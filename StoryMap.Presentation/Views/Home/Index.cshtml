@@ -9,16 +9,18 @@
         <div class="row mt-5 pt-5">
             <!-- Create New Item Card -->
             <div class="col-md-4 mb-4">
-                <div class="card text-center card-limited-height">
-                    <div class="position-relative">
-                        <img src="https://static3.depositphotos.com/1000941/160/i/450/depositphotos_1602106-stock-photo-sign-plus-on-white-background.jpg" class="card-img-top rounded-top faded-image" alt="Card image cap">
-                        <div class="overlay">
-                            <h5 class="text-white">Create Story</h5>
+                <!-- Wrap the card in a clickable link -->
+                <a href="@Url.Action("Create", "Story")" class="text-decoration-none">
+                    <div class="card text-center card-limited-height">
+                        <div class="position-relative">
+                            <img src="https://static3.depositphotos.com/1000941/160/i/450/depositphotos_1602106-stock-photo-sign-plus-on-white-background.jpg" class="card-img-top rounded-top faded-image" alt="Card image cap">
+                            <div class="overlay">
+                                <h5 class="text-white">Create Story</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-
             <!-- Story Items (8 Stories) -->
             @for (var i = 0; i < 16; i++)
             {
