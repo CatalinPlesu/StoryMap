@@ -1,0 +1,41 @@
+# Ignore bin and obj folders in any directory
+**/bin/
+**/obj/
+
+# User-specific files (optional)
+**/.vs/
+**/.idea/
+**/.vscode/
+
+# User-specific files
+.vs/
+.idea/
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer files (for .NET Core packaging)
+*.vsix
+*.nupkg
+*.dmg
+
+# Rider/IntelliJ IDEA
+.idea/
+
+# ASP.NET Core environment settings
+appsettings.json
+
+# User-specific NuGet files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# .NET Core build directory
+project.lock.json
+project.fragment.lock.json
+artifacts/
