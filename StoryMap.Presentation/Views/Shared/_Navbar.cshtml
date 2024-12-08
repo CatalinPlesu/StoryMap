@@ -1,0 +1,33 @@
+<nav class="navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/" id="navbar-brand">StoryMap</a>
+  </div>
+</nav>
+
+<style>
+  /* Navbar customizations */
+  body, html {
+      background-color: #f0f8ff;
+  }
+
+  .navbar {
+    background-color: #e3f2fd;
+    margin: 10px;                  /* Adds 20px margin on all sides */
+    padding: 20px;
+    border-radius: 10px;           /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect for floating look */
+    position: fixed;               /* Makes the navbar stay on top */
+    top: 10px;                     /* Adjust for desired positioning */
+    left: 10px;                    /* Margin from left */
+    right: 10px;                   /* Margin from right */
+    z-index: 1000;                 /* Ensures navbar stays on top of other content */
+  }
+
+.navbar-brand{
+      font-size: x-large;
+  }
+  /* Push the content below the navbar down */
+  body {
+    margin-top: 100px;             /* This will push the content down by the height of the navbar + the margin */
+  }
+</style>

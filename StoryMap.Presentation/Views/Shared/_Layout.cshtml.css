@@ -46,3 +46,49 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+body.dark-theme {
+    background-color: #333;
+    color: white;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 10px;
+    border-radius: 10px;
+    z-index: 1000;
+}
+
+.floating-sidebar-left, .floating-sidebar-right {
+    position: fixed;
+    top: 100px;
+    z-index: 999;
+    background-color: #f8f9fa;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.floating-sidebar-left {
+    left: 10px;
+}
+
+.floating-sidebar-right {
+    right: 10px;
+}
+
+.time-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+}
+
+.card-img-top {
+    object-fit: cover;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+}

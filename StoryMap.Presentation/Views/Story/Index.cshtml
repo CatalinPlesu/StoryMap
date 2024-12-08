@@ -1,0 +1,69 @@
+@{
+    Layout = "_Layout"; 
+}
+
+<div class="container mt-3">
+    <div class="row">
+        <!-- Floating Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top rounded shadow">
+            <a class="navbar-brand" href="/">StoryMap</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <button class="btn btn-link" onclick="toggleTheme()">🌙 / 🌞</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-link">Save</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-link">Cancel</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-link">Undo</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="row mt-5 pt-5">
+            <div class="col-md-12">
+                <h2>@Model.Title</h2>
+                <p>@Model.Description</p>
+            </div>
+        </div>
+
+        <!-- Floating Sidebar for Maps and Timeframes -->
+        <div class="floating-sidebar-left">
+            <h4>Maps and Timeframes</h4>
+            <!-- Add map and timeframe content here -->
+        </div>
+
+        <!-- Floating Sidebar for Characters -->
+        <div class="floating-sidebar-right">
+            <h4>Characters</h4>
+            <!-- Add character content here -->
+        </div>
+
+        <!-- Time Speed and Play/Pause Buttons -->
+        <div class="time-controls">
+            <input type="range" min="1" max="10" value="5" id="timeSpeed" />
+            <button class="btn btn-primary" id="playPauseBtn">Play</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Time speed functionality
+    document.getElementById('timeSpeed').addEventListener('input', function() {
+        console.log('Time speed:', this.value);
+    });
+
+    document.getElementById('playPauseBtn').addEventListener('click', function() {
+        this.textContent = (this.textContent === 'Play') ? 'Pause' : 'Play';
+    });
+</script>
+
