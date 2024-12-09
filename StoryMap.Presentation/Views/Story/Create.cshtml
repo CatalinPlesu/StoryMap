@@ -1,6 +1,6 @@
 @Html.Partial("_LeftBar")
 
-<div id="canvas" 
+<canvas id="canvas" 
     style="width: calc(100% - 2 * 270px); 
            height: calc(100vh - 150px); 
            border: 2px dashed #ccc; 
@@ -9,8 +9,9 @@
            top: 130px; /* Start 130px from the top (just below the navbar) */
            bottom: 20px; /* Extend it to the bottom of the viewport */
            left: 270px; /* 20px from the left margin */
-           user-select: none;"> <!-- Disable text/image selection -->
-</div>
+           user-select: none;
+           overflow: hidden;"> 
+</canvas>
 
 <!-- File input and button -->
 <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
@@ -18,257 +19,11 @@
 
 @Html.Partial("_RightBar")
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    // Elements
-    const canvas = document.getElementById("canvas");
-    const uploadBtn = document.getElementById("upload-btn");
-    const fileInput = document.getElementById("file-input");
-
-    // Trigger file input when the button is clicked
-    uploadBtn.addEventListener("click", () => fileInput.click());
-
-    // Handle the file input selection
-    fileInput.addEventListener("change", (e) => {
-        const files = e.target.files;
-        for (const file of files) {
-            const img = document.createElement("img");
-            img.src = URL.createObjectURL(file);
-            img.onload = () => URL.revokeObjectURL(img.src);  // Cleanup the object URL after loading
-            addImageToCanvas(img);
-        }
-    });
-
-    // Function to add an image to the canvas
-    function addImageToCanvas(img) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "image-wrapper";
-        wrapper.style.position = "absolute";
-        wrapper.style.top = "50%";
-        wrapper.style.left = "50%";
-        wrapper.style.width = "150px";
-        wrapper.style.height = "150px";
-        wrapper.style.transform = "translate(-50%, -50%) rotate(0deg)";
-        wrapper.style.cursor = "move";
-
-        wrapper.appendChild(img);
-        canvas.appendChild(wrapper);
-
-        // Add resize and rotation controls to the image wrapper
-        addControls(wrapper);
-
-        // Enable drag functionality
-        wrapper.addEventListener("mousedown", startDrag);
-    }
-
-    // Function to add resize and rotation controls to the wrapper
-    function addControls(wrapper) {
-        const img = wrapper.querySelector('img');
-
-        // Add resize handle to the wrapper
-        const resizeHandle = document.createElement("div");
-        resizeHandle.className = "resize-handle";
-        wrapper.appendChild(resizeHandle);
-        resizeHandle.style.bottom = `-10px`;
-        resizeHandle.style.right = `-10px`;
-
-        // Handle resize logic
-        resizeHandle.addEventListener("mousedown", (e) => startResize(e, wrapper, img));
-
-        // Add rotate handle to the wrapper
-        const rotateHandle = document.createElement("div");
-        rotateHandle.className = "rotate-handle";
-        wrapper.appendChild(rotateHandle);
-        rotateHandle.style.top = `-50px`;
-        rotateHandle.style.left = `50%`;
-        rotateHandle.style.transform = "translateX(-50%)";
-
-        // Handle rotation logic
-        rotateHandle.addEventListener("mousedown", (e) => startRotate(e, wrapper, img));
-    }
-
-    // Dragging functionality
-    let isDragging = false, startX, startY;
-
-    function startDrag(e) {
-        const wrapper = e.target.closest(".image-wrapper");
-
-        // Prevent dragging if resize or rotate handles are clicked
-        if (!wrapper || e.target.classList.contains("resize-handle") || e.target.classList.contains("rotate-handle")) return;
-
-        isDragging = true;
-        startX = e.clientX - wrapper.offsetLeft;
-        startY = e.clientY - wrapper.offsetTop;
-
-        document.addEventListener("mousemove", drag);
-        document.addEventListener("mouseup", stopDrag);
-
-        function drag(e) {
-            if (!isDragging) return;
-            wrapper.style.left = `${e.clientX - startX}px`;
-            wrapper.style.top = `${e.clientY - startY}px`;
-        }
-
-        function stopDrag() {
-            isDragging = false;
-            document.removeEventListener("mousemove", drag);
-            document.removeEventListener("mouseup", stopDrag);
-        }
-    }
-
-    // Resize functionality
-    function startResize(e, wrapper, img) {
-        e.stopPropagation();
-        const rect = wrapper.getBoundingClientRect();
-        const initialWidth = rect.width;
-        const initialHeight = rect.height;
-        const startX = e.clientX;
-        const startY = e.clientY;
-
-        // Calculate initial aspect ratio
-        const aspectRatio = initialWidth / initialHeight;
-
-        document.addEventListener("mousemove", resize);
-        document.addEventListener("mouseup", stopResize);
-
-        function resize(e) {
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
-
-            let newWidth = initialWidth + deltaX;
-            let newHeight = initialHeight + deltaY;
-
-            // Lock the aspect ratio during resizing
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                newHeight = newWidth / aspectRatio;
-            } else {
-                newWidth = newHeight * aspectRatio;
-            }
-
-            wrapper.style.width = `${newWidth}px`;
-            wrapper.style.height = `${newHeight}px`;
-            img.style.width = `${newWidth}px`;
-            img.style.height = `${newHeight}px`;
-        }
-
-        function stopResize() {
-            document.removeEventListener("mousemove", resize);
-            document.removeEventListener("mouseup", stopResize);
-        }
-    }
-
-    // Rotation functionality
-    function startRotate(e, wrapper, img) {
-        e.stopPropagation();
-
-        // Get the center of the image wrapper
-        const centerX = wrapper.offsetLeft + wrapper.offsetWidth / 2;
-        const centerY = wrapper.offsetTop + wrapper.offsetHeight / 2;
-
-        // Get the initial angle between the mouse and the center of the wrapper
-        const startAngle = getAngle(e.clientX, e.clientY, centerX, centerY);
-        let currentRotation = getCurrentRotation(wrapper);
-
-        document.addEventListener("mousemove", rotate);
-        document.addEventListener("mouseup", stopRotate);
-
-        function rotate(e) {
-            // Calculate the current angle of the mouse relative to the center of the wrapper
-            const currentAngle = getAngle(e.clientX, e.clientY, centerX, centerY);
-
-            // Normalize angleDelta to the shortest path
-            const normalizedDelta = ((currentAngle + 180) % 360) - 180;
-
-            // Calculate the new rotation
-            // Reverse the sign of normalizedDelta to match the direction
-            const newRotation = currentRotation + normalizedDelta;  // Add delta as is
-
-            // Apply the new rotation to the wrapper
-            const normalizedRotation = newRotation;
-
-            // Apply the new rotation to the wrapper
-            wrapper.style.transform = `translate(-50%, -50%) rotate(${normalizedRotation}deg)`;
-
-            // Update the start angle for the next mouse move
-            startAngle = currentAngle;
-        }
-
-        function stopRotate(e) {
-            // Final angle calculation to ensure the image faces the mouse
-            const finalAngle = getAngle(e.clientX, e.clientY, centerX, centerY);
-
-            // Apply the final rotation with smooth transition
-            wrapper.style.transition = "transform 0.1s ease-out";
-            wrapper.style.transform = `translate(-50%, -50%) rotate(${finalAngle}deg)`;
-
-            // Remove event listeners
-            document.removeEventListener("mousemove", rotate);
-            document.removeEventListener("mouseup", stopRotate);
-        }
-    }
-
-    // Helper function to calculate the angle between the cursor and the center of the wrapper
-    function getAngle(clientX, clientY, centerX, centerY) {
-        return Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
-    }
-
-    // Helper function to get the current rotation of an element from its CSS transform property
-    function getCurrentRotation(element) {
-        const style = window.getComputedStyle(element);
-        const matrix = new WebKitCSSMatrix(style.transform);
-        return Math.round(Math.atan2(matrix.m21, matrix.m11) * (180 / Math.PI));
-    }
-});
-</script>
-
-<style>
-/* Adjust canvas and content layout */
-#canvas {
-    margin: 0 auto;
+@section Styles {
+    <link rel="stylesheet" href="~/css/story-canvas.css" />
 }
 
-/* Center the content with flexbox */
-.container-fluid .row {
-    display: flex;
-    align-items: stretch;
-    min-height: 100vh;
+<!-- Inject additional JavaScript -->
+@section Scripts {
+    <script src="~/js/canvas/main.js"></script>
 }
-
-.col-md-6 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.image-wrapper {
-    position: relative;
-    display: inline-block;
-    cursor: move;
-    transition: transform 0.1s ease-out; /* Smooth out rotation transitions */
-}
-
-.image-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
-    height: auto; /* Ensures aspect ratio is locked */
-    width: auto; /* Ensures aspect ratio is locked */
-}
-
-.resize-handle {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background-color: green;
-    cursor: nwse-resize;
-}
-
-.rotate-handle {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: yellow;
-    border-radius: 50%;
-    cursor: grab;
-}
-</style>
