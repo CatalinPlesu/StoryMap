@@ -1,8 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    const uploadBtn = document.getElementById("upload-btn");
+    const uploadBtns = document.getElementsByClassName("upload-btn");
     const fileInput = document.getElementById("file-input");
+
+    const set = document.querySelector('.maps');
+    set.addEventListener('click', handleClick, false);
+
+    function handleClick(e) {
+      const { nodeName, textContent } = e.target;
+        console.log(nodeName);
+        console.log(textContent);
+        console.log(e.target);
+      if (nodeName === 'BUTTON' || nodeName === 'I') {
+        if (e.target.classList.contains("upload-btn")) {
+            fileInput.click();
+        }
+        console.log(textContent);
+      }
+    }
 
     let images = []; // Store image data and positions
     let dragIndex = null; // Track dragged image
@@ -16,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    uploadBtn.addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", (e) => {
         const files = e.target.files;
         for (const file of files) {
@@ -119,10 +134,10 @@ canvas.addEventListener("wheel", (e) => {
     const minZoomForImages = Math.min(
         canvas.width / imgWidth, 
         canvas.height / imgHeight
-    ) * 1000;
+    ) * 500;
 
     // Dynamic zoom step
-    const dynamicZoomStep = zoomStep * (1 + (zoomFactor / 30000) * 5);
+    const dynamicZoomStep = zoomStep * (1 + (zoomFactor / 200));
 
     // Mouse position relative to canvas
     const mouseX = e.offsetX;
