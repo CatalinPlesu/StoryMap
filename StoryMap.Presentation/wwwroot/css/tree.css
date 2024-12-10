@@ -1,0 +1,71 @@
+.leftbar {
+    background-color: #e3f2fd; /* Match the navbar background */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+    position: fixed; /* Fixed position ensures it stays in place */
+    top: 130px; /* Start 130px from the top (just below the navbar) */
+    bottom: 20px; /* Extend it to the bottom of the viewport */
+    left: 20px; /* 20px from the left margin */
+    width: 230px; /* Sidebar width */
+    height: calc(100vh - 150px); /* Ensure it takes full height from navbar to bottom */
+    z-index: 1050; /* Ensure it stays on top of other elements */
+    overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
+}
+
+.rightbar {
+    background-color: #e3f2fd; /* Match the navbar background */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+    position: fixed; /* Fixed position ensures it stays in place */
+    top: 130px; /* Start 130px from the top (just below the navbar) */
+    right: 20px; /* 20px from the right margin */
+    bottom: 20px; /* Extend it to the bottom of the viewport */
+    width: 230px; /* Sidebar width */
+    height: calc(100vh - 150px); /* Ensure it takes full height from navbar to bottom */
+    z-index: 1050; /* Ensure it stays on top of other elements */
+    overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
+}
+
+.tree,
+.tree ul {
+    list-style-type: none;
+    padding-left: 2rem;
+}
+
+.tree li {
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.tree li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -1rem;
+    border-left: 1px solid #ccc;
+    height: 100%;
+    width: 1px;
+}
+
+.tree li::after {
+    content: "";
+    position: absolute;
+    top: 1.25rem;
+    left: -1rem;
+    border-top: 1px solid #ccc;
+    width: 1rem;
+}
+
+.tree li:last-child::before {
+    height: 1.25rem;
+}
+
+.tree .toggle {
+    cursor: pointer;
+}
+
+.tree .collapsed ul {
+    display: none;
+}

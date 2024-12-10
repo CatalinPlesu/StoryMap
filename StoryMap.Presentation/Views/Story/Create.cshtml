@@ -1,14 +1,68 @@
-@Html.Partial("_LeftBar")
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="leftbar">
+<div class="card mb-3">
+ <ul class="tree">
+        <li>
+            <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+            Maps
+            <ul>
+                @for (int j = 1; j <= 3; j++)
+                {
+                <li>
+                    <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+                    Map @j
+                    <ul>
+                        @for (int i = 1; i <= 2; i++)
+                        {
+                        <li>Image @i</li>
+                        }
+                        <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+                    </ul>
+                </li>
+                }
+                <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+            </ul>
+        </li>
+    </ul>
+    </div>
+
+    <div class="card mb-3">
+     <ul class="tree">
+            <li>
+                <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+                Chapters
+                <ul>
+                    @for (int j = 1; j <= 3; j++)
+                    {
+                    <li>
+                        <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+                        Chapter @j
+                        <ul>
+                            @for (int i = 1; i <= 2; i++)
+                            {
+                            <li>Timeframe @i</li>
+                            }
+                            <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+                        </ul>
+                    </li>
+                    }
+                    <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+                </ul>
+            </li>
+        </ul>
+        </div>
+</div>
 
 <canvas id="canvas" 
     style="width: calc(100% - 2 * 270px); 
            height: calc(100vh - 150px); 
            border: 2px dashed #ccc; 
            background: #e3f2fd; 
-           position: fixed; /* Fixed position ensures it stays in place */
-           top: 130px; /* Start 130px from the top (just below the navbar) */
-           bottom: 20px; /* Extend it to the bottom of the viewport */
-           left: 270px; /* 20px from the left margin */
+           position: fixed; 
+           top: 130px; 
+           bottom: 20px; 
+           left: 270px; 
            user-select: none;
            overflow: hidden;"> 
 </canvas>
@@ -17,13 +71,42 @@
 <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
 <button id="upload-btn" class="btn btn-primary mt-3">Upload Images</button>
 
-@Html.Partial("_RightBar")
+<div class="rightbar">
+<div class="card mb-3">
+ <ul class="tree">
+        <li>
+            <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+            Characters
+            <ul>
+                @for (int j = 1; j <= 3; j++)
+                {
+                <li>
+                    <span class="toggle"><i class="bi bi-chevron-right"></i></span>
+                    Character @j
+                    <ul>
+                        @for (int i = 1; i <= 2; i++)
+                        {
+                        <li>Detail @i</li>
+                        }
+                        <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+                    </ul>
+                </li>
+                }
+                <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
+            </ul>
+        </li>
+    </ul>
+    </div>
+</div>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/story-canvas.css" />
+    <link rel="stylesheet" href="~/css/tree.css" />
 }
 
 <!-- Inject additional JavaScript -->
 @section Scripts {
     <script src="~/js/canvas/main.js"></script>
+    <script src="~/js/tree.js"></script>
 }
+
