@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Create new detail
                     const newDetailLi = document.createElement('li');
+                    newDetailLi.classList.add("editable");
                     switch(treeType) {
                         case 'Maps':
                             newDetailLi.textContent = `Image ${newDetailNumber}`;

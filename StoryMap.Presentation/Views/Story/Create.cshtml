@@ -2,7 +2,7 @@
 
 <div class="leftbar">
 <div class="card mb-3">
- <ul class="tree maps">
+ <ul class="tree maps" id="tree-map">
         <li>
             <span class="toggle"><i class="bi bi-chevron-right"></i></span>
             Maps
@@ -28,7 +28,7 @@
     </div>
 
     <div class="card mb-3">
-     <ul class="tree">
+     <ul class="tree" id="tree-chapter">
             <li>
                 <span class="toggle"><i class="bi bi-chevron-right"></i></span>
                 Chapters
@@ -71,7 +71,7 @@
 
 <div class="rightbar">
 <div class="card mb-3">
- <ul class="tree">
+ <ul class="tree" id="tree-chapter">
         <li >
             <span class="toggle"><i class="bi bi-chevron-right"></i></span>
             Characters
@@ -104,8 +104,10 @@
 
 <!-- Inject additional JavaScript -->
 @section Scripts {
-    <script src="~/js/canvas/main.js"></script>
-    <script src="~/js/tree.js"></script>
-    <script src="~/js/chapters.js"></script>
+    <!-- <script type="module" src="~/js/observer_main.js"></script> -->
+    <script type="module" src="~/js/App.js"></script>
+    <!-- <script src="~/js/canvas/main.js"></script> -->
+    <!-- <script src="~/js/tree.js"></script> -->
+    <!-- <script src="~/js/chapters.js"></script> -->
 }
 
