@@ -9,13 +9,13 @@
             <ul>
                 @for (int j = 1; j <= 3; j++)
                 {
-                <li>
+                <li class="editable">
                     <span class="toggle"><i class="bi bi-chevron-right"></i></span>
                     Map @j
                     <ul>
                         @for (int i = 1; i <= 2; i++)
                         {
-                        <li>Image @i</li>
+                        <li class="editable">Image @i</li>
                         }
                             <li><button type="button" class="btn btn-outline-primary upload-btn"><i class="bi bi-plus upload-btn"></i></button></li>
                     </ul>
@@ -35,13 +35,13 @@
                 <ul>
                     @for (int j = 1; j <= 3; j++)
                     {
-                    <li>
+                    <li class="editable">
                         <span class="toggle"><i class="bi bi-chevron-right"></i></span>
                         Chapter @j
                         <ul>
                             @for (int i = 1; i <= 2; i++)
                             {
-                            <li>Timeframe @i</li>
+                            <li class="editable">Timeframe @i</li>
                             }
                             <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
                         </ul>
@@ -72,19 +72,19 @@
 <div class="rightbar">
 <div class="card mb-3">
  <ul class="tree">
-        <li>
+        <li >
             <span class="toggle"><i class="bi bi-chevron-right"></i></span>
             Characters
             <ul>
                 @for (int j = 1; j <= 3; j++)
                 {
-                <li>
+                <li class="editable">
                     <span class="toggle"><i class="bi bi-chevron-right"></i></span>
                     Character @j
                     <ul>
                         @for (int i = 1; i <= 2; i++)
                         {
-                        <li>Detail @i</li>
+                        <li class="editable">Detail @i</li>
                         }
                         <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
                     </ul>
@@ -106,5 +106,6 @@
 @section Scripts {
     <script src="~/js/canvas/main.js"></script>
     <script src="~/js/tree.js"></script>
+    <script src="~/js/chapters.js"></script>
 }
 

@@ -9,9 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleClick(e) {
       const { nodeName, textContent } = e.target;
-        console.log(nodeName);
-        console.log(textContent);
-        console.log(e.target);
       if (nodeName === 'BUTTON' || nodeName === 'I') {
         if (e.target.classList.contains("upload-btn")) {
             fileInput.click();
