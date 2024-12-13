@@ -5,7 +5,13 @@ const CharactersTree = {
     return m("div.card.mb-3", [
       m("ul.tree.characters#tree-characters", [
 
-        m("li", [
+        m("li", {
+                  class: State.select.item === 'base_character' && State.select.index === 0 && State.select.nestedIndex === null ? 'selected' : '',
+                  onclick: (e) => {
+                    e.stopPropagation();  
+                    State.select('base_character', 0, null); 
+                  }
+                }, [
           m("span.toggle", [
             m("i.bi.bi-chevron-right")
           ]),

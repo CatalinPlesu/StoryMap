@@ -195,7 +195,7 @@ const MapsTree = {
                 onclick: () => {
                   const newMapName = prompt("Enter new map name:");
                   if (newMapName) {
-                    State.addMap({ name: newMapName, images: [] });
+                    State.addMap(newMapName);
                   }
                 }
               }, m("i.bi.bi-plus"))

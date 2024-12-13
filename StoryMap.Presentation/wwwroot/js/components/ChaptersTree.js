@@ -181,10 +181,7 @@ const ChaptersTree = {
                   onclick: () => {
                     const newChapterName = prompt("Enter new chapter name:");
                     if (newChapterName) {
-                      State.addChapter({
-                        name: newChapterName,
-                        timeframes: [],
-                      });
+                      State.addChapter(newChapterName);
                     }
                   },
                 },
