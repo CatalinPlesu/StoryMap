@@ -1,7 +1,10 @@
 const State = {
   maps: [],
+  base_character_details: [],
   characters: [],
   chapters: [],
+  mode: 'view', // 'view' or 'edit'
+  selected: {item: 'map', index: 0, nestedIndex: null, type: 'select'},
 
   // Map methods
   addMap(name) {
@@ -17,6 +20,12 @@ const State = {
   updateMap(index, updates) {
     if (this.maps[index]) {
       Object.assign(this.maps[index], updates);
+      m.redraw();
+    }
+  },
+  updateMapName(index, name) {
+    if (this.maps[index]) {
+      this.maps[index].name = name;
       m.redraw();
     }
   },
@@ -41,7 +50,7 @@ const State = {
 
   // Character methods
   addCharacter(name) {
-    this.characters.push({ name, details: [] });
+    this.characters.push({ name, details: structuredClone(this.base_character_details) });
     m.redraw();
   },
   removeCharacter(index) {
@@ -73,6 +82,18 @@ const State = {
       this.characters[characterIndex].details.splice(detailIndex, 1);
       m.redraw();
     }
+  },
+  addDetailToBaseCharacter(detail) {
+    this.base_character_details.push(detail);
+    m.redraw();
+  },
+  updateDetailInBaseCharacter(detailIndex, updates) {
+    Object.assign(this.base_character_details[detailIndex], updates);
+    m.redraw();
+  },
+  removeDetailFromBaseCharacter(detailIndex) {
+    this.base_character_details.splice(detailIndex, 1);
+    m.redraw();
   },
 
   // Chapter methods
@@ -108,6 +129,17 @@ const State = {
     if (this.chapters[chapterIndex]?.timeframes[timeframeIndex]) {
       this.chapters[chapterIndex].timeframes.splice(timeframeIndex, 1);
       m.redraw();
+    }
+  },
+
+  select(item, index, nestedIndex) {
+    if (this.select.item === item && this.select.index === index && this.select.nestedIndex === nestedIndex) {
+      this.select.type = 'edit';
+    } else {
+      this.select.item = item;
+      this.select.index = index;
+      this.select.nestedIndex = nestedIndex;
+      this.select.type = 'select';
     }
   }
 };
@@ -149,10 +181,14 @@ State.characters = [
 State.chapters = [
   {
     name: "Chapter 1",
+    x: 0,
+    y: 0,
     timeframes: ["Introduction Scene", "First Conflict"]
   },
   {
     name: "Chapter 2",
+    x: 0,
+    y: 0,
     timeframes: ["Rising Action", "Turning Point"]
   }
 ];

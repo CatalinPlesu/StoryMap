@@ -42,9 +42,15 @@
 
 .tree .inline-edit {
     border: 1px solid #ced4da;
+    background-color: #98d1fa;
     border-radius: 0.25rem;
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
+}
+
+.tree .selected {
+    background-color: #98d1fa;
+    border-radius: 0.25rem;
 }
 
 .tree li::before {
