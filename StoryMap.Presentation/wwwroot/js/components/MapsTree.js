@@ -89,7 +89,7 @@ const MapsTree = {
                           }
                         }) : 
                         m("span", [
-                          `Image ${imageIndex + 1}: ${image.src}`
+                          image.src
                         ]),
                       // Show delete button in edit mode for image
                       State.select.item ==='map' && State.select.index === mapIndex && State.select.nestedIndex === imageIndex && State.select.type === 'edit' ?
