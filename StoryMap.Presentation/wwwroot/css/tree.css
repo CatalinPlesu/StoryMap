@@ -50,7 +50,20 @@
 
 .tree .selected {
     background-color: #98d1fa;
-    border-radius: 0.25rem;
+    border-top-left-radius: 0.5rem;  
+    border-bottom-left-radius: 0.5rem;
+}
+
+.tree .active {
+    background-color: #FFD700; 
+    border-top-left-radius: 0.5rem;  
+    border-bottom-left-radius: 0.5rem;
+}
+
+.tree .selected-active {
+    background: linear-gradient(45deg, #FFD700 50%, #98d1fa 50%); 
+    border-top-left-radius: 0.5rem;  
+    border-bottom-left-radius: 0.5rem;
 }
 
 .tree li::before {

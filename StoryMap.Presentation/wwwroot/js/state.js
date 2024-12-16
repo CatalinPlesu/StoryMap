@@ -3,8 +3,12 @@ const State = {
   base_character_details: [],
   characters: [],
   chapters: [],
-  mode: 'view', // 'view' or 'edit'
-  selected: {item: 'map', index: 0, nestedIndex: null, type: 'select'},
+  mode: "view", // 'view' or 'edit'
+  selected: { item: "map", index: 0, nestedIndex: null, type: "select" },
+  selectedChapterIndex: null,
+  selectedMapIndex: null,
+  selectedCharacterIndex: null,
+  selectedTimeframeIndex: null,
 
   // Map methods
   addMap(name) {
@@ -50,7 +54,10 @@ const State = {
 
   // Character methods
   addCharacter(name) {
-    this.characters.push({ name, details: structuredClone(this.base_character_details) });
+    this.characters.push({
+      name,
+      details: structuredClone(this.base_character_details),
+    });
     m.redraw();
   },
   removeCharacter(index) {
@@ -73,7 +80,10 @@ const State = {
   },
   updateDetailInCharacter(characterIndex, detailIndex, updates) {
     if (this.characters[characterIndex]?.details[detailIndex]) {
-      Object.assign(this.characters[characterIndex].details[detailIndex], updates);
+      Object.assign(
+        this.characters[characterIndex].details[detailIndex],
+        updates,
+      );
       m.redraw();
     }
   },
@@ -133,15 +143,88 @@ const State = {
   },
 
   select(item, index, nestedIndex) {
-    if (this.select.item === item && this.select.index === index && this.select.nestedIndex === nestedIndex) {
-      this.select.type = 'edit';
+    if (
+      this.select.item === item && this.select.index === index &&
+      this.select.nestedIndex === nestedIndex
+    ) {
+      this.select.type = "edit";
     } else {
       this.select.item = item;
       this.select.index = index;
       this.select.nestedIndex = nestedIndex;
-      this.select.type = 'select';
+      this.select.type = "select";
+
+      switch (item) {
+        case "map":
+          this.selectedMapIndex = index;
+          break;
+        case "timeframe":
+          this.selectedChapterIndex = index;
+          this.selectedTimeframeIndex = nestedIndex;
+          break;
+        case "character":
+          this.selectedCharacterIndex = index;
+          break;
+        default:
+      }
     }
-  }
+  },
+
+  // Add to existing State object in state.js
+  updateCharacterPositionInTimeframe(
+    chapterIndex,
+    timeframeIndex,
+    characterIndex,
+    position,
+  ) {
+    if (this.chapters[chapterIndex]?.timeframes[timeframeIndex]) {
+      // Ensure character positions array exists
+      if (
+        !this.chapters[chapterIndex].timeframes[timeframeIndex]
+          .characterPositions
+      ) {
+        this.chapters[chapterIndex].timeframes[timeframeIndex]
+          .characterPositions = [];
+      }
+
+      // Update or add character position
+      const existingPositionIndex = this.chapters[chapterIndex]
+        .timeframes[timeframeIndex].characterPositions
+        .findIndex((pos) => pos.characterIndex === characterIndex);
+
+      if (existingPositionIndex !== -1) {
+        this.chapters[chapterIndex].timeframes[timeframeIndex]
+          .characterPositions[existingPositionIndex] = {
+            characterIndex,
+            ...position,
+          };
+      } else {
+        this.chapters[chapterIndex].timeframes[timeframeIndex]
+          .characterPositions.push({
+            characterIndex,
+            ...position,
+          });
+      }
+
+      m.redraw();
+    }
+  },
+
+  getCharacterPositionInTimeframe(
+    chapterIndex,
+    timeframeIndex,
+    characterIndex,
+  ) {
+    if (
+      this.chapters[chapterIndex]?.timeframes[timeframeIndex]
+        ?.characterPositions
+    ) {
+      return this.chapters[chapterIndex].timeframes[timeframeIndex]
+        .characterPositions
+        .find((pos) => pos.characterIndex === characterIndex);
+    }
+    return null;
+  },
 };
 
 // Initialize with some data for testing
@@ -150,15 +233,15 @@ State.maps = [
     name: "Map 1",
     images: [
       { src: "test1.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
-      { src: "test2.jpg", x: 0, y: 0, scale: 1, rotation: 0 }
-    ]
+      { src: "test2.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
+    ],
   },
   {
     name: "Map 2",
     images: [
-      { src: "map2_image1.jpg", x: 0, y: 0, scale: 1, rotation: 0 }
-    ]
-  }
+      { src: "map2_image1.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
+    ],
+  },
 ];
 
 State.characters = [
@@ -166,16 +249,16 @@ State.characters = [
     name: "Character 1",
     details: [
       { health: 100 },
-      { race: "human" }
-    ]
+      { race: "human" },
+    ],
   },
   {
     name: "Character 2",
     details: [
       { health: 100 },
-      { race: "human" }
-    ]
-  }
+      { race: "human" },
+    ],
+  },
 ];
 
 State.chapters = [
@@ -183,14 +266,14 @@ State.chapters = [
     name: "Chapter 1",
     x: 0,
     y: 0,
-    timeframes: ["Introduction Scene", "First Conflict"]
+    timeframes: ["Introduction Scene", "First Conflict"],
   },
   {
     name: "Chapter 2",
     x: 0,
     y: 0,
-    timeframes: ["Rising Action", "Turning Point"]
-  }
+    timeframes: ["Rising Action", "Turning Point"],
+  },
 ];
 
 globalThis.State = State;
