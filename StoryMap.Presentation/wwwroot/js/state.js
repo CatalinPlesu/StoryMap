@@ -5,10 +5,10 @@ const State = {
   chapters: [],
   mode: "view", // 'view' or 'edit'
   selected: { item: "map", index: 0, nestedIndex: null, type: "select" },
-  selectedChapterIndex: null,
-  selectedMapIndex: null,
-  selectedCharacterIndex: null,
-  selectedTimeframeIndex: null,
+  selectedChapterIndex: 0,
+  selectedMapIndex: 0,
+  selectedCharacterIndex: 0,
+  selectedTimeframeIndex: 0,
 
   // Map methods
   addMap(name) {
@@ -56,8 +56,16 @@ const State = {
   addCharacter(name) {
     this.characters.push({
       name,
-      details: structuredClone(this.base_character_details),
+      states: [{
+        mapId: this.selectedMapIndex,
+        x: 0,
+        y: 0,
+        chapterId: 0,
+        timeframeId: 0,
+        details: structuredClone(this.base_character_details),
+      }],
     });
+    console.log(JSON.stringify(this.characters[-1]));
     m.redraw();
   },
   removeCharacter(index) {
@@ -66,31 +74,91 @@ const State = {
       m.redraw();
     }
   },
-  updateCharacter(index, updates) {
+  updateCharacterName(index, name) {
     if (this.characters[index]) {
-      Object.assign(this.characters[index], updates);
+      this.characters[index].name = name;
       m.redraw();
     }
   },
-  addDetailToCharacter(characterIndex, detail) {
+  addDetailToCharacter(characterIndex, stateIndex, detail) {
     if (this.characters[characterIndex]) {
-      this.characters[characterIndex].details.push(detail);
+      if (this.characters[characterIndex].states[stateIndex]) {
+        this.characters[characterIndex].states[stateIndex].details.push(detail);
+      } else {
+        // something was wrong
+      }
       m.redraw();
     }
   },
-  updateDetailInCharacter(characterIndex, detailIndex, updates) {
-    if (this.characters[characterIndex]?.details[detailIndex]) {
-      Object.assign(
-        this.characters[characterIndex].details[detailIndex],
-        updates,
-      );
-      m.redraw();
+  updateDetailInCharacter(characterIndex, stateIndex, detailIndex, updates) {
+    if (this.characters[characterIndex]) {
+      const character = this.characters[characterIndex];
+
+      if (
+        character.states[stateIndex] &&
+        character.states[stateIndex].chapterId === this.selectedChapterIndex &&
+        character.states[stateIndex].timeframeId ===
+          this.selectedTimeframeIndex &&
+        character.states[stateIndex].details[detailIndex]
+      ) {
+        // Update the existing detail in the current state
+        Object.assign(
+          character.states[stateIndex].details[detailIndex],
+          updates,
+        );
+        m.redraw();
+      } else {
+        // Create a new state based on the previous state
+        let previousState = null;
+        if (stateIndex === 0) {
+          previousState = character.states[0];
+        } else {
+          previousState = character.states[stateIndex - 1];
+        }
+
+        // Clone details from the previous state (deep clone)
+        const clonedDetails = previousState
+          ? JSON.parse(JSON.stringify(previousState.details))
+          : [];
+
+        // Ensure the detail at the specified index exists
+        if (!clonedDetails[detailIndex]) {
+          clonedDetails[detailIndex] = {};
+        }
+
+        // Create a new state object
+        const newState = {
+          mapId: this.selectedMapIndex,
+          x: 0,
+          y: 0,
+          chapterId: this.selectedChapterIndex,
+          timeframeId: this.selectedTimeframeIndex,
+          details: clonedDetails, // Use the cloned details for the new state
+        };
+
+        // Apply the updates to the cloned detail
+        Object.assign(newState.details[detailIndex], updates);
+
+        // Insert the new state into the character's states array
+        if (character.states[stateIndex]) {
+          character.states.splice(stateIndex + 1, 0, newState);
+        } else {
+          character.states.push(newState);
+        }
+
+        m.redraw();
+      }
+    } else {
+      console.error("Character not found at index:", characterIndex);
     }
   },
-  removeDetailFromCharacter(characterIndex, detailIndex) {
-    if (this.characters[characterIndex]?.details[detailIndex]) {
-      this.characters[characterIndex].details.splice(detailIndex, 1);
-      m.redraw();
+  removeDetailFromCharacter(characterIndex, stateIndex, detailIndex) {
+    if (this.characters[characterIndex]) {
+      const currentState = this.characters[characterIndex].states[stateIndex];
+      if (currentState && currentState.details[detailIndex]) {
+        currentState.details.splice(detailIndex, 1);
+        m.redraw();
+      }
     }
   },
   addDetailToBaseCharacter(detail) {
@@ -117,9 +185,9 @@ const State = {
       m.redraw();
     }
   },
-  updateChapter(index, updates) {
+  updateChapterName(index, name) {
     if (this.chapters[index]) {
-      Object.assign(this.chapters[index], updates);
+      this.chapters[index].name = name;
       m.redraw();
     }
   },
@@ -168,66 +236,65 @@ const State = {
         default:
       }
     }
+    // m.redraw();
   },
 
-  // Add to existing State object in state.js
-  updateCharacterPositionInTimeframe(
-    chapterIndex,
-    timeframeIndex,
-    characterIndex,
-    position,
-  ) {
-    if (this.chapters[chapterIndex]?.timeframes[timeframeIndex]) {
-      // Ensure character positions array exists
-      if (
-        !this.chapters[chapterIndex].timeframes[timeframeIndex]
-          .characterPositions
+  findCharacterLatestStateIndexUpTo(characterIndex, chapterId, timeframeId) {
+    const character = this.characters[characterIndex];
+    let latestStateIndex = -1; // -1 if no state found
+    let prevStateIndex = -1; // To track the last valid state index before the current one
+
+    // Perform binary search through the states
+    let low = 0;
+    let high = character.states.length - 1;
+
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const state = character.states[mid];
+
+      if (state.chapterId === chapterId && state.timeframeId === timeframeId) {
+        latestStateIndex = mid;
+        break;
+      } else if (
+        state.chapterId < chapterId ||
+        (state.chapterId === chapterId && state.timeframeId < timeframeId)
       ) {
-        this.chapters[chapterIndex].timeframes[timeframeIndex]
-          .characterPositions = [];
-      }
-
-      // Update or add character position
-      const existingPositionIndex = this.chapters[chapterIndex]
-        .timeframes[timeframeIndex].characterPositions
-        .findIndex((pos) => pos.characterIndex === characterIndex);
-
-      if (existingPositionIndex !== -1) {
-        this.chapters[chapterIndex].timeframes[timeframeIndex]
-          .characterPositions[existingPositionIndex] = {
-            characterIndex,
-            ...position,
-          };
+        // Move to the right side of the list if the state is older or if we match the chapter but not the timeframe
+        prevStateIndex = mid; // Keep track of the index of the last valid state before the current one
+        low = mid + 1;
       } else {
-        this.chapters[chapterIndex].timeframes[timeframeIndex]
-          .characterPositions.push({
-            characterIndex,
-            ...position,
-          });
+        // Otherwise, move to the left side if the current state is newer than our target
+        high = mid - 1;
       }
-
-      m.redraw();
     }
+
+    // If no exact match, return the index of the previous valid state
+    if (latestStateIndex === -1 && prevStateIndex !== -1) {
+      latestStateIndex = prevStateIndex;
+    }
+
+    return latestStateIndex;
   },
+  getLatestCharacterChanges() {
+    let chapterId = this.selectedChapterIndex ?? 0;
+    let timeframeId = this.selectedTimeframeIndex ?? 0;
+    const latestChanges = this.characters.map((_, characterIndex) => {
+      const latestStateIndex = this.findCharacterLatestStateIndexUpTo(
+        characterIndex,
+        chapterId,
+        timeframeId,
+      );
 
-  getCharacterPositionInTimeframe(
-    chapterIndex,
-    timeframeIndex,
-    characterIndex,
-  ) {
-    if (
-      this.chapters[chapterIndex]?.timeframes[timeframeIndex]
-        ?.characterPositions
-    ) {
-      return this.chapters[chapterIndex].timeframes[timeframeIndex]
-        .characterPositions
-        .find((pos) => pos.characterIndex === characterIndex);
-    }
-    return null;
+      return {
+        characterIndex: characterIndex,
+        latestStateIndex: latestStateIndex,
+      };
+    });
+
+    return latestChanges;
   },
 };
 
-// Initialize with some data for testing
 State.maps = [
   {
     name: "Map 1",
@@ -243,20 +310,42 @@ State.maps = [
     ],
   },
 ];
-
+State.base_character_details = [
+  { "Health": 100 },
+  { "XP": 0 },
+  { "Money": 3 },
+];
 State.characters = [
   {
     name: "Character 1",
-    details: [
-      { health: 100 },
-      { race: "human" },
+    states: [
+      {
+        mapId: 0,
+        x: 0,
+        y: 0,
+        chapterId: 0,
+        timeframeId: 0,
+        details: [
+          { health: 100 },
+          { race: "human" },
+        ],
+      },
     ],
   },
   {
     name: "Character 2",
-    details: [
-      { health: 100 },
-      { race: "human" },
+    states: [
+      {
+        mapId: 0,
+        x: 0,
+        y: 1,
+        chapterId: 0,
+        timeframeId: 0,
+        details: [
+          { health: 200 },
+          { race: "non-human" },
+        ],
+      },
     ],
   },
 ];
@@ -264,14 +353,10 @@ State.characters = [
 State.chapters = [
   {
     name: "Chapter 1",
-    x: 0,
-    y: 0,
     timeframes: ["Introduction Scene", "First Conflict"],
   },
   {
     name: "Chapter 2",
-    x: 0,
-    y: 0,
     timeframes: ["Rising Action", "Turning Point"],
   },
 ];
