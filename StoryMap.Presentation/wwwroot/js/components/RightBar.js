@@ -40,7 +40,7 @@ const CharactersTree = {
                 oncontextmenu: (e) => {
                   const actions = [
                     {
-                      label: "Edit Key",
+                      label: `Edit Key: ${Object.keys(detail)[0]}`,
                       onClick: (_) => {
                         const oldDetail = { ...detail };
                         const key = Object.keys(oldDetail)[0];
@@ -58,7 +58,7 @@ const CharactersTree = {
                       },
                     },
                     {
-                      label: "Edit Value",
+                      label: `Edit Value: ${detail[Object.keys(detail)[0]]}`,
                       onClick: (_) => {
                         const oldDetail = detail;
                         const key = Object.keys(oldDetail)[0];
@@ -136,7 +136,7 @@ const CharactersTree = {
                   oncontextmenu: (e) => {
                     const actions = [
                       {
-                        label: "Edit Name",
+                        label: `Edit Name`,
                         onClick: (characterHelper) => {
                           const value =
                             State.characters[characterHelper.characterIndex]
@@ -205,10 +205,18 @@ const CharactersTree = {
                     .states[characterHelper.latestStateIndex].details.map(
                       (detail, detailIndex) => {
                         return m("li", {
+                          class:
+                            State.checkModifiedDetailFromCharacter(
+                                characterHelper.characterIndex,
+                                characterHelper.latestStateIndex,
+                                detailIndex,
+                              )
+                              ? "modified"
+                              : "",
                           oncontextmenu: (e) => {
                             const actions = [
                               {
-                                label: "Edit Key",
+                                label: `Edit Key: ${Object.keys(detail)[0]}`,
                                 onClick: (_) => {
                                   const oldDetail = { ...detail };
                                   const key = Object.keys(oldDetail)[0];
@@ -231,7 +239,9 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: "Edit Value",
+                                label: `Edit Value: ${
+                                  detail[Object.keys(detail)[0]]
+                                }`,
                                 onClick: (_) => {
                                   const oldDetail = detail;
                                   const key = Object.keys(oldDetail)[0];
