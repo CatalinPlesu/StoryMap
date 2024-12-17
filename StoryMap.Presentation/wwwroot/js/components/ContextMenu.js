@@ -13,8 +13,6 @@ const ContextMenu = {
   },
 
   show(e, actions, data) {
-    console.group("[ContextMenu] Show Method");
-
     e.preventDefault();
     e.stopPropagation();
 
@@ -23,19 +21,12 @@ const ContextMenu = {
     ContextMenu.y = e.clientY;
     ContextMenu.actions = actions;
     ContextMenu.data = data;
-
-    console.groupEnd();
-
   },
 
   hide() {
-    console.group("[ContextMenu] Hide Method");
-
     ContextMenu.visible = false;
     ContextMenu.actions = [];
     ContextMenu.data = null;
-
-    console.groupEnd();
   },
 
   view() {
