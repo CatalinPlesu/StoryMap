@@ -102,10 +102,7 @@ const State = {
         character.states[stateIndex].details[detailIndex]
       ) {
         // Update the existing detail in the current state
-        Object.assign(
-          character.states[stateIndex].details[detailIndex],
-          updates,
-        );
+        character.states[stateIndex].details[detailIndex] = { ...updates };
         m.redraw();
       } else {
         // Create a new state based on the previous state
@@ -137,7 +134,7 @@ const State = {
         };
 
         // Apply the updates to the cloned detail
-        Object.assign(newState.details[detailIndex], updates);
+        newState.details[detailIndex] = { ...updates };
 
         // Insert the new state into the character's states array
         if (character.states[stateIndex]) {
@@ -166,7 +163,7 @@ const State = {
     m.redraw();
   },
   updateDetailInBaseCharacter(detailIndex, updates) {
-    Object.assign(this.base_character_details[detailIndex], updates);
+    this.base_character_details[detailIndex] = { ...updates };
     m.redraw();
   },
   removeDetailFromBaseCharacter(detailIndex) {
@@ -211,30 +208,23 @@ const State = {
   },
 
   select(item, index, nestedIndex) {
-    if (
-      this.select.item === item && this.select.index === index &&
-      this.select.nestedIndex === nestedIndex
-    ) {
-      this.select.type = "edit";
-    } else {
-      this.select.item = item;
-      this.select.index = index;
-      this.select.nestedIndex = nestedIndex;
-      this.select.type = "select";
+    this.select.item = item;
+    this.select.index = index;
+    this.select.nestedIndex = nestedIndex;
+    this.select.type = "select";
 
-      switch (item) {
-        case "map":
-          this.selectedMapIndex = index;
-          break;
-        case "timeframe":
-          this.selectedChapterIndex = index;
-          this.selectedTimeframeIndex = nestedIndex;
-          break;
-        case "character":
-          this.selectedCharacterIndex = index;
-          break;
-        default:
-      }
+    switch (item) {
+      case "map":
+        this.selectedMapIndex = index;
+        break;
+      case "timeframe":
+        this.selectedChapterIndex = index;
+        this.selectedTimeframeIndex = nestedIndex;
+        break;
+      case "character":
+        this.selectedCharacterIndex = index;
+        break;
+      default:
     }
     // m.redraw();
   },

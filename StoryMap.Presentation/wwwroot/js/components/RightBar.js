@@ -1,154 +1,33 @@
 import State from "/js/state.js";
+import ContextMenu from "/js/components/ContextMenu.js";
 
 const CharactersTree = {
-  // Local state for managing edits
-  localState: {
-    baseCharacterDetails: [],
-    characters: [],
-    editingItem: null,
-  },
-
-  // Method to handle input updates for base_character
-  handleBaseCharacterInput(detail, detailIndex) {
-    return {
-      oninput: (e) => {
-        const updatedDetail = { ...detail };
-        const oldKey = Object.keys(updatedDetail)[0];
-        const newKey = e.target.value;
-        const value = updatedDetail[oldKey];
-
-        delete updatedDetail[oldKey];
-        updatedDetail[newKey] = value;
-
-        this.localState.baseCharacterDetails[detailIndex] = updatedDetail;
-      },
-      onkeydown: (e) => {
-        if (e.key === "Enter") {
-          State.updateDetailInBaseCharacter(
-            detailIndex,
-            this.localState.baseCharacterDetails[detailIndex],
-          );
-        }
-      },
-    };
-  },
-
-  // Method to handle value input for base_character
-  handleBaseCharacterValueInput(detail, detailIndex) {
-    return {
-      oninput: (e) => {
-        const updatedDetail = { ...detail };
-        const key = Object.keys(updatedDetail)[0];
-        updatedDetail[key] = e.target.value;
-
-        this.localState.baseCharacterDetails[detailIndex] = updatedDetail;
-      },
-      onkeydown: (e) => {
-        if (e.key === "Enter") {
-          State.updateDetailInBaseCharacter(
-            detailIndex,
-            this.localState.baseCharacterDetails[detailIndex],
-          );
-        }
-      },
-    };
-  },
-
-  handleCharacterInput(characterHelper, detail, detailIndex) {
-    return {
-      oninput: (e) => {
-        const updatedDetail = { ...detail };
-        const oldKey = Object.keys(updatedDetail)[0];
-        const newKey = e.target.value;
-        const value = updatedDetail[oldKey];
-
-        delete updatedDetail[oldKey];
-        updatedDetail[newKey] = value;
-
-        // Update local state for characters
-        const characterIndex = characterHelper.characterIndex;
-        const stateIndex = characterHelper.latestStateIndex;
-
-        if (!this.localState.characters[characterIndex]) {
-          this.localState.characters[characterIndex] = JSON.parse(
-            JSON.stringify(State.characters[characterIndex]),
-          );
-        }
-
-        this.localState.characters[characterIndex].states[stateIndex]
-          .details[detailIndex] = updatedDetail;
-      },
-      onkeydown: (e) => {
-        if (e.key === "Enter") {
-          const characterIndex = characterHelper.characterIndex;
-          const stateIndex = characterHelper.latestStateIndex;
-
-          State.updateDetailInCharacter(
-            characterIndex,
-            stateIndex,
-            detailIndex,
-            this.localState.characters[characterIndex].states[stateIndex]
-              .details[detailIndex],
-          );
-        }
-      },
-    };
-  },
-
-  // Method to handle value input for characters
-  handleCharacterValueInput(characterHelper, detail, detailIndex) {
-    return {
-      oninput: (e) => {
-        const updatedDetail = { ...detail };
-        const key = Object.keys(updatedDetail)[0];
-        updatedDetail[key] = e.target.value;
-
-        // Update local state for characters
-        const characterIndex = characterHelper.characterIndex;
-        const stateIndex = characterHelper.latestStateIndex;
-
-        if (!this.localState.characters[characterIndex]) {
-          this.localState.characters[characterIndex] = JSON.parse(
-            JSON.stringify(State.characters[characterIndex]),
-          );
-        }
-
-        this.localState.characters[characterIndex].states[stateIndex]
-          .details[detailIndex] = updatedDetail;
-      },
-      onkeydown: (e) => {
-        if (e.key === "Enter") {
-          const characterIndex = characterHelper.characterIndex;
-          const stateIndex = characterHelper.latestStateIndex;
-
-          State.updateDetailInCharacter(
-            characterIndex,
-            stateIndex,
-            detailIndex,
-            this.localState.characters[characterIndex].states[stateIndex]
-              .details[detailIndex],
-          );
-        }
-      },
-    };
-  },
-
   view() {
-    // Initialize local state before rendering
-    this.localState.baseCharacterDetails = structuredClone(
-      State.base_character_details,
-    );
-
     return m("div.card.mb-3", [
       m("ul.tree.characters#tree-characters", [
         m("li", {
-          class: State.select.item === "base_character" &&
-              State.select.index === 0 && State.select.nestedIndex === null
-            ? "selected"
-            : "",
-          onclick: (e) => {
-            e.stopPropagation();
-            State.select("base_character", 0, null);
+          oncontextmenu: (e) => {
+            console.log("make the thing visible");
+            const actions = [
+              {
+                label: "Add details",
+                onClick: (_) => {
+                  const key = prompt(
+                    "Enter detail property (e.g., health, race):",
+                  );
+                  const value = prompt("Enter detail value:");
+                  if (key && value) {
+                    const newDetail = { [key]: value };
+                    State.addDetailToBaseCharacter(newDetail);
+                  }
+                },
+              },
+              {
+                label: "Cancel",
+                onClick: (_) => {},
+              },
+            ];
+            ContextMenu.show(e, actions, 111);
           },
         }, [
           m("span.toggle", [
@@ -156,51 +35,64 @@ const CharactersTree = {
           ]),
           "Template Character",
           m("ul", [
-            ...this.localState.baseCharacterDetails.map((detail, detailIndex) =>
+            ...State.base_character_details.map((detail, detailIndex) =>
               m("li", {
-                class: State.select.item === "base_character" &&
-                    State.select.nestedIndex === detailIndex
-                  ? "selected"
-                  : State.select.item === "base_character" &&
-                      State.select.nestedIndex === detailIndex &&
-                      State.select.type === "edit"
-                  ? "inline-edit"
-                  : "",
-                onclick: (e) => {
-                  e.stopPropagation();
-                  State.select("base_character", 0, detailIndex);
-                },
-              }, [
-                State.select.item === "base_character" &&
-                  State.select.nestedIndex === detailIndex &&
-                  State.select.type === "edit"
-                  ? m("div.detail-edit", [
-                    m("input[type='text']", {
-                      value: Object.keys(detail)[0],
-                      placeholder: "Key",
-                      ...this.handleBaseCharacterInput(detail, detailIndex),
-                    }),
-                    m("input[type='text']", {
-                      value: detail[Object.keys(detail)[0]],
-                      placeholder: "Value",
-                      ...this.handleBaseCharacterValueInput(
-                        detail,
-                        detailIndex,
-                      ),
-                    }),
-                    m("button.btn.btn-sm.btn-outline-danger.ml-2", {
-                      onclick: (e) => {
-                        e.stopPropagation();
+                oncontextmenu: (e) => {
+                  const actions = [
+                    {
+                      label: "Edit Key",
+                      onClick: (_) => {
+                        const oldDetail = { ...detail };
+                        const key = Object.keys(oldDetail)[0];
+                        const value = oldDetail[key];
+
+                        const newKey = prompt("Edit detail property:", key);
+
+                        if (newKey) {
+                          const newDetail = { [newKey]: value };
+                          State.updateDetailInBaseCharacter(
+                            detailIndex,
+                            newDetail,
+                          );
+                        }
+                      },
+                    },
+                    {
+                      label: "Edit Value",
+                      onClick: (_) => {
+                        const oldDetail = detail;
+                        const key = Object.keys(oldDetail)[0];
+                        const value = oldDetail[key];
+                        const newValue = prompt("Edit detail property:", value);
+                        if (newValue) {
+                          const newDetail = { [key]: newValue };
+                          State.updateDetailInBaseCharacter(
+                            detailIndex,
+                            newDetail,
+                          );
+                        }
+                      },
+                    },
+                    {
+                      label: "Delete",
+                      onClick: (_) => {
                         State.removeDetailFromBaseCharacter(detailIndex);
                       },
-                    }, "Delete"),
-                  ])
-                  : m(
-                    "span",
-                    `${Object.keys(detail)[0]}: ${
-                      detail[Object.keys(detail)[0]]
-                    }`,
-                  ),
+                    },
+                    {
+                      label: "Cancel",
+                      onClick: (_) => {},
+                    },
+                  ];
+                  ContextMenu.show(e, actions, 111);
+                },
+              }, [
+                m(
+                  "span",
+                  `${Object.keys(detail)[0]}: ${
+                    detail[Object.keys(detail)[0]]
+                  }`,
+                ),
               ])
             ),
             m("li", [
@@ -227,24 +119,10 @@ const CharactersTree = {
           "Characters",
           m("ul", [
             ...State.getLatestCharacterChanges().map((characterHelper) => {
-              // Local state for character name
-              const localCharacterName = {
-                value: State.characters[characterHelper.characterIndex].name,
-              };
-
               return m("li", [
                 m("div", {
-                  class: State.select.item === "character" &&
-                      State.select.index === characterHelper.characterIndex &&
-                      State.select.nestedIndex === null
-                    ? "selected-active"
-                    : State.select.item === "character" &&
-                        State.select.index === characterHelper.characterIndex &&
-                        State.select.nestedIndex === null &&
-                        State.select.type === "edit"
-                    ? "inline-edit"
-                    : State.selectedCharacterIndex ===
-                        characterHelper.characterIndex
+                  class: State.selectedCharacterIndex ===
+                      characterHelper.characterIndex
                     ? "active"
                     : "",
                   onclick: (e) => {
@@ -255,140 +133,159 @@ const CharactersTree = {
                       null,
                     );
                   },
+                  oncontextmenu: (e) => {
+                    const actions = [
+                      {
+                        label: "Edit Name",
+                        onClick: (characterHelper) => {
+                          const value =
+                            State.characters[characterHelper.characterIndex]
+                              .name;
+
+                          const newValue = prompt(
+                            "Edit character name:",
+                            value,
+                          );
+
+                          State.updateCharacterName(
+                            characterHelper.characterIndex,
+                            newValue,
+                          );
+                        },
+                      },
+                      {
+                        label: "Add Detail",
+                        onClick: (characterHelper) => {
+                          const key = prompt(
+                            "Enter detail property (e.g., health, race):",
+                          );
+                          const value = prompt("Enter detail value:");
+                          if (key && value) {
+                            const newDetail = { [key]: value };
+                            State.addDetailToCharacter(
+                              characterHelper.characterIndex,
+                              characterHelper.latestStateIndex,
+                              newDetail,
+                            );
+                          }
+                        },
+                      },
+                      {
+                        label: "Move Up",
+                        onClick: (characterHelper) => {},
+                      },
+                      {
+                        label: "Move Down",
+                        onClick: (characterHelper) => {},
+                      },
+                      {
+                        label: "Delete",
+                        onClick: (characterHelper) => {
+                          State.removeCharacter(characterHelper.characterIndex);
+                        },
+                      },
+                      {
+                        label: "Cancel",
+                        onClick: (_) => {},
+                      },
+                    ];
+                    ContextMenu.show(e, actions, characterHelper);
+                  },
                 }, [
                   m("span.toggle", [
                     m("i.bi.bi-chevron-right"),
                   ]),
-                  // Inline edit for character name
-                  State.select.item === "character" &&
-                    State.select.index === characterHelper.characterIndex &&
-                    State.select.nestedIndex === null &&
-                    State.select.type === "edit"
-                    ? m("input[type='text']", {
-                      value: localCharacterName.value,
-                      oninput: (e) => {
-                        localCharacterName.value = e.target.value;
-                      },
-                      onblur: () => {
-                        State.updateCharacterName(
-                          characterHelper.characterIndex,
-                          localCharacterName.value,
-                        );
-                      },
-                      onkeydown: (e) => {
-                        if (e.key === "Enter") {
-                          State.updateCharacterName(
-                            characterHelper.characterIndex,
-                            localCharacterName.value,
-                          );
-                          e.target.blur();
-                        }
-                      },
-                      onfocus: (e) => {
-                        e.target.select();
-                      },
-                    })
-                    : m("span", {
-                      onclick: () => {
-                        State.select(
-                          "character",
-                          characterHelper.characterIndex,
-                          null,
-                        );
-                      },
-                    }, State.characters[characterHelper.characterIndex].name),
-                  // Show delete button in edit mode for character
-                  State.select.item === "character" &&
-                    State.select.index === characterHelper.characterIndex &&
-                    State.select.nestedIndex === null &&
-                    State.select.type === "edit"
-                    ? m("button.btn.btn-sm.btn-outline-danger.ml-2", {
-                      onclick: (e) => {
-                        e.stopPropagation();
-                        State.removeCharacter(characterHelper.characterIndex);
-                      },
-                    }, "Delete Item")
-                    : null,
+                  m(
+                    "span",
+                    State.characters[characterHelper.characterIndex].name,
+                  ),
                 ]),
                 m("ul", [
-                  ...structuredClone(
-                    State.characters[characterHelper.characterIndex]
-                      .states[characterHelper.latestStateIndex].details,
-                  ).map((
-                    detail,
-                    detailIndex,
-                  ) => {
-                    // Local state for detail key and value
-                    const localDetailState = {
-                      key: Object.keys(detail)[0],
-                      value: detail[Object.keys(detail)[0]],
-                    };
+                  ...State.characters[characterHelper.characterIndex]
+                    .states[characterHelper.latestStateIndex].details.map(
+                      (detail, detailIndex) => {
+                        return m("li", {
+                          oncontextmenu: (e) => {
+                            const actions = [
+                              {
+                                label: "Edit Key",
+                                onClick: (_) => {
+                                  const oldDetail = { ...detail };
+                                  const key = Object.keys(oldDetail)[0];
+                                  const value = oldDetail[key];
 
-                    return m("li", {
-                      class: State.select.item === "character" &&
-                          State.select.index ===
-                            characterHelper.characterIndex &&
-                          State.select.nestedIndex === detailIndex
-                        ? "selected"
-                        : State.select.item === "character" &&
-                            State.select.index ===
-                              characterHelper.characterIndex &&
-                            State.select.nestedIndex === detailIndex &&
-                            State.select.type === "edit"
-                        ? "inline-edit"
-                        : "",
-                      onclick: (e) => {
-                        e.stopPropagation();
-                        State.select(
-                          "character",
-                          characterHelper.characterIndex,
-                          detailIndex,
-                        );
+                                  const newKey = prompt(
+                                    "Edit detail property:",
+                                    key,
+                                  );
+
+                                  if (newKey) {
+                                    const newDetail = { [newKey]: value };
+                                    State.updateDetailInCharacter(
+                                      characterHelper.characterIndex,
+                                      characterHelper.latestStateIndex,
+                                      detailIndex,
+                                      newDetail,
+                                    );
+                                  }
+                                },
+                              },
+                              {
+                                label: "Edit Value",
+                                onClick: (_) => {
+                                  const oldDetail = detail;
+                                  const key = Object.keys(oldDetail)[0];
+                                  const value = oldDetail[key];
+                                  const newValue = prompt(
+                                    "Edit detail property:",
+                                    value,
+                                  );
+                                  if (newValue) {
+                                    const newDetail = { [key]: newValue };
+                                    State.updateDetailInCharacter(
+                                      characterHelper.characterIndex,
+                                      characterHelper.latestStateIndex,
+                                      detailIndex,
+                                      newDetail,
+                                    );
+                                  }
+                                },
+                              },
+                              {
+                                label: "Delete",
+                                onClick: (_) => {
+                                  State.removeDetailFromCharacter(
+                                    characterHelper.characterIndex,
+                                    characterHelper.latestStateIndex,
+                                    detailIndex,
+                                  );
+                                },
+                              },
+                              {
+                                label: "Cancel",
+                                onClick: (_) => {},
+                              },
+                            ];
+                            ContextMenu.show(e, actions, 111);
+                          },
+                          onclick: (e) => {
+                            e.stopPropagation();
+                            State.select(
+                              "character",
+                              characterHelper.characterIndex,
+                              detailIndex,
+                            );
+                          },
+                        }, [
+                          m(
+                            "span",
+                            `${Object.keys(detail)[0]}: ${
+                              detail[Object.keys(detail)[0]]
+                            }`,
+                          ),
+                        ]);
                       },
-                    }, [
-                      State.select.item === "character" &&
-                        State.select.index ===
-                          characterHelper.characterIndex &&
-                        State.select.nestedIndex === detailIndex &&
-                        State.select.type === "edit"
-                        ? m("div.detail-edit", [
-                          m("input[type='text']", {
-                            value: localDetailState.key,
-                            placeholder: "Key",
-                            ...this.handleCharacterInput(
-                              characterHelper,
-                              detail,
-                              detailIndex,
-                            ),
-                          }),
-                          m("input[type='text']", {
-                            value: localDetailState.value,
-                            placeholder: "Value",
-                            ...this.handleCharacterValueInput(
-                              characterHelper,
-                              detail,
-                              detailIndex,
-                            ),
-                          }),
-                          m("button.btn.btn-sm.btn-outline-danger.ml-2", {
-                            onclick: (e) => {
-                              e.stopPropagation();
-                              State.removeDetailFromCharacter(
-                                characterHelper.characterIndex,
-                                characterHelper.latestStateIndex,
-                                detailIndex,
-                              );
-                            },
-                          }, "Delete"),
-                        ])
-                        : m(
-                          "span",
-                          `${Object.keys(detail)[0]}: ${
-                            detail[Object.keys(detail)[0]]
-                          }`,
-                        ),
-                    ]);
-                  }),
+                    ),
                   m("li", [
                     m("button.btn.btn-outline-primary.add-detail-btn", {
                       onclick: () => {
