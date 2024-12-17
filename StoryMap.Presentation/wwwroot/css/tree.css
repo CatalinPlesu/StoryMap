@@ -48,11 +48,6 @@
     font-size: 0.875rem;
 }
 
-.tree .selected {
-    background-color: #98d1fa;
-    border-top-left-radius: 0.5rem;  
-    border-bottom-left-radius: 0.5rem;
-}
 
 .tree .active {
     background-color: #FFD700; 
@@ -60,10 +55,20 @@
     border-bottom-left-radius: 0.5rem;
 }
 
-.tree .selected-active {
-    background: linear-gradient(45deg, #FFD700 50%, #98d1fa 50%); 
-    border-top-left-radius: 0.5rem;  
+.tree .modified {
+    background-color: #e3fde7;
+    border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
+    animation: fadeBack 5s forwards; /* Fade back to original color */
+}
+
+@keyframes fadeBack {
+    0% {
+        background-color: #a1ed97; /* Start with greenish color */
+    }
+    100% {
+        background-color: initial; /* Fade back to the normal color */
+    }
 }
 
 .tree li::before {

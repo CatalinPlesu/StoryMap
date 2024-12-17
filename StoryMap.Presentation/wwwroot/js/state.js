@@ -149,6 +149,45 @@ const State = {
       console.error("Character not found at index:", characterIndex);
     }
   },
+  checkModifiedDetailFromCharacter(characterIndex, stateIndex, detailIndex) {
+    if (this.characters[characterIndex]) {
+      const currentState = this.characters[characterIndex].states[stateIndex];
+      if (
+        currentState && currentState.details[detailIndex] &&
+        currentState.chapterId === this.selectedChapterIndex &&
+        currentState.timeframeId === this.selectedTimeframeIndex
+      ) {
+        if (stateIndex > 0) {
+          if (
+            currentState.details[detailIndex] &&
+            this.characters[characterIndex].states[stateIndex - 1] &&
+            Object.entries(currentState.details[detailIndex]).some(
+              ([key, value]) => {
+                const previousDetail =
+                  this.characters[characterIndex].states[stateIndex - 1]
+                    .details[detailIndex];
+                const previousKeys = Object.keys(previousDetail);
+
+                if (!previousKeys.includes(key)) {
+                  return true; // Key has been added
+                }
+
+                const previousValue = previousDetail[key];
+
+                return previousValue !== value ||
+                  typeof previousValue !== typeof value;
+              },
+            )
+          ) {
+            return true;
+          }
+          // m.redraw();
+        }
+      }
+    }
+
+    return false;
+  },
   removeDetailFromCharacter(characterIndex, stateIndex, detailIndex) {
     if (this.characters[characterIndex]) {
       const currentState = this.characters[characterIndex].states[stateIndex];
