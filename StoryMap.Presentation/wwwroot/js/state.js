@@ -4,7 +4,7 @@ const State = {
   characters: [],
   chapters: [],
   mode: "view", // 'view' or 'edit'
-  selected: { item: "map", index: 0, nestedIndex: null, type: "select" },
+  selected: { item: "map", index: 0, nestedIndex: null},
   selectedChapterIndex: 0,
   selectedMapIndex: 0,
   selectedCharacterIndex: 0,
@@ -36,6 +36,7 @@ const State = {
   addImageToMap(mapIndex, image) {
     if (this.maps[mapIndex]) {
       this.maps[mapIndex].images.push(image);
+      this.selected.nestedIndex = this.maps[mapIndex].images.length-1;
       m.redraw();
     }
   },
@@ -65,7 +66,6 @@ const State = {
         details: structuredClone(this.base_character_details),
       }],
     });
-    console.log(JSON.stringify(this.characters[-1]));
     m.redraw();
   },
   removeCharacter(index) {
@@ -247,10 +247,9 @@ const State = {
   },
 
   select(item, index, nestedIndex) {
-    this.select.item = item;
-    this.select.index = index;
-    this.select.nestedIndex = nestedIndex;
-    this.select.type = "select";
+    this.selected.item = item;
+    this.selected.index = index;
+    this.selected.nestedIndex = nestedIndex;
 
     switch (item) {
       case "map":

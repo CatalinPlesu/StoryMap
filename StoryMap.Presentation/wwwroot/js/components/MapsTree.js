@@ -1,5 +1,6 @@
 import State from "/js/state.js";
 import ContextMenu from "/js/components/ContextMenu.js";
+import FileInput from "/js/components/FileInput.js";
 
 const MapsTree = {
   // View function to render the component
@@ -16,9 +17,7 @@ const MapsTree = {
             ...State.maps.map((map, mapIndex) =>
               m("li", [
                 m("div", {
-                  class:State.selectedMapIndex === mapIndex
-                      ? "active"
-                      : "", // Apply classes based on selection/edit state
+                  class: State.selectedMapIndex === mapIndex ? "active" : "", // Apply classes based on selection/edit state
                   onclick: (e) => {
                     e.stopPropagation(); // Prevent image selection when map is clicked
                     State.select("map", mapIndex, null); // Select the map only
@@ -29,7 +28,10 @@ const MapsTree = {
                       {
                         label: "Edit Map Name",
                         onClick: () => {
-                          const newMapName = prompt("Enter new map name:", map.name);
+                          const newMapName = prompt(
+                            "Enter new map name:",
+                            map.name,
+                          );
                           if (newMapName) {
                             State.updateMapName(mapIndex, newMapName);
                           }
@@ -52,67 +54,95 @@ const MapsTree = {
                   m("span.toggle", [
                     m("i.bi.bi-chevron-right"),
                   ]),
-                  m("span", {
-                      ondblclick: () => {
-                        State.select("map", mapIndex, null); // Switch to edit mode on double-click
-                      },
-                    }, map.name),
+                  m("span", map.name),
                 ]),
                 m("ul", [
                   // Loop through images in each map
                   ...map.images.map((image, imageIndex) =>
                     m("li", {
+                      class:
+                        State.selected.item === "map" &&
+                        State.selected.index === mapIndex &&
+                          State.selected.nestedIndex == imageIndex
+                          ? "active-image"
+                          : "", // Apply classes based on selection/edit state
                       onclick: (e) => {
                         e.stopPropagation(); // Prevent map/image selection when image is clicked
-                        State.select("map", mapIndex, imageIndex); // Select the image
+                        State.select("map", mapIndex, imageIndex); 
                       },
                       oncontextmenu: (e) => {
                         e.preventDefault();
+                        State.select("map", mapIndex, imageIndex);
                         const actions = [
                           {
                             label: `Edit Image name (${image.src})`,
                             onClick: () => {
-                              const newSrc = prompt("Enter new image URL:", image.src);
+                              const newSrc = prompt(
+                                "Enter new image URL:",
+                                image.src,
+                              );
                               if (newSrc) {
-                                State.updateImageInMap(mapIndex, imageIndex, { src: newSrc });
+                                State.updateImageInMap(mapIndex, imageIndex, {
+                                  src: newSrc,
+                                });
                               }
-                          },
+                            },
                           },
                           {
                             label: `Edit X Position (${image.x})`,
                             onClick: () => {
-                              const newX = prompt("Enter new X position:", image.x);
+                              const newX = prompt(
+                                "Enter new X position:",
+                                image.x,
+                              );
                               if (newX) {
-                                State.updateImageInMap(mapIndex, imageIndex, { x: parseFloat(newX) });
-                                    }
-                                  },
+                                State.updateImageInMap(mapIndex, imageIndex, {
+                                  x: parseFloat(newX),
+                                });
+                              }
+                            },
                           },
                           {
                             label: `Edit Y Position (${image.y})`,
                             onClick: () => {
-                              const newY = prompt("Enter new Y position:", image.y);
+                              const newY = prompt(
+                                "Enter new Y position:",
+                                image.y,
+                              );
                               if (newY) {
-                                State.updateImageInMap(mapIndex, imageIndex, { y: parseFloat(newY) });
-                                    }
-                                  },
+                                State.updateImageInMap(mapIndex, imageIndex, {
+                                  y: parseFloat(newY),
+                                });
+                              }
+                            },
                           },
                           {
                             label: `Edit Scale (${image.scale})`,
                             onClick: () => {
-                              const newScale = prompt("Enter new scale value:", image.scale);
+                              const newScale = prompt(
+                                "Enter new scale value:",
+                                image.scale,
+                              );
                               if (newScale) {
-                                State.updateImageInMap(mapIndex, imageIndex, { scale: parseFloat(newScale) });
-                                    }
-                                  },
+                                State.updateImageInMap(mapIndex, imageIndex, {
+                                  scale: parseFloat(newScale),
+                                });
+                              }
+                            },
                           },
                           {
                             label: `Edit Rotation (${image.rotation})`,
                             onClick: () => {
-                              const newRotation = prompt("Enter new rotation value:", image.rotation);
+                              const newRotation = prompt(
+                                "Enter new rotation value:",
+                                image.rotation,
+                              );
                               if (newRotation) {
-                                State.updateImageInMap(mapIndex, imageIndex, { rotation: parseFloat(newRotation) });
-                                    }
-                                  },
+                                State.updateImageInMap(mapIndex, imageIndex, {
+                                  rotation: parseFloat(newRotation),
+                                });
+                              }
+                            },
                           },
                           {
                             label: "Delete Image",
@@ -132,16 +162,8 @@ const MapsTree = {
                   m("li", [
                     m("button.btn.btn-outline-primary.upload-btn", {
                       onclick: () => {
-                        const newImage = {
-                          src: "new_image.jpg",
-                          x: 0,
-                          y: 0,
-                          scale: 1,
-                          rotation: 0,
-                        }; // New image structure
-                        State.addImageToMap(mapIndex, newImage); // Add new image to map
-                        // Select the newly added image and enter edit mode
-                        State.select("map", mapIndex, map.images.length - 1);
+                        State.select("map", mapIndex, null); // Select the image
+                        document.getElementById("file-input").click(); // Trigger the file input
                       },
                     }, m("i.bi.bi-plus.upload-btn")),
                   ]),
@@ -161,6 +183,7 @@ const MapsTree = {
           ]),
         ]),
       ]),
+      m(FileInput),
     ]);
   },
 };

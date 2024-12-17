@@ -55,6 +55,12 @@
     border-bottom-left-radius: 0.5rem;
 }
 
+.tree .active-image {
+    background-color: #ffe47c; 
+    border-top-left-radius: 0.5rem;  
+    border-bottom-left-radius: 0.5rem;
+}
+
 .tree .modified {
     background-color: #e3fde7;
     border-top-left-radius: 0.5rem;
