@@ -89,6 +89,18 @@ const MapsTree = {
                             },
                           },
                           {
+                            label: `Move image up ⬆️`,
+                            onClick: () => {
+                                State.moveImageUp(mapIndex, imageIndex);
+                              },
+                          },
+                          {
+                            label: `Move image down ⬇️`,
+                            onClick: () => {
+                                State.moveImageDown(mapIndex, imageIndex);
+                              },
+                          },
+                          {
                             label: `Edit X Position (${image.x})`,
                             onClick: () => {
                               const newX = prompt(

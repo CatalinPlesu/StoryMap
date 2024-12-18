@@ -53,6 +53,41 @@ const State = {
       m.redraw();
     }
   },
+  moveImageUp(mapIndex, imageIndex) {
+    const map = this.maps[mapIndex];
+    
+    if (map && map.images && imageIndex > 0 && imageIndex < map.images.length) {
+      // Swap the image with the one before it
+      const currentImage = {...map.images[imageIndex]};
+      const previousImage = {...map.images[imageIndex - 1]};
+      
+      // Swap the positions in the array
+      map.images[imageIndex] = previousImage;
+      map.images[imageIndex - 1] = currentImage;
+
+      this.selected.nestedIndex -=1;
+
+      this._updated = true;
+      m.redraw();  // Redraw to reflect the change in the UI
+    }
+  },
+  moveImageDown(mapIndex, imageIndex) {
+    const map = this.maps[mapIndex];
+    
+    if (map && map.images && imageIndex >= 0 && imageIndex < map.images.length - 1) {
+      // Swap the image with the one after it
+      const currentImage = map.images[imageIndex];
+      const nextImage = map.images[imageIndex + 1];
+      
+      // Swap the positions in the array
+      map.images[imageIndex] = {...nextImage};
+      map.images[imageIndex + 1] = {...currentImage};
+      
+      this.selected.nestedIndex +=1;
+      this._updated = true;
+      m.redraw();  // Redraw to reflect the change in the UI
+    }
+  },
   removeImageFromMap(mapIndex, imageIndex) {
     if (this.maps[mapIndex]?.images[imageIndex]) {
       this.maps[mapIndex].images.splice(imageIndex, 1);

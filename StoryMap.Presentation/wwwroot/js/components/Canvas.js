@@ -1,35 +1,35 @@
 import State from "/js/state.js";
 const Canvas = {
-drawCanvas: function (ctx, state, canvas) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
-  ctx.translate(state.mapOffset.x, state.mapOffset.y);
-  ctx.scale(state.mapZoom, state.mapZoom);
-  
-  state.images.forEach(({ id, img, x, y, width, height }) => {
-    const zoom = state.imageZooms.get(id) || 1;
-    const rotation = state.imageRotations.get(id) || 0;
-
+  drawCanvas: function (ctx, state, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rotation * Math.PI / 180);
-    ctx.scale(zoom, zoom);
-    ctx.drawImage(img, -width / 2, -height / 2, width, height);
+    ctx.translate(state.mapOffset.x, state.mapOffset.y);
+    ctx.scale(state.mapZoom, state.mapZoom);
 
-    // Adjusting the border width based on zoom
-    if (State.selected.nestedIndex === id) {
-      const originalBorderWidth = 15; // The original border width
-      const scaledBorderWidth = originalBorderWidth / zoom; // Reverse scale the border width
-      ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
-      ctx.strokeStyle = "#ffe47c"; // Border color
-      ctx.strokeRect(-width / 2, -height / 2, width, height); // Draw the border
-    }
+    state.images.forEach(({ id, img, x, y, width, height }) => {
+      const zoom = state.imageZooms.get(id) || 1;
+      const rotation = state.imageRotations.get(id) || 0;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rotation * Math.PI / 180);
+      ctx.scale(zoom, zoom);
+      ctx.drawImage(img, -width / 2, -height / 2, width, height);
+
+      // Adjusting the border width based on zoom
+      if (State.selected.nestedIndex === id) {
+        const originalBorderWidth = 10; // The original border width
+        const scaledBorderWidth = originalBorderWidth / zoom; // Reverse scale the border width
+        ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
+        ctx.strokeStyle = "#ffe47c"; // Border color
+        ctx.strokeRect(-width / 2, -height / 2, width, height); // Draw the border
+      }
+
+      ctx.restore();
+    });
 
     ctx.restore();
-  });
-
-  ctx.restore();
-},
+  },
   _debounce: (func, delay) => {
     let timeoutId;
     return (...args) => {
@@ -54,7 +54,6 @@ drawCanvas: function (ctx, state, canvas) {
     const ctx = canvas.getContext("2d");
     canvas.width = 1000;
     canvas.height = 700;
-    const placeholderImage = this.createPlaceholderImage();
     const debouncedMapStateUpdate = this._debounce((mapIndex, updates) => {
       if (mapIndex !== undefined && State.maps[mapIndex]) {
         State.maps[mapIndex] = {
@@ -97,9 +96,9 @@ drawCanvas: function (ctx, state, canvas) {
           const img = new Image();
           img.src = imageData.file
             ? URL.createObjectURL(imageData.file)
-            : imageData.src || "";
+            : imageData.src || '/images/no-image.jpg';
           img.onerror = () => {
-            img.src = placeholderImage.toDataURL();
+            img.src = '/images/no-image.jpg';
           };
           img.onload = () => {
             const imageEntry = {
@@ -215,7 +214,7 @@ drawCanvas: function (ctx, state, canvas) {
       vnode.state.loadImages();
       return;
     }
-    if (State.updated){
+    if (State.updated) {
       vnode.state.loadImages();
     }
     const selectedMap = State.maps[State.selectedMapIndex];
@@ -240,19 +239,6 @@ drawCanvas: function (ctx, state, canvas) {
       this.drawCanvas(ctx, vnode.state, vnode.dom);
     }
   },
-  createPlaceholderImage: function () {
-    const placeholderCanvas = document.createElement("canvas");
-    placeholderCanvas.width = 200;
-    placeholderCanvas.height = 200;
-    const ctx = placeholderCanvas.getContext("2d");
-    ctx.fillStyle = "#e3e3e3";
-    ctx.fillRect(0, 0, 200, 200);
-    ctx.fillStyle = "#666";
-    ctx.font = "16px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("No Image", 100, 100);
-    return placeholderCanvas;
-  },
   view: function () {
     return m("canvas#canvas", {
       style: {
@@ -261,8 +247,8 @@ drawCanvas: function (ctx, state, canvas) {
         position: "fixed",
         top: "130px",
         left: "270px",
-        width: "60%",
-        height: "70%",
+        width: "calc(100% - 2 * 270px)",
+        height: "calc(100vh - 150px)",
       },
     });
   },
