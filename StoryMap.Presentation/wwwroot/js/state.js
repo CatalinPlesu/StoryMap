@@ -4,7 +4,7 @@ const State = {
   characters: [],
   chapters: [],
   mode: "view", // 'view' or 'edit'
-  selected: { item: "map", index: 0, nestedIndex: null},
+  selected: { item: "map", index: 0, nestedIndex: null },
   selectedChapterIndex: 0,
   selectedMapIndex: 0,
   selectedCharacterIndex: 0,
@@ -36,7 +36,7 @@ const State = {
   addImageToMap(mapIndex, image) {
     if (this.maps[mapIndex]) {
       this.maps[mapIndex].images.push(image);
-      this.selected.nestedIndex = this.maps[mapIndex].images.length-1;
+      this.selected.nestedIndex = this.maps[mapIndex].images.length - 1;
       m.redraw();
     }
   },
@@ -326,6 +326,9 @@ const State = {
 State.maps = [
   {
     name: "Map 1",
+    xoffset: 0,
+    yoffset: 0,
+    zoom: 0,
     images: [
       { src: "test1.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
       { src: "test2.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
@@ -333,6 +336,9 @@ State.maps = [
   },
   {
     name: "Map 2",
+    xoffset: 0,
+    yoffset: 0,
+    zoom: 0,
     images: [
       { src: "map2_image1.jpg", x: 0, y: 0, scale: 1, rotation: 0 },
     ],
