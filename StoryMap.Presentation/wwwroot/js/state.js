@@ -1,4 +1,5 @@
 const State = {
+  _updated: false,
   maps: [],
   base_character_details: [],
   characters: [],
@@ -11,6 +12,11 @@ const State = {
   selectedTimeframeIndex: 0,
 
   // Map methods
+  get updated() {
+    const currentUpdated = this._updated;
+    this._updated = false; 
+    return currentUpdated;
+  },
   addMap(name) {
     this.maps.push({ name, images: [] });
     m.redraw();
@@ -37,6 +43,7 @@ const State = {
     if (this.maps[mapIndex]) {
       this.maps[mapIndex].images.push(image);
       this.selected.nestedIndex = this.maps[mapIndex].images.length - 1;
+      this._updated = true;
       m.redraw();
     }
   },
