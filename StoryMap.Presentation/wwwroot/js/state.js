@@ -379,6 +379,35 @@ const State = {
 
     return latestChanges;
   },
+  moveCharacter(index, direction) {
+    // Check if the character exists
+    if (!this.characters[index]) {
+      console.error("Character not found at index:", index);
+      return;
+    }
+
+    const newIndex = index + direction;
+
+    // Check if the move would be out of bounds
+    if (newIndex < 0 || newIndex >= this.characters.length) {
+      console.warn("Cannot move character: would be out of bounds");
+      return;
+    }
+
+    // Swap the characters
+    const temp = this.characters[index];
+    this.characters[index] = this.characters[newIndex];
+    this.characters[newIndex] = temp;
+
+    // Update the selected character index if needed
+    if (this.selectedCharacterIndex === index) {
+      this.selectedCharacterIndex = newIndex;
+    } else if (this.selectedCharacterIndex === newIndex) {
+      this.selectedCharacterIndex = index;
+    }
+
+    m.redraw();
+  },
 };
 
 State.maps = [

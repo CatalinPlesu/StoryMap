@@ -172,11 +172,15 @@ const CharactersTree = {
                       },
                       {
                         label: "Move Up",
-                        onClick: (characterHelper) => {},
+                        onClick: (characterHelper) => {
+                          State.moveCharacter(characterHelper.characterIndex, -1);
+                        },
                       },
                       {
                         label: "Move Down",
-                        onClick: (characterHelper) => {},
+                        onClick: (characterHelper) => {
+                          State.moveCharacter(characterHelper.characterIndex, 1);
+                        },
                       },
                       {
                         label: "Delete",
