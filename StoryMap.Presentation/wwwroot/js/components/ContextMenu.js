@@ -15,13 +15,44 @@ const ContextMenu = {
   show(e, actions, data) {
     e.preventDefault();
     e.stopPropagation();
-
-    ContextMenu.visible = true;
-    ContextMenu.x = e.clientX;
-    ContextMenu.y = e.clientY;
+  
     ContextMenu.actions = actions;
     ContextMenu.data = data;
-  },
+  
+    // Temporarily render the menu to calculate its height
+    const tempMenu = document.createElement("div");
+    tempMenu.style.position = "absolute";
+    tempMenu.style.visibility = "hidden";
+    tempMenu.style.zIndex = "-1";
+    tempMenu.style.minWidth = "150px";
+    tempMenu.style.background = "#fff";
+    tempMenu.style.border = "1px solid transparent"; // Optional styling similar to actual menu
+  
+    // Render actions to mimic actual menu height
+    actions.forEach(action => {
+      const menuItem = document.createElement("div");
+      menuItem.style.padding = "8px 12px";
+      menuItem.style.borderBottom = "1px solid #eee";
+      menuItem.innerText = action.label;
+      tempMenu.appendChild(menuItem);
+    });
+  
+    document.body.appendChild(tempMenu);
+    const menuWidth = tempMenu.offsetWidth;
+    const menuHeight = tempMenu.offsetHeight;
+    document.body.removeChild(tempMenu);
+  
+    // Check viewport boundaries
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+  
+    const drawToLeft = e.clientX + menuWidth > viewportWidth;
+    const drawUpwards = e.clientY + menuHeight > viewportHeight;
+  
+    ContextMenu.visible = true;
+    ContextMenu.x = drawToLeft ? e.clientX - menuWidth : e.clientX;
+    ContextMenu.y = drawUpwards ? e.clientY - menuHeight : e.clientY;
+  },  
 
   hide() {
     ContextMenu.visible = false;
