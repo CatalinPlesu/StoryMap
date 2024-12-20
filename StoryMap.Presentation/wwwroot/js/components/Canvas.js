@@ -150,20 +150,23 @@ const Canvas = {
         vnode.state.mapZoom;
       const mouseY = (e.clientY - rect.top - vnode.state.mapOffset.y) /
         vnode.state.mapZoom;
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+
       const selectedImageIndex = State.selected.nestedIndex;
       if (selectedImageIndex !== null) {
+        // Zoom the selected image only
         const imageId = selectedImageIndex;
         const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
-        const newZoom = e.deltaY < 0 ? currentZoom * 1.1 : currentZoom / 1.1;
-        vnode.state.imageZooms.set(imageId, newZoom);
+        const newImageZoom = e.deltaY < 0 ? currentZoom * 1.1 : currentZoom / 1.1;
+        vnode.state.imageZooms.set(imageId, newImageZoom);
         const currentMap = State.maps[State.selectedMapIndex];
         const currentImage = currentMap.images[imageId];
-        currentImage.scale = newZoom;
+        currentImage.scale = newImageZoom;
       } else {
-        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+        // Zoom the map only
         const newZoom = vnode.state.mapZoom * zoomFactor;
-        vnode.state.mapOffset.x -= mouseX * (zoomFactor - 1);
-        vnode.state.mapOffset.y -= mouseY * (zoomFactor - 1);
+        vnode.state.mapOffset.x -= mouseX * (zoomFactor - 1) * vnode.state.mapZoom;
+        vnode.state.mapOffset.y -= mouseY * (zoomFactor - 1) * vnode.state.mapZoom;
         vnode.state.mapZoom = newZoom;
         debouncedMapStateUpdate(State.selectedMapIndex, {
           zoom: newZoom,
@@ -171,6 +174,7 @@ const Canvas = {
           yoffset: vnode.state.mapOffset.y,
         });
       }
+
       this.drawCanvas(ctx, vnode.state, canvas);
     });
     canvas.addEventListener("mousedown", (e) => {
