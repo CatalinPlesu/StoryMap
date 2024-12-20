@@ -19,7 +19,7 @@ const Canvas = {
       // Adjusting the border width based on zoom
       if (State.selected.nestedIndex === id) {
         const originalBorderWidth = 10; // The original border width
-        const scaledBorderWidth = originalBorderWidth / zoom; // Reverse scale the border width
+        const scaledBorderWidth = originalBorderWidth; // Reverse scale the border width
         ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
         ctx.strokeStyle = "#ffe47c"; // Border color
         ctx.strokeRect(-width / 2, -height / 2, width, height); // Draw the border
