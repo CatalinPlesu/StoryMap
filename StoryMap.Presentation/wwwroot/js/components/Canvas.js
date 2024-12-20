@@ -47,7 +47,7 @@ const Canvas = {
     };
   },
   oninit: function (vnode) {
-    vnode.state.lastSelectedMapIndex = undefined;
+    vnode.state.lastSelectedMapIndex = null;
     vnode.state.images = [];
     vnode.state.mapZoom = 1;
     vnode.state.mapOffset = { x: 0, y: 0 };
@@ -76,7 +76,7 @@ const Canvas = {
     vnode.state.resizeObserver = resizeObserver;
 
     const debouncedMapStateUpdate = this._debounce((mapIndex, updates) => {
-      if (mapIndex !== undefined && State.maps[mapIndex]) {
+      if (mapIndex !== null && State.maps[mapIndex]) {
         State.maps[mapIndex] = {
           ...State.maps[mapIndex],
           ...updates,
@@ -85,8 +85,8 @@ const Canvas = {
     }, 300);
     vnode.state.updateImageInState = (imageUpdates) => {
       if (
-        State.selectedMapIndex === undefined ||
-        State.selected.nestedIndex === undefined
+        State.selectedMapIndex === null ||
+        State.selected.nestedIndex === null
       ) return;
       const currentMap = State.maps[State.selectedMapIndex];
       const currentImage = currentMap.images[State.selected.nestedIndex];
@@ -151,7 +151,7 @@ const Canvas = {
       const mouseY = (e.clientY - rect.top - vnode.state.mapOffset.y) /
         vnode.state.mapZoom;
       const selectedImageIndex = State.selected.nestedIndex;
-      if (selectedImageIndex !== undefined) {
+      if (selectedImageIndex !== null) {
         const imageId = selectedImageIndex;
         const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
         const newZoom = e.deltaY < 0 ? currentZoom * 1.1 : currentZoom / 1.1;
@@ -181,7 +181,7 @@ const Canvas = {
       vnode.state.dragStart = { x: mouseX, y: mouseY };
       vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
       const selectedImageIndex = State.selected.nestedIndex;
-      if (selectedImageIndex !== undefined) {
+      if (selectedImageIndex !== null) {
         vnode.state.draggedObjectType = "image";
       } else {
         vnode.state.draggedObjectType = "map";
