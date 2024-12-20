@@ -91,6 +91,7 @@ const State = {
   removeImageFromMap(mapIndex, imageIndex) {
     if (this.maps[mapIndex]?.images[imageIndex]) {
       this.maps[mapIndex].images.splice(imageIndex, 1);
+      this._updated = true;
       m.redraw();
     }
   },
