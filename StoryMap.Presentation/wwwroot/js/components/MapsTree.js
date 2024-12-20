@@ -38,6 +38,18 @@ const MapsTree = {
                         },
                       },
                       {
+                        label: "Center Map",
+                        onClick: () => {
+                          State.updateMapOffset(mapIndex, { x: 0, y: 0 });
+                        },
+                      },
+                      {
+                        label: "Reset Zoom",
+                        onClick: () => {
+                          State.updateMapZoom(mapIndex, 1);
+                        },
+                      },
+                      {
                         label: "Delete Map",
                         onClick: () => {
                           State.removeMap(mapIndex);

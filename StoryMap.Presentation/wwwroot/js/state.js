@@ -39,6 +39,21 @@ const State = {
       m.redraw();
     }
   },
+  updateMapZoom(index, zoom) {
+    if (this.maps[index]) {
+      this.maps[index].zoom = zoom;
+      this._updated = true;
+      m.redraw();
+    }
+  },
+  updateMapOffset(index, offset) {
+    if (this.maps[index]) {
+      this.maps[index].xoffset = offset.x;
+      this.maps[index].yoffset = offset.y;
+      this._updated = true;
+      m.redraw();
+    }
+  },
   addImageToMap(mapIndex, image) {
     if (this.maps[mapIndex]) {
       this.maps[mapIndex].images.push(image);
