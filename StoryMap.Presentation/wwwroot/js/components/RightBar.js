@@ -10,7 +10,7 @@ const CharactersTree = {
             console.log("make the thing visible");
             const actions = [
               {
-                label: "Add details",
+                label: "➕ Add details",
                 onClick: (_) => {
                   const key = prompt(
                     "Enter detail property (e.g., health, race):",
@@ -23,7 +23,7 @@ const CharactersTree = {
                 },
               },
               {
-                label: "Cancel",
+                label: "❌ Cancel",
                 onClick: (_) => {},
               },
             ];
@@ -40,13 +40,13 @@ const CharactersTree = {
                 oncontextmenu: (e) => {
                   const actions = [
                     {
-                      label: `Edit Key: ${Object.keys(detail)[0]}`,
+                      label: `✏️ Edit Key: ${Object.keys(detail)[0]}`,
                       onClick: (_) => {
                         const oldDetail = { ...detail };
                         const key = Object.keys(oldDetail)[0];
                         const value = oldDetail[key];
 
-                        const newKey = prompt("Edit detail property:", key);
+                        const newKey = prompt("✏️ Edit detail property:", key);
 
                         if (newKey) {
                           const newDetail = { [newKey]: value };
@@ -58,12 +58,12 @@ const CharactersTree = {
                       },
                     },
                     {
-                      label: `Edit Value: ${detail[Object.keys(detail)[0]]}`,
+                      label: `✏️ Edit Value: ${detail[Object.keys(detail)[0]]}`,
                       onClick: (_) => {
                         const oldDetail = detail;
                         const key = Object.keys(oldDetail)[0];
                         const value = oldDetail[key];
-                        const newValue = prompt("Edit detail property:", value);
+                        const newValue = prompt("✏️ Edit detail property:", value);
                         if (newValue) {
                           const newDetail = { [key]: newValue };
                           State.updateDetailInBaseCharacter(
@@ -74,13 +74,13 @@ const CharactersTree = {
                       },
                     },
                     {
-                      label: "Delete",
+                      label: "🗑️ Delete",
                       onClick: (_) => {
                         State.removeDetailFromBaseCharacter(detailIndex);
                       },
                     },
                     {
-                      label: "Cancel",
+                      label: "❌ Cancel",
                       onClick: (_) => {},
                     },
                   ];
@@ -136,14 +136,14 @@ const CharactersTree = {
                   oncontextmenu: (e) => {
                     const actions = [
                       {
-                        label: `Edit Name`,
+                        label: `✏️ Edit Name`,
                         onClick: (characterHelper) => {
                           const value =
                             State.characters[characterHelper.characterIndex]
                               .name;
 
                           const newValue = prompt(
-                            "Edit character name:",
+                            "✏️ Edit character name:",
                             value,
                           );
 
@@ -154,7 +154,7 @@ const CharactersTree = {
                         },
                       },
                       {
-                        label: "Add Detail",
+                        label: "➕ Add Detail",
                         onClick: (characterHelper) => {
                           const key = prompt(
                             "Enter detail property (e.g., health, race):",
@@ -171,25 +171,25 @@ const CharactersTree = {
                         },
                       },
                       {
-                        label: "Move Up",
+                        label: "⬆️ Move Up",
                         onClick: (characterHelper) => {
                           State.moveCharacter(characterHelper.characterIndex, -1);
                         },
                       },
                       {
-                        label: "Move Down",
+                        label: "⬇️ Move Down",
                         onClick: (characterHelper) => {
                           State.moveCharacter(characterHelper.characterIndex, 1);
                         },
                       },
                       {
-                        label: "Delete",
+                        label: "🗑️ Delete",
                         onClick: (characterHelper) => {
                           State.removeCharacter(characterHelper.characterIndex);
                         },
                       },
                       {
-                        label: "Cancel",
+                        label: "❌ Cancel",
                         onClick: (_) => {},
                       },
                     ];
@@ -220,14 +220,14 @@ const CharactersTree = {
                           oncontextmenu: (e) => {
                             const actions = [
                               {
-                                label: `Edit Key: ${Object.keys(detail)[0]}`,
+                                label: `✏️ Edit Key: ${Object.keys(detail)[0]}`,
                                 onClick: (_) => {
                                   const oldDetail = { ...detail };
                                   const key = Object.keys(oldDetail)[0];
                                   const value = oldDetail[key];
 
                                   const newKey = prompt(
-                                    "Edit detail property:",
+                                    "✏️ Edit detail property:",
                                     key,
                                   );
 
@@ -243,7 +243,7 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: `Edit Value: ${
+                                label: `✏️ Edit Value: ${
                                   detail[Object.keys(detail)[0]]
                                 }`,
                                 onClick: (_) => {
@@ -251,7 +251,7 @@ const CharactersTree = {
                                   const key = Object.keys(oldDetail)[0];
                                   const value = oldDetail[key];
                                   const newValue = prompt(
-                                    "Edit detail property:",
+                                    "✏️ Edit detail property:",
                                     value,
                                   );
                                   if (newValue) {
@@ -266,7 +266,7 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: "Delete",
+                                label: "🗑️ Delete",
                                 onClick: (_) => {
                                   State.removeDetailFromCharacter(
                                     characterHelper.characterIndex,
@@ -276,7 +276,7 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: "Cancel",
+                                label: "❌ Cancel",
                                 onClick: (_) => {},
                               },
                             ];

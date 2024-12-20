@@ -11,7 +11,7 @@ const MapsTree = {
           m("span.toggle", [
             m("i.bi.bi-chevron-right"),
           ]),
-          "Maps",
+          "🗺️ Maps",
           m("ul", [
             // Loop through each map in the State
             ...State.maps.map((map, mapIndex) =>
@@ -26,7 +26,7 @@ const MapsTree = {
                     e.preventDefault();
                     const actions = [
                       {
-                        label: "Edit Map Name",
+                        label: "✏️ Edit Map Name",
                         onClick: () => {
                           const newMapName = prompt(
                             "Enter new map name:",
@@ -38,25 +38,25 @@ const MapsTree = {
                         },
                       },
                       {
-                        label: "Center Map",
+                        label: "📍 Center Map",
                         onClick: () => {
                           State.updateMapOffset(mapIndex, { x: 0, y: 0 });
                         },
                       },
                       {
-                        label: "Reset Zoom",
+                        label: "🔄 Reset Zoom",
                         onClick: () => {
                           State.updateMapZoom(mapIndex, 1);
                         },
                       },
                       {
-                        label: "Delete Map",
+                        label: "🗑️ Delete Map",
                         onClick: () => {
                           State.removeMap(mapIndex);
                         },
                       },
                       {
-                        label: "Cancel",
+                        label: "❌ Cancel",
                         onClick: () => {},
                       },
                     ];
@@ -87,7 +87,7 @@ const MapsTree = {
                         State.select("map", mapIndex, imageIndex);
                         const actions = [
                           {
-                            label: `Edit Image name (${image.src})`,
+                            label: `✏️ Edit Image name (${image.src})`,
                             onClick: () => {
                               const newSrc = prompt(
                                 "Enter new image URL:",
@@ -101,19 +101,19 @@ const MapsTree = {
                             },
                           },
                           {
-                            label: `Move image up ⬆️`,
+                            label: `⬆️ Move image up`,
                             onClick: () => {
                                 State.moveImageUp(mapIndex, imageIndex);
                               },
                           },
                           {
-                            label: `Move image down ⬇️`,
+                            label: `⬇️ Move image down`,
                             onClick: () => {
                                 State.moveImageDown(mapIndex, imageIndex);
                               },
                           },
                           {
-                            label: `Edit X Position (${image.x})`,
+                            label: `✏️ Edit X Position (${image.x})`,
                             onClick: () => {
                               const newX = prompt(
                                 "Enter new X position:",
@@ -127,7 +127,7 @@ const MapsTree = {
                             },
                           },
                           {
-                            label: `Edit Y Position (${image.y})`,
+                            label: `✏️ Edit Y Position (${image.y})`,
                             onClick: () => {
                               const newY = prompt(
                                 "Enter new Y position:",
@@ -141,7 +141,7 @@ const MapsTree = {
                             },
                           },
                           {
-                            label: `Edit Scale (${image.scale})`,
+                            label: `✏️ Edit Scale (${image.scale})`,
                             onClick: () => {
                               const newScale = prompt(
                                 "Enter new scale value:",
@@ -155,7 +155,7 @@ const MapsTree = {
                             },
                           },
                           {
-                            label: `Edit Rotation (${image.rotation})`,
+                            label: `✏️ Edit Rotation (${image.rotation})`,
                             onClick: () => {
                               const newRotation = prompt(
                                 "Enter new rotation value:",
@@ -169,13 +169,13 @@ const MapsTree = {
                             },
                           },
                           {
-                            label: "Delete Image",
+                            label: "🗑️ Delete Image",
                             onClick: () => {
                               State.removeImageFromMap(mapIndex, imageIndex);
                             },
                           },
                           {
-                            label: "Cancel",
+                            label: "❌ Cancel",
                             onClick: () => {},
                           },
                         ];

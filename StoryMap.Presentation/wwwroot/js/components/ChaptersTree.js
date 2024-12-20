@@ -8,7 +8,7 @@ const ChaptersTree = {
       m("ul.tree.chapters#tree-chapter", [
         m("li", [
           m("span.toggle", [m("i.bi.bi-chevron-right")]),
-          "Chapters",
+          "📖 Chapters",
           m("ul", [
             ...State.chapters.map((chapter, chapterIndex) =>
               m("li", [
@@ -17,7 +17,7 @@ const ChaptersTree = {
                     e.preventDefault();
                     const actions = [
                       {
-                        label: "Edit Chapter Name",
+                        label: "📝 Edit Chapter Name",
                         onClick: () => {
                           const newChapterName = prompt(
                             "Enter new chapter name:",
@@ -32,13 +32,13 @@ const ChaptersTree = {
                         },
                       },
                       {
-                        label: "Delete Chapter",
+                        label: "🗑️ Delete Chapter",
                         onClick: () => {
                           State.removeChapter(chapterIndex);
                         },
                       },
                       {
-                        label: "Cancel",
+                        label: "❌ Cancel",
                         onClick: () => {},
                       },
                     ];
@@ -68,7 +68,7 @@ const ChaptersTree = {
                         State.select("timeframe", chapterIndex, timeframeIndex);
                         const actions = [
                           {
-                            label: `Edit Timeframe Name`,
+                            label: "📝 Edit Timeframe Name",
                             onClick: () => {
                               const newTimeframeName = prompt(
                                 "Enter new timeframe name:",
@@ -84,7 +84,7 @@ const ChaptersTree = {
                             },
                           },
                           {
-                            label: "Delete Timeframe",
+                            label: "🗑️ Delete Timeframe",
                             onClick: () => {
                               State.removeTimeframeFromChapter(
                                 chapterIndex,
@@ -93,7 +93,7 @@ const ChaptersTree = {
                             },
                           },
                           {
-                            label: "Cancel",
+                            label: "❌ Cancel",
                             onClick: () => {},
                           },
                         ];
