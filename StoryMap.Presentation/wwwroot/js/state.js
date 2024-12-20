@@ -149,62 +149,22 @@ const State = {
     }
   },
   updateDetailInCharacter(characterIndex, stateIndex, detailIndex, updates) {
-    if (this.characters[characterIndex]) {
-      const character = this.characters[characterIndex];
-
-      if (
-        character.states[stateIndex] &&
-        character.states[stateIndex].chapterId === this.selectedChapterIndex &&
-        character.states[stateIndex].timeframeId ===
-          this.selectedTimeframeIndex &&
-        character.states[stateIndex].details[detailIndex]
-      ) {
-        // Update the existing detail in the current state
-        character.states[stateIndex].details[detailIndex] = { ...updates };
-        m.redraw();
-      } else {
-        // Create a new state based on the previous state
-        let previousState = null;
-        if (stateIndex === 0) {
-          previousState = character.states[0];
-        } else {
-          previousState = character.states[stateIndex - 1];
-        }
-
-        // Clone details from the previous state (deep clone)
-        const clonedDetails = previousState
-          ? JSON.parse(JSON.stringify(previousState.details))
-          : [];
-
-        // Ensure the detail at the specified index exists
-        if (!clonedDetails[detailIndex]) {
-          clonedDetails[detailIndex] = {};
-        }
-
-        // Create a new state object
-        const newState = {
-          mapId: this.selectedMapIndex,
-          x: 0,
-          y: 0,
-          chapterId: this.selectedChapterIndex,
-          timeframeId: this.selectedTimeframeIndex,
-          details: clonedDetails, // Use the cloned details for the new state
-        };
-
-        // Apply the updates to the cloned detail
-        newState.details[detailIndex] = { ...updates };
-
-        // Insert the new state into the character's states array
-        if (character.states[stateIndex]) {
-          character.states.splice(stateIndex + 1, 0, newState);
-        } else {
-          character.states.push(newState);
-        }
-
-        m.redraw();
-      }
-    } else {
+    const character = this.characters[characterIndex];
+    if (!character) {
       console.error("Character not found at index:", characterIndex);
+      return;
+    }
+
+    const newState = this.ensureCharacterState(characterIndex, stateIndex);
+    if (newState) {
+      // Ensure the detail at the specified index exists
+      if (!newState.details[detailIndex]) {
+        newState.details[detailIndex] = {};
+      }
+
+      // Update the specific detail
+      Object.assign(newState.details[detailIndex], updates);
+      m.redraw();
     }
   },
   checkModifiedDetailFromCharacter(characterIndex, stateIndex, detailIndex) {
@@ -407,6 +367,64 @@ const State = {
     }
 
     m.redraw();
+  },
+  bringCharacterToMap(characterIndex, latestStateIndex) {
+    const character = this.characters[characterIndex];
+    if (!character) {
+      console.error("Character not found at index:", characterIndex);
+      return;
+    }
+
+    const latestState = this.ensureCharacterState(characterIndex, latestStateIndex, {
+      mapId: this.selectedMapIndex,
+      x: 0,
+      y: 0,
+    });
+
+    if (latestState) {
+      console.log(`Character ${characterIndex} moved to map ${this.selectedMapIndex}`);
+      m.redraw();
+    }
+  },
+  ensureCharacterState(characterIndex, stateIndex, updates = {}) {
+    const character = this.characters[characterIndex];
+    if (!character) {
+      console.error("Character not found at index:", characterIndex);
+      return null;
+    }
+
+    const currentState = character.states[stateIndex];
+    if (
+      currentState &&
+      currentState.chapterId === this.selectedChapterIndex &&
+      currentState.timeframeId === this.selectedTimeframeIndex
+    ) {
+      // Update the existing state
+      Object.assign(currentState, updates);
+      return currentState;
+    } else {
+      // Create a new state based on the previous state
+      const previousState =
+        stateIndex > 0
+          ? character.states[stateIndex - 1]
+          : character.states[0];
+
+      const newState = {
+        mapId: this.selectedMapIndex,
+        x: updates.x || 0,
+        y: updates.y || 0,
+        chapterId: this.selectedChapterIndex,
+        timeframeId: this.selectedTimeframeIndex,
+        details: structuredClone(
+          previousState ? previousState.details : this.base_character_details
+        ),
+        ...updates,
+      };
+
+      // Insert the new state into the states array
+      character.states.splice(stateIndex + 1, 0, newState);
+      return newState;
+    }
   },
 };
 
