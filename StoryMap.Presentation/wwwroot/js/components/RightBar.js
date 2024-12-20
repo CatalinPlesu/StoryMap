@@ -24,7 +24,7 @@ const CharactersTree = {
               },
               {
                 label: "❌ Cancel",
-                onClick: (_) => {},
+                onClick: (_) => { },
               },
             ];
             ContextMenu.show(e, actions, 111);
@@ -81,7 +81,7 @@ const CharactersTree = {
                     },
                     {
                       label: "❌ Cancel",
-                      onClick: (_) => {},
+                      onClick: (_) => { },
                     },
                   ];
                   ContextMenu.show(e, actions, 111);
@@ -89,8 +89,7 @@ const CharactersTree = {
               }, [
                 m(
                   "span",
-                  `${Object.keys(detail)[0]}: ${
-                    detail[Object.keys(detail)[0]]
+                  `${Object.keys(detail)[0]}: ${detail[Object.keys(detail)[0]]
                   }`,
                 ),
               ])
@@ -122,7 +121,7 @@ const CharactersTree = {
               return m("li", [
                 m("div", {
                   class: State.selectedCharacterIndex ===
-                      characterHelper.characterIndex
+                    characterHelper.characterIndex
                     ? "active"
                     : "",
                   onclick: (e) => {
@@ -196,7 +195,7 @@ const CharactersTree = {
                       },
                       {
                         label: "❌ Cancel",
-                        onClick: (_) => {},
+                        onClick: (_) => { },
                       },
                     ];
                     ContextMenu.show(e, actions, characterHelper);
@@ -207,7 +206,7 @@ const CharactersTree = {
                   ]),
                   m(
                     "span",
-                    State.characters[characterHelper.characterIndex].name,
+                    `${State.characters[characterHelper.characterIndex].name} ${State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].mapId === State.selectedMapIndex ? "🌍📍" : "🌍🚫"}`,
                   ),
                 ]),
                 m("ul", [
@@ -217,10 +216,10 @@ const CharactersTree = {
                         return m("li", {
                           class:
                             State.checkModifiedDetailFromCharacter(
-                                characterHelper.characterIndex,
-                                characterHelper.latestStateIndex,
-                                detailIndex,
-                              )
+                              characterHelper.characterIndex,
+                              characterHelper.latestStateIndex,
+                              detailIndex,
+                            )
                               ? "modified"
                               : "",
                           oncontextmenu: (e) => {
@@ -249,9 +248,8 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: `✏️ Edit Value: ${
-                                  detail[Object.keys(detail)[0]]
-                                }`,
+                                label: `✏️ Edit Value: ${detail[Object.keys(detail)[0]]
+                                  }`,
                                 onClick: (_) => {
                                   const oldDetail = detail;
                                   const key = Object.keys(oldDetail)[0];
@@ -283,7 +281,7 @@ const CharactersTree = {
                               },
                               {
                                 label: "❌ Cancel",
-                                onClick: (_) => {},
+                                onClick: (_) => { },
                               },
                             ];
                             ContextMenu.show(e, actions, 111);
@@ -299,8 +297,7 @@ const CharactersTree = {
                         }, [
                           m(
                             "span",
-                            `${Object.keys(detail)[0]}: ${
-                              detail[Object.keys(detail)[0]]
+                            `${Object.keys(detail)[0]}: ${detail[Object.keys(detail)[0]]
                             }`,
                           ),
                         ]);
