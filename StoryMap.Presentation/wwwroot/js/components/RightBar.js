@@ -171,6 +171,12 @@ const CharactersTree = {
                         },
                       },
                       {
+                        label: "🛬 Bring to current map",
+                        onClick: (characterHelper) => {
+                          State.bringCharacterToMap(characterHelper.characterIndex, characterHelper.latestStateIndex);
+                        },
+                      },
+                      {
                         label: "⬆️ Move Up",
                         onClick: (characterHelper) => {
                           State.moveCharacter(characterHelper.characterIndex, -1);
