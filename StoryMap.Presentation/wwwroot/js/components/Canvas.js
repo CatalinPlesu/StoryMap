@@ -3,26 +3,31 @@ const Canvas = {
   drawCanvas: function (ctx, state, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
-    ctx.translate(state.mapOffset.x, state.mapOffset.y);
-    ctx.scale(state.mapZoom, state.mapZoom);
+
+    // Calculate the center of the canvas
+    const canvasCenterX = canvas.width / 2;
+    const canvasCenterY = canvas.height / 2;
 
     state.images.forEach(({ id, img, x, y, width, height }) => {
       const zoom = state.imageZooms.get(id) || 1;
       const rotation = state.imageRotations.get(id) || 0;
 
       ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rotation * Math.PI / 180);
-      ctx.scale(zoom, zoom);
-      ctx.drawImage(img, -width / 2, -height / 2, width, height);
+      const adjustedX = (x - canvasCenterX) * state.mapZoom + canvasCenterX + state.mapOffset.x;
+      const adjustedY = (y - canvasCenterY) * state.mapZoom + canvasCenterY + state.mapOffset.y;
+      const adjustedWidth = width * zoom * state.mapZoom;
+      const adjustedHeight = height * zoom * state.mapZoom;
 
-      // Adjusting the border width based on zoom
+      ctx.translate(adjustedX, adjustedY);
+      ctx.rotate(rotation * Math.PI / 180);
+      ctx.drawImage(img, -adjustedWidth / 2, -adjustedHeight / 2, adjustedWidth, adjustedHeight);
+
       if (State.selected.nestedIndex === id) {
         const originalBorderWidth = 10; // The original border width
-        const scaledBorderWidth = originalBorderWidth; // Reverse scale the border width
+        const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom; // Reverse scale the border width
         ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
         ctx.strokeStyle = "#ffe47c"; // Border color
-        ctx.strokeRect(-width / 2, -height / 2, width, height); // Draw the border
+        ctx.strokeRect(-adjustedWidth / 2, -adjustedHeight / 2, adjustedWidth, adjustedHeight); // Draw the border
       }
 
       ctx.restore();
@@ -146,10 +151,6 @@ const Canvas = {
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
       const rect = canvas.getBoundingClientRect();
-      const mouseX = (e.clientX - rect.left - vnode.state.mapOffset.x) /
-        vnode.state.mapZoom;
-      const mouseY = (e.clientY - rect.top - vnode.state.mapOffset.y) /
-        vnode.state.mapZoom;
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
 
       const selectedImageIndex = State.selected.nestedIndex;
@@ -157,17 +158,31 @@ const Canvas = {
         // Zoom the selected image only
         const imageId = selectedImageIndex;
         const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
-        const newImageZoom = e.deltaY < 0 ? currentZoom * 1.1 : currentZoom / 1.1;
+        const newImageZoom = currentZoom * zoomFactor;
         vnode.state.imageZooms.set(imageId, newImageZoom);
         const currentMap = State.maps[State.selectedMapIndex];
         const currentImage = currentMap.images[imageId];
         currentImage.scale = newImageZoom;
       } else {
-        // Zoom the map only
-        const newZoom = vnode.state.mapZoom * zoomFactor;
-        vnode.state.mapOffset.x -= mouseX * (zoomFactor - 1) * vnode.state.mapZoom;
-        vnode.state.mapOffset.y -= mouseY * (zoomFactor - 1) * vnode.state.mapZoom;
+        // Get mouse position in screen space
+        const screenX = e.clientX - rect.left;
+        const screenY = e.clientY - rect.top;
+
+        // Get current world coordinates under mouse
+        const canvasCenterX = canvas.width / 2;
+        const canvasCenterY = canvas.height / 2;
+        const worldX = ((screenX - vnode.state.mapOffset.x - canvasCenterX) / vnode.state.mapZoom) + canvasCenterX;
+        const worldY = ((screenY - vnode.state.mapOffset.y - canvasCenterY) / vnode.state.mapZoom) + canvasCenterY;
+
+        // Update zoom
+        const oldZoom = vnode.state.mapZoom;
+        const newZoom = oldZoom * zoomFactor;
         vnode.state.mapZoom = newZoom;
+
+        // Calculate new offset to maintain world position under cursor
+        vnode.state.mapOffset.x = screenX - ((worldX - canvasCenterX) * newZoom + canvasCenterX);
+        vnode.state.mapOffset.y = screenY - ((worldY - canvasCenterY) * newZoom + canvasCenterY);
+
         debouncedMapStateUpdate(State.selectedMapIndex, {
           zoom: newZoom,
           xoffset: vnode.state.mapOffset.x,
