@@ -30,6 +30,15 @@ const Canvas = {
 
     ctx.restore();
   },
+
+  updateCanvasSize: function (canvas) {
+    // Get the computed size from CSS
+    const rect = canvas.getBoundingClientRect();
+    // Set the canvas internal dimensions to match its CSS dimensions
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  },
+
   _debounce: (func, delay) => {
     let timeoutId;
     return (...args) => {
@@ -52,8 +61,20 @@ const Canvas = {
   oncreate: function (vnode) {
     const canvas = vnode.dom;
     const ctx = canvas.getContext("2d");
-    canvas.width = 1000;
-    canvas.height = 700;
+
+    // Initial size setup
+    this.updateCanvasSize(canvas);
+
+    // Handle window resize
+    const resizeObserver = new ResizeObserver(() => {
+      this.updateCanvasSize(canvas);
+      this.drawCanvas(ctx, vnode.state, canvas);
+    });
+    resizeObserver.observe(canvas);
+
+    // Store the observer for cleanup
+    vnode.state.resizeObserver = resizeObserver;
+
     const debouncedMapStateUpdate = this._debounce((mapIndex, updates) => {
       if (mapIndex !== undefined && State.maps[mapIndex]) {
         State.maps[mapIndex] = {
