@@ -424,6 +424,7 @@ const State = {
 
       // Insert the new state into the states array
       character.states.splice(stateIndex + 1, 0, newState);
+      this._updated = true;
       return newState;
     }
   },

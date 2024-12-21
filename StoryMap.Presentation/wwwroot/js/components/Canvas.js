@@ -33,28 +33,40 @@ const Canvas = {
       ctx.restore();
     });
 
-    // Draw characters
-    state.characters.forEach(({ id, x, y, name }) => {
+    // Draw characters only if they are on the selected map
+    state.characters.forEach(({ id, x, y, name, prevX, prevY, animationProgress, matchesCurrentContext }) => {
+      const currentState = State.characters[id].states[state.characters[id].stateIndex];
+      
+      // Check if the character's current state is on the selected map
+      if (currentState.mapId !== State.selectedMapIndex) {
+        return; // Skip drawing this character if not on the selected map
+      }
+
       const adjustedX = (x - canvasCenterX) * state.mapZoom + canvasCenterX + state.mapOffset.x;
       const adjustedY = (y - canvasCenterY) * state.mapZoom + canvasCenterY + state.mapOffset.y;
 
-      // Draw character marker
-      ctx.save();
-      ctx.translate(adjustedX, adjustedY);
-      
-      // Draw circle
-      ctx.beginPath();
-      ctx.fillStyle = State.selected.item === "character" && State.selected.index === id ? "#ffe47c" : "red";
-      ctx.arc(0, 0, 10 * state.mapZoom, 0, Math.PI * 2);
-      ctx.fill();
+      let drawX = adjustedX;
+      let drawY = adjustedY;
+
+      // Handle animation if we have previous coordinates and the context matches
+      if (prevX !== undefined && prevY !== undefined && animationProgress < 1 && matchesCurrentContext) {
+        const prevAdjustedX = (prevX - canvasCenterX) * state.mapZoom + canvasCenterX + state.mapOffset.x;
+        const prevAdjustedY = (prevY - canvasCenterY) * state.mapZoom + canvasCenterY + state.mapOffset.y;
+        
+        drawX = prevAdjustedX + (adjustedX - prevAdjustedX) * animationProgress;
+        drawY = prevAdjustedY + (adjustedY - prevAdjustedY) * animationProgress;
+      }
+
+      // Draw marker
+      const markerSize = 20 * state.mapZoom;
+      drawMapMarker(ctx, drawX - markerSize/2, drawY - markerSize, markerSize, 
+        State.selected.item === "character" && State.selected.index === id);
       
       // Draw name
       ctx.fillStyle = "black";
       ctx.font = `${12 * state.mapZoom}px Arial`;
       ctx.textAlign = "center";
-      ctx.fillText(name, 0, -15 * state.mapZoom);
-      
-      ctx.restore();
+      ctx.fillText(name, drawX, drawY - (markerSize * 1.5));
     });
 
     ctx.restore();
@@ -174,20 +186,63 @@ const Canvas = {
         this.drawCanvas(ctx, vnode.state, canvas);
       });
 
-      // Load characters that are on this map
+      // Load characters with animation data
       vnode.state.characters = State.getLatestCharacterChanges()
-        .filter(characterHelper => {
+        .map(characterHelper => {
           const character = State.characters[characterHelper.characterIndex];
-          const state = character.states[characterHelper.latestStateIndex];
-          return state && state.mapId === State.selectedMapIndex;
-        })
-        .map(characterHelper => ({
-          id: characterHelper.characterIndex,
-          stateIndex: characterHelper.latestStateIndex,
-          x: State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].x,
-          y: State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].y,
-          name: State.characters[characterHelper.characterIndex].name
-        }));
+          const currentState = character.states[characterHelper.latestStateIndex];
+          let prevX, prevY;
+
+          // Get previous coordinates if this isn't the first state
+          if (characterHelper.latestStateIndex > 0) {
+            const prevState = character.states[characterHelper.latestStateIndex - 1];
+            if (prevState.mapId === State.selectedMapIndex) {
+              prevX = prevState.x;
+              prevY = prevState.y;
+            }
+          }
+
+          return {
+            id: characterHelper.characterIndex,
+            stateIndex: characterHelper.latestStateIndex,
+            x: currentState.x,
+            y: currentState.y,
+            name: character.name,
+            prevX,
+            prevY,
+            animationProgress: 0,
+            matchesCurrentContext: currentState.chapterId === State.selectedChapterIndex && 
+                                   currentState.timeframeId === State.selectedTimeframeIndex // Check context
+          };
+        });
+
+      // Start animation if we have characters with previous positions and they match the current context
+      const charactersToAnimate = vnode.state.characters.filter(c => c.prevX !== undefined && c.matchesCurrentContext);
+      if (charactersToAnimate.length > 0) {
+        const startTime = Date.now();
+        const animationDuration = 1000; // 1 second
+
+        const animate = () => {
+          const currentTime = Date.now();
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / animationDuration, 1);
+
+          charactersToAnimate.forEach(char => {
+            char.animationProgress = progress;
+          });
+
+          this.drawCanvas(ctx, vnode.state, canvas);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+
+        requestAnimationFrame(animate);
+      }
+
+      // Draw all characters regardless of animation
+      this.drawCanvas(ctx, vnode.state, canvas);
     };
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
@@ -358,3 +413,57 @@ const Canvas = {
   },
 };
 export default Canvas;
+
+// Add these animation helper functions at the top of the file
+const createGradient = (ctx, x, y, width, height, color1, color2) => {
+    const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+};
+
+const drawMapMarker = (ctx, x, y, size, selected) => {
+    const width = size;
+    const height = size * 1.5;
+    
+    // Create gradients
+    const mainColor = selected ? '#ffd700' : '#d00';
+    const darkColor = selected ? '#b8860b' : '#600';
+    const mainGradient = createGradient(ctx, x, y, width, height, mainColor, darkColor);
+    const darkGradient = createGradient(ctx, x, y, width, height, 
+        selected ? '#a67c00' : '#800', 
+        selected ? '#856600' : '#500'
+    );
+     
+    // Draw main marker shape
+    ctx.beginPath();
+    ctx.arc(x + width/2, y + height/3, width/2, Math.PI, 0, false);
+    
+    // Right curve
+    ctx.bezierCurveTo(
+        x + width, y + height/2,
+        x + width * 2/3, y + height * 2/3,
+        x + width/2, y + height
+    );
+    
+    // Left curve
+    ctx.bezierCurveTo(
+        x + width/3, y + height * 2/3,
+        x, y + height/2,
+        x, y + height/3
+    );
+
+    // Fill and stroke
+    ctx.fillStyle = mainGradient;
+    ctx.strokeStyle = darkGradient;
+    ctx.lineWidth = 1.2;
+    ctx.fill();
+    ctx.stroke();
+
+    // Draw highlight
+    const highlightPadding = width * 0.1;
+    ctx.beginPath();
+    ctx.arc(x + width/2, y + height/3, width/3, Math.PI, 0, false);
+    ctx.fillStyle = `rgba(255,255,255,0.3)`;
+    ctx.fill();
+};
