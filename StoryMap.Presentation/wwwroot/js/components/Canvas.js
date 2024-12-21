@@ -33,8 +33,29 @@ const Canvas = {
       ctx.restore();
     });
 
-    // Draw characters only if they are on the selected map
-    state.characters.forEach(({ id, x, y, name, prevX, prevY, animationProgress, matchesCurrentContext }) => {
+    let selectedCharacter = null;
+
+    // Draw all non-selected characters first
+    state.characters.forEach(character => {
+      const isSelected = State.selected.item === "character" && State.selected.index === character.id;
+      
+      if (isSelected) {
+        selectedCharacter = character;
+      } else {
+        this.drawCharacter(ctx, character, state, canvasCenterX, canvasCenterY);
+      }
+    });
+
+    // Draw selected character last if there is one
+    if (selectedCharacter) {
+      this.drawCharacter(ctx, selectedCharacter, state, canvasCenterX, canvasCenterY);
+    }
+
+    ctx.restore();
+  },
+
+  drawCharacter: function(ctx, character, state, canvasCenterX, canvasCenterY) {
+    const { id, x, y, name, prevX, prevY, animationProgress, matchesCurrentContext } = character;
       const currentState = State.characters[id].states[state.characters[id].stateIndex];
       
       // Check if the character's current state is on the selected map
@@ -68,7 +89,6 @@ const Canvas = {
       ctx.font = `${baseFontSize}px Arial`;
       ctx.textAlign = "center";
       ctx.fillText(name, drawX, drawY - (baseMarkerSize * 1.5));
-    });
 
     ctx.restore();
   },
