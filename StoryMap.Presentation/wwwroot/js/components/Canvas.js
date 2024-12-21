@@ -57,16 +57,17 @@ const Canvas = {
         drawY = prevAdjustedY + (adjustedY - prevAdjustedY) * animationProgress;
       }
 
-      // Draw marker
-      const markerSize = 20 * state.mapZoom;
-      drawMapMarker(ctx, drawX - markerSize/2, drawY - markerSize, markerSize, 
-        State.selected.item === "character" && State.selected.index === id);
+      // Draw marker with constant size
+      const baseMarkerSize = 20; // Base size of the marker
+      drawMapMarker(ctx, drawX - baseMarkerSize/2, drawY - baseMarkerSize, baseMarkerSize, 
+        State.selected.item === "character" && State.selected.index === id, state.mapZoom);
       
-      // Draw name
+      // Draw name with constant size
+      const baseFontSize = 12;
       ctx.fillStyle = "black";
-      ctx.font = `${12 * state.mapZoom}px Arial`;
+      ctx.font = `${baseFontSize}px Arial`;
       ctx.textAlign = "center";
-      ctx.fillText(name, drawX, drawY - (markerSize * 1.5));
+      ctx.fillText(name, drawX, drawY - (baseMarkerSize * 1.5));
     });
 
     ctx.restore();
