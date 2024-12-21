@@ -33,6 +33,30 @@ const Canvas = {
       ctx.restore();
     });
 
+    // Draw characters
+    state.characters.forEach(({ id, x, y, name }) => {
+      const adjustedX = (x - canvasCenterX) * state.mapZoom + canvasCenterX + state.mapOffset.x;
+      const adjustedY = (y - canvasCenterY) * state.mapZoom + canvasCenterY + state.mapOffset.y;
+
+      // Draw character marker
+      ctx.save();
+      ctx.translate(adjustedX, adjustedY);
+      
+      // Draw circle
+      ctx.beginPath();
+      ctx.fillStyle = State.selected.item === "character" && State.selected.index === id ? "#ffe47c" : "red";
+      ctx.arc(0, 0, 10 * state.mapZoom, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Draw name
+      ctx.fillStyle = "black";
+      ctx.font = `${12 * state.mapZoom}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(name, 0, -15 * state.mapZoom);
+      
+      ctx.restore();
+    });
+
     ctx.restore();
   },
 
@@ -62,6 +86,7 @@ const Canvas = {
     vnode.state.dragStart = { x: 0, y: 0 };
     vnode.state.lastDragPosition = { x: 0, y: 0 };
     vnode.state.draggedObjectType = null;
+    vnode.state.characters = [];
   },
   oncreate: function (vnode) {
     const canvas = vnode.dom;
@@ -104,8 +129,9 @@ const Canvas = {
     };
     vnode.state.loadImages = () => {
       const selectedMap = State.maps[State.selectedMapIndex];
-      if (!selectedMap || !selectedMap.images) {
+      if (!selectedMap) {
         vnode.state.images = [];
+        vnode.state.characters = []; // Clear characters
         this.drawCanvas(ctx, vnode.state, canvas);
         return;
       }
@@ -147,16 +173,30 @@ const Canvas = {
       Promise.all(loadPromises).then(() => {
         this.drawCanvas(ctx, vnode.state, canvas);
       });
+
+      // Load characters that are on this map
+      vnode.state.characters = State.getLatestCharacterChanges()
+        .filter(characterHelper => {
+          const character = State.characters[characterHelper.characterIndex];
+          const state = character.states[characterHelper.latestStateIndex];
+          return state && state.mapId === State.selectedMapIndex;
+        })
+        .map(characterHelper => ({
+          id: characterHelper.characterIndex,
+          stateIndex: characterHelper.latestStateIndex,
+          x: State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].x,
+          y: State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].y,
+          name: State.characters[characterHelper.characterIndex].name
+        }));
     };
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
       const rect = canvas.getBoundingClientRect();
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
 
-      const selectedImageIndex = State.selected.nestedIndex;
-      if (selectedImageIndex !== null) {
+      if (State.selected.item === "map" && State.selected.nestedIndex !== null) {
         // Zoom the selected image only
-        const imageId = selectedImageIndex;
+        const imageId = State.selected.nestedIndex;
         const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
         const newImageZoom = currentZoom * zoomFactor;
         vnode.state.imageZooms.set(imageId, newImageZoom);
@@ -199,8 +239,10 @@ const Canvas = {
       vnode.state.dragging = true;
       vnode.state.dragStart = { x: mouseX, y: mouseY };
       vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
-      const selectedImageIndex = State.selected.nestedIndex;
-      if (selectedImageIndex !== null) {
+
+      if (State.selected.item === "character") {
+        vnode.state.draggedObjectType = "character";
+      } else if (State.selected.item === "map" && State.selected.nestedIndex !== null) {
         vnode.state.draggedObjectType = "image";
       } else {
         vnode.state.draggedObjectType = "map";
@@ -213,7 +255,29 @@ const Canvas = {
       const mouseY = e.clientY - rect.top;
       const dx = mouseX - vnode.state.lastDragPosition.x;
       const dy = mouseY - vnode.state.lastDragPosition.y;
-      if (vnode.state.draggedObjectType === "image") {
+
+      if (vnode.state.draggedObjectType === "character") {
+        const characterIndex = State.selected.index;
+        const character = State.characters[characterIndex];
+        if (character) {
+          const latestStateIndex = State.getLatestCharacterChanges().find(
+            change => change.characterIndex === characterIndex
+          ).latestStateIndex;
+          
+          const stateCharacter = vnode.state.characters.find(c => c.id === characterIndex);
+          if (stateCharacter) {
+            // Update position in canvas state
+            stateCharacter.x += dx / vnode.state.mapZoom;
+            stateCharacter.y += dy / vnode.state.mapZoom;
+            
+            // Update position in global state
+            State.ensureCharacterState(characterIndex, latestStateIndex, {
+              x: stateCharacter.x,
+              y: stateCharacter.y
+            });
+          }
+        }
+      } else if (vnode.state.draggedObjectType === "image") {
         const selectedImageIndex = State.selected.nestedIndex;
         const currentMap = State.maps[State.selectedMapIndex];
         const currentImage = currentMap.images[selectedImageIndex];

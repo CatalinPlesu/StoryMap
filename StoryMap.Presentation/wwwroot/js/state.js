@@ -282,7 +282,8 @@ const State = {
         break;
       default:
     }
-    // m.redraw();
+    this._updated = true;
+    m.redraw();
   },
 
   findCharacterLatestStateIndexUpTo(characterIndex, chapterId, timeframeId) {
