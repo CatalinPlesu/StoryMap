@@ -1,0 +1,3 @@
+dotnet ef migrations add InitialCreate --startup-project ./StoryMap.Presentation/StoryMap.Presentation.csproj --project ./StoryMap.Domain/StoryMap.Domain.csproj
+
+dotnet ef database update --startup-project ./StoryMap.Presentation/StoryMap.Presentation.csproj --project ./StoryMap.Domain/StoryMap.Domain.csproj
