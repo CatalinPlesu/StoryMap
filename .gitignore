@@ -27,7 +27,7 @@
 .idea/
 
 # ASP.NET Core environment settings
-appsettings.json
+# appsettings.json
 
 # User-specific NuGet files
 *.user
