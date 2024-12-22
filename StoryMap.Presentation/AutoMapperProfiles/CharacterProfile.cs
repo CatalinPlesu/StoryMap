@@ -2,6 +2,8 @@ using AutoMapper;
 using StoryMap.Domain.Entities;
 using StoryMap.Presentation.Models.CharacterModels;
 
+namespace StoryMap.Presentation.AutoMapperProfiles;
+
 public class CharacterProfile : Profile
 {
     public CharacterProfile()

@@ -2,6 +2,8 @@ using AutoMapper;
 using StoryMap.Domain.Entities;
 using StoryMap.Presentation.Models.ImageModels;
 
+namespace StoryMap.Presentation.AutoMapperProfiles;
+
 public class ImageProfile : Profile
 {
     public ImageProfile()

@@ -2,6 +2,8 @@ using AutoMapper;
 using StoryMap.Domain.Entities;
 using StoryMap.Presentation.Models.MapModels;
 
+namespace StoryMap.Presentation.AutoMapperProfiles;
+
 public class MapProfile : Profile
 {
     public MapProfile()

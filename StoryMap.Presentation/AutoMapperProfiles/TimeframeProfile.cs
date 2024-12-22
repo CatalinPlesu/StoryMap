@@ -2,6 +2,8 @@ using AutoMapper;
 using StoryMap.Domain.Entities;
 using StoryMap.Presentation.Models.TimeframeModels;
 
+namespace StoryMap.Presentation.AutoMapperProfiles;
+
 public class TimeframeProfile : Profile
 {
     public TimeframeProfile()
