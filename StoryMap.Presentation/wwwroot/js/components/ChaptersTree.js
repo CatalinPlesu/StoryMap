@@ -42,7 +42,7 @@ const ChaptersTree = {
                         onClick: () => {},
                       },
                     ];
-                    ContextMenu.show(e, actions, 111);
+                    ContextMenu.show(e, actions);
                   },
                 }, [
                   m("span.toggle", [m("i.bi.bi-chevron-right")]),
@@ -97,7 +97,7 @@ const ChaptersTree = {
                             onClick: () => {},
                           },
                         ];
-                        ContextMenu.show(e, actions, 111);
+                        ContextMenu.show(e, actions);
                       },
                     }, [
                       m("span", `${timeframe}`),

@@ -3,7 +3,6 @@ const ContextMenu = {
   x: 0,
   y: 0,
   actions: [],
-  data: null,
 
   constructor() {
 
@@ -12,12 +11,11 @@ const ContextMenu = {
     });
   },
 
-  show(e, actions, data) {
+  show(e, actions) {
     e.preventDefault();
     e.stopPropagation();
   
     ContextMenu.actions = actions;
-    ContextMenu.data = data;
   
     // Temporarily render the menu to calculate its height
     const tempMenu = document.createElement("div");
@@ -57,7 +55,6 @@ const ContextMenu = {
   hide() {
     ContextMenu.visible = false;
     ContextMenu.actions = [];
-    ContextMenu.data = null;
   },
 
   view() {
@@ -88,7 +85,7 @@ const ContextMenu = {
             },
             onclick: (e) => {
               e.stopPropagation();
-              const result = action.onClick(ContextMenu.data);
+              const result = action.onClick();
 
               if (result?.then) {
                 result.then(() => ContextMenu.hide());

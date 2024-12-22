@@ -1,113 +1,18 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+@{
+    ViewData["Title"] = "Story Page";
+    Layout = "_Layout"; 
+}
 
-<div class="leftbar">
-<div class="card mb-3">
- <ul class="tree maps" id="tree-map">
-        <li>
-            <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-            Maps
-            <ul>
-                @for (int j = 1; j <= 3; j++)
-                {
-                <li class="editable">
-                    <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-                    Map @j
-                    <ul>
-                        @for (int i = 1; i <= 2; i++)
-                        {
-                        <li class="editable">Image @i</li>
-                        }
-                            <li><button type="button" class="btn btn-outline-primary upload-btn"><i class="bi bi-plus upload-btn"></i></button></li>
-                    </ul>
-                </li>
-                }
-                <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
-            </ul>
-        </li>
-    </ul>
-    </div>
-
-    <div class="card mb-3">
-     <ul class="tree" id="tree-chapter">
-            <li>
-                <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-                Chapters
-                <ul>
-                    @for (int j = 1; j <= 3; j++)
-                    {
-                    <li class="editable">
-                        <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-                        Chapter @j
-                        <ul>
-                            @for (int i = 1; i <= 2; i++)
-                            {
-                            <li class="editable">Timeframe @i</li>
-                            }
-                            <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
-                        </ul>
-                    </li>
-                    }
-                    <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
-                </ul>
-            </li>
-        </ul>
-        </div>
-</div>
-
-<canvas id="canvas" 
-    style="width: calc(100% - 2 * 270px); 
-           height: calc(100vh - 150px); 
-           border: 2px dashed #ccc; 
-           background: #e3f2fd; 
-           position: fixed; 
-           top: 130px; 
-           bottom: 20px; 
-           left: 270px; 
-           user-select: none;
-           overflow: hidden;"> 
-</canvas>
-
-<input type="file" id="file-input" multiple accept="image/*" style="display: none;">
-
-<div class="rightbar">
-<div class="card mb-3">
- <ul class="tree" id="tree-chapter">
-        <li >
-            <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-            Characters
-            <ul>
-                @for (int j = 1; j <= 3; j++)
-                {
-                <li class="editable">
-                    <span class="toggle"><i class="bi bi-chevron-right"></i></span>
-                    Character @j
-                    <ul>
-                        @for (int i = 1; i <= 2; i++)
-                        {
-                        <li class="editable">Detail @i</li>
-                        }
-                        <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
-                    </ul>
-                </li>
-                }
-                <li><button type="button" class="btn btn-outline-primary"><i class="bi bi-plus"></i></button></li>
-            </ul>
-        </li>
-    </ul>
-    </div>
-</div>
+<div id="app"></div>
 
 @section Styles {
     <link rel="stylesheet" href="~/css/story-canvas.css" />
     <link rel="stylesheet" href="~/css/tree.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" />
 }
 
-<!-- Inject additional JavaScript -->
 @section Scripts {
-    <!-- <script type="module" src="~/js/observer_main.js"></script> -->
-    <script type="module" src="~/js/App.js"></script>
-    <!-- <script src="~/js/canvas/main.js"></script> -->
-    <!-- <script src="~/js/tree.js"></script> -->
-    <!-- <script src="~/js/chapters.js"></script> -->
+    <script defer src="/js/lib/mithril/mithril.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/tree.js"></script>
 }
-

@@ -7,7 +7,6 @@ const CharactersTree = {
       m("ul.tree.characters#tree-characters", [
         m("li", {
           oncontextmenu: (e) => {
-            console.log("make the thing visible");
             const actions = [
               {
                 label: "➕ Add details",
@@ -27,7 +26,7 @@ const CharactersTree = {
                 onClick: (_) => { },
               },
             ];
-            ContextMenu.show(e, actions, 111);
+            ContextMenu.show(e, actions);
           },
         }, [
           m("span.toggle", [
@@ -84,7 +83,7 @@ const CharactersTree = {
                       onClick: (_) => { },
                     },
                   ];
-                  ContextMenu.show(e, actions, 111);
+                  ContextMenu.show(e, actions);
                 },
               }, [
                 m(
@@ -284,7 +283,7 @@ const CharactersTree = {
                                 onClick: (_) => { },
                               },
                             ];
-                            ContextMenu.show(e, actions, 111);
+                            ContextMenu.show(e, actions);
                           },
                           onclick: (e) => {
                             e.stopPropagation();
