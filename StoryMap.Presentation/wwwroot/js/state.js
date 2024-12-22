@@ -10,6 +10,7 @@ const State = {
   selectedMapIndex: 0,
   selectedCharacterIndex: 0,
   selectedTimeframeIndex: 0,
+  storyName: null,
 
   // Map methods
   get updated() {
@@ -427,6 +428,10 @@ const State = {
       this._updated = true;
       return newState;
     }
+  },
+  updateStoryName(name) {
+    this.storyName = name;
+    m.redraw();
   },
 };
 
