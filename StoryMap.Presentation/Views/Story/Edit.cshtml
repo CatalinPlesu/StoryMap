@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Story Page";
+    Layout = "_Layout"; 
+}
+
+<div id="app"></div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/story-canvas.css" />
+    <link rel="stylesheet" href="~/css/tree.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" />
+}
+
+@section Scripts {
+    <script defer src="/js/lib/mithril/mithril.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/tree.js"></script>
+}

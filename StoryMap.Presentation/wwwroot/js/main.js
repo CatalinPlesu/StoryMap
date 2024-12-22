@@ -4,6 +4,7 @@ import RightBar from "/js/components/RightBar.js";
 import Canvas from "/js/components/Canvas.js";
 import ContextMenu from "/js/components/ContextMenu.js";
 import StoryNameDisplay from "/js/components/StoryNameDisplay.js";
+import ButtonPanel from "/js/components/ButtonPanel.js";
 
 const App = {
   view() {
@@ -20,4 +21,4 @@ m.mount(document.getElementById("app"), App);
 
 m.mount(document.getElementById("map-name"), StoryNameDisplay);
 
-console.log(window.location.href)
+m.mount(document.getElementById("button-panel"), ButtonPanel);

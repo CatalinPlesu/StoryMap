@@ -4,13 +4,25 @@ const State = {
   base_character_details: [],
   characters: [],
   chapters: [],
-  mode: "view", // 'view' or 'edit'
   selected: { item: "map", index: 0, nestedIndex: null },
   selectedChapterIndex: 0,
   selectedMapIndex: 0,
   selectedCharacterIndex: 0,
   selectedTimeframeIndex: 0,
   storyName: null,
+  mode: (function() {
+    const path = window.location.href.toLowerCase();
+    let mode = "";
+    if (path.includes("story/create")) {
+      mode = "create"; // Set mode to 'edit' for create path
+    } else if (path.includes("story/edit")) {
+      mode = "edit"; // Set mode to 'edit' for edit path
+    } else {
+      mode = "view"; // Default to 'view'
+    }
+    m.redraw();
+    return mode;
+  })(),
 
   // Map methods
   get updated() {
@@ -507,5 +519,4 @@ State.chapters = [
   },
 ];
 
-globalThis.State = State;
 export default State;
