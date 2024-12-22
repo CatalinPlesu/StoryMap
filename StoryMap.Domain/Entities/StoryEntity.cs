@@ -1,0 +1,13 @@
+namespace StoryMap.Domain.Entities
+{
+    public class StoryEntity : BaseEntity
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<ChapterEntity> Chapters { get; set; } = new List<ChapterEntity>();
+        public virtual ICollection<CharacterEntity> Characters { get; set; } = new List<CharacterEntity>();
+        public virtual ICollection<MapEntity> Maps { get; set; } = new List<MapEntity>();
+    }
+} 
