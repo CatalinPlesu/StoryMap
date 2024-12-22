@@ -27,7 +27,7 @@ namespace StoryMap.Domain.Repositories
 
         public async Task<T> GetById(int id)
         {
-            var entity = await _dbSet.FindAsync(id);
+            var entity = await _context.Set<T>().FindAsync(id);
             if (entity == null)
             {
                 throw new ArgumentException($"Entity with id {id} not found.");
@@ -37,7 +37,7 @@ namespace StoryMap.Domain.Repositories
 
         public async Task Create(T entity)
         {
-            await _dbSet.AddAsync(entity);
+            await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
@@ -50,9 +50,12 @@ namespace StoryMap.Domain.Repositories
 
         public async Task Delete(int id)
         {
-            var entityToRemove = await GetById(id);
-            _dbSet.Remove(entityToRemove);
-            await _context.SaveChangesAsync();
+            var entity = await GetById(id);
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 } 
