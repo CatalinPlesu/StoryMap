@@ -1,4 +1,4 @@
-namespace StoryMap.Domain.Models.ChapterModels
+namespace StoryMap.Presentation.Models.ChapterModels
 {
     public class ChapterDetailsModel : BaseChapterModel
     {

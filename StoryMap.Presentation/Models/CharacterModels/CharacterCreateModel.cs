@@ -1,4 +1,4 @@
-namespace StoryMap.Domain.Models.CharacterModels
+namespace StoryMap.Presentation.Models.CharacterModels
 {
     public class CharacterCreateModel : BaseCharacterModel
     {

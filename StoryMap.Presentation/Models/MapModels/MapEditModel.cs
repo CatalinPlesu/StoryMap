@@ -1,4 +1,4 @@
-namespace StoryMap.Domain.Models.MapModels
+namespace StoryMap.Presentation.Models.MapModels
 {
     public class MapEditModel : BaseMapModel
     {

@@ -1,4 +1,4 @@
-namespace StoryMap.Domain.Models.DetailModels
+namespace StoryMap.Presentation.Models.DetailModels
 {
     public class DetailDetailsModel : BaseDetailModel
     {
