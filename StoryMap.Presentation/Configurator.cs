@@ -1,8 +1,14 @@
-using StoryMap.Domain.Models.TopicModels;
-using StoryMap.Domain.Persistence;
-using StoryMap.Presentation.AutoMapperProfiles;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using StoryMap.Domain.Persistence;
+using StoryMap.Presentation.AutoMapperProfiles;
+using StoryMap.Presentation.Models.ChapterModels;
+using StoryMap.Presentation.Validations;
+using StoryMap.Presentation.Models.StoryModels;
+using StoryMap.Presentation.Models.ImageModels;
+using StoryMap.Presentation.Models.CharacterModels;
+using StoryMap.Presentation.Models.DetailModels;
+using StoryMap.Presentation.Models.TimeframeModels;
 
 namespace StoryMap.Presentation
 {
@@ -11,24 +17,36 @@ namespace StoryMap.Presentation
         public static void AddPresentation(this IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            services.AddScoped<TopicValidatorHelpers>();
-            services.AddScoped<IValidator<TopicDetailsModel>, CommentCreateModelValidator>();
-            services.AddScoped<IValidator<TopicCreateModel>, TopicCreateModelValidator>();
-            services.AddScoped<IValidator<TopicEditModel>, TopicEditModelValidator>();
+            services.AddScoped<IValidator<ChapterCreateModel>, ChapterCreateModelValidator>();
+            services.AddScoped<IValidator<ChapterEditModel>, ChapterEditModelValidator>();
+            services.AddScoped<IValidator<StoryCreateModel>, StoryCreateModelValidator>();
+            services.AddScoped<IValidator<StoryEditModel>, StoryEditModelValidator>();
+            services.AddScoped<IValidator<ImageCreateModel>, ImageCreateModelValidator>();
+            services.AddScoped<IValidator<ImageEditModel>, ImageEditModelValidator>();
+            services.AddScoped<IValidator<CharacterCreateModel>, CharacterCreateModelValidator>();
+            services.AddScoped<IValidator<CharacterEditModel>, CharacterEditModelValidator>();
+            services.AddScoped<IValidator<DetailCreateModel>, DetailCreateModelValidator>();
+            services.AddScoped<IValidator<DetailEditModel>, DetailEditModelValidator>();
+            services.AddScoped<IValidator<TimeframeCreateModel>, TimeframeCreateModelValidator>();
+            services.AddScoped<IValidator<TimeframeEditModel>, TimeframeEditModelValidator>();
             services.AddControllersWithViews();
-            services.AddValidatorsFromAssemblyContaining<TopicEditModelValidator>();
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         public static void AddAutoMapper(this IServiceCollection services)
         {
-            services.AddAutoMapper(cfg =>
-            {
-                cfg.AddProfile<TopicProfile>();
-                cfg.AddProfile<CommentProfile>();
-            }, typeof(Program).Assembly);
+            services.AddAutoMapper(
+                cfg =>
+                {
+                    cfg.AddProfile<ChapterProfile>();
+                    cfg.AddProfile<CharacterProfile>();
+                    cfg.AddProfile<DetailProfile>();
+                    cfg.AddProfile<ImageProfile>();
+                    cfg.AddProfile<MapProfile>();
+                    cfg.AddProfile<TimeframeProfile>();
+                },
+                typeof(Program).Assembly
+            );
         }
     }
-} 
+}
