@@ -28,6 +28,7 @@ const StoryNameDisplay = {
                 ];
                 ContextMenu.show(e, actions);
             },
+            onclick: updateStoryName
         }, mapName); // Ensure mapName is the text of the button
     }
 };
