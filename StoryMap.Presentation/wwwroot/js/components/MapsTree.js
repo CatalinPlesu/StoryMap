@@ -26,18 +26,6 @@ const MapsTree = {
                     e.preventDefault();
                     const actions = [
                       {
-                        label: "✏️ Edit Map Name",
-                        onClick: () => {
-                          const newMapName = prompt(
-                            "Enter new map name:",
-                            map.name,
-                          );
-                          if (newMapName) {
-                            State.updateMapName(mapIndex, newMapName);
-                          }
-                        },
-                      },
-                      {
                         label: "📍 Center Map",
                         onClick: () => {
                           State.updateMapOffset(mapIndex, { x: 0, y: 0 });
@@ -50,9 +38,10 @@ const MapsTree = {
                         },
                       },
                       {
-                        label: "🗑️ Delete Map",
+                        label: "📍🔄 Center & Reset Zoom",
                         onClick: () => {
-                          State.removeMap(mapIndex);
+                          State.updateMapOffset(mapIndex, { x: 0, y: 0 });
+                          State.updateMapZoom(mapIndex, 1);
                         },
                       },
                       {
@@ -63,147 +52,87 @@ const MapsTree = {
                     ContextMenu.show(e, actions);
                   },
                 }, [
-                  m("span.toggle", [
-                    m("i.bi.bi-chevron-right"),
-                  ]),
+                  ...(State.mode !== "view" ? [
+                    m("span.toggle", [
+                      m("i.bi.bi-chevron-right"),
+                    ]),
+                  ] : []),
                   m("span", map.name),
                 ]),
-                m("ul", [
-                  // Loop through images in each map
-                  ...map.images.map((image, imageIndex) =>
-                    m("li", {
-                      class:
-                        State.selected.item === "map" &&
-                        State.selected.index === mapIndex &&
+                // Only display images if not in view mode
+                ...(State.mode !== "view" ? [
+                  m("ul", [
+                    // Loop through images in each map
+                    ...map.images.map((image, imageIndex) =>
+                      m("li", {
+                        class:
+                          State.selected.item === "map" &&
+                          State.selected.index === mapIndex &&
                           State.selected.nestedIndex == imageIndex
-                          ? "active-image"
-                          : "", // Apply classes based on selection/edit state
-                      onclick: (e) => {
-                        e.stopPropagation(); // Prevent map/image selection when image is clicked
-                        State.select("map", mapIndex, imageIndex); 
-                      },
-                      oncontextmenu: (e) => {
-                        e.preventDefault();
-                        State.select("map", mapIndex, imageIndex);
-                        const actions = [
-                          {
-                            label: `✏️ Edit Image name (${image.src})`,
-                            onClick: () => {
-                              const newSrc = prompt(
-                                "Enter new image URL:",
-                                image.src,
-                              );
-                              if (newSrc) {
-                                State.updateImageInMap(mapIndex, imageIndex, {
-                                  src: newSrc,
-                                });
-                              }
-                            },
-                          },
-                          {
-                            label: `⬆️ Move image up`,
-                            onClick: () => {
-                                State.moveImageUp(mapIndex, imageIndex);
+                            ? "active-image"
+                            : "", // Apply classes based on selection/edit state
+                        onclick: (e) => {
+                          e.stopPropagation(); // Prevent map/image selection when image is clicked
+                          State.select("map", mapIndex, imageIndex); 
+                        },
+                        oncontextmenu: (e) => {
+                          e.preventDefault();
+                          State.select("map", mapIndex, imageIndex);
+                          const actions = [
+                            {
+                              label: `✏️ Edit Image name (${image.src})`,
+                              onClick: () => {
+                                const newSrc = prompt(
+                                  "Enter new image URL:",
+                                  image.src,
+                                );
+                                if (newSrc) {
+                                  State.updateImageInMap(mapIndex, imageIndex, {
+                                    src: newSrc,
+                                  });
+                                }
                               },
-                          },
-                          {
-                            label: `⬇️ Move image down`,
-                            onClick: () => {
-                                State.moveImageDown(mapIndex, imageIndex);
+                            },
+                            {
+                              label: "🗑️ Delete Image",
+                              onClick: () => {
+                                State.removeImageFromMap(mapIndex, imageIndex);
                               },
-                          },
-                          {
-                            label: `✏️ Edit X Position (${image.x})`,
-                            onClick: () => {
-                              const newX = prompt(
-                                "Enter new X position:",
-                                image.x,
-                              );
-                              if (newX) {
-                                State.updateImageInMap(mapIndex, imageIndex, {
-                                  x: parseFloat(newX),
-                                });
-                              }
                             },
-                          },
-                          {
-                            label: `✏️ Edit Y Position (${image.y})`,
-                            onClick: () => {
-                              const newY = prompt(
-                                "Enter new Y position:",
-                                image.y,
-                              );
-                              if (newY) {
-                                State.updateImageInMap(mapIndex, imageIndex, {
-                                  y: parseFloat(newY),
-                                });
-                              }
+                            {
+                              label: "❌ Cancel",
+                              onClick: () => {},
                             },
-                          },
-                          {
-                            label: `✏️ Edit Scale (${image.scale})`,
-                            onClick: () => {
-                              const newScale = prompt(
-                                "Enter new scale value:",
-                                image.scale,
-                              );
-                              if (newScale) {
-                                State.updateImageInMap(mapIndex, imageIndex, {
-                                  scale: parseFloat(newScale),
-                                });
-                              }
-                            },
-                          },
-                          {
-                            label: `✏️ Edit Rotation (${image.rotation})`,
-                            onClick: () => {
-                              const newRotation = prompt(
-                                "Enter new rotation value:",
-                                image.rotation,
-                              );
-                              if (newRotation) {
-                                State.updateImageInMap(mapIndex, imageIndex, {
-                                  rotation: parseFloat(newRotation),
-                                });
-                              }
-                            },
-                          },
-                          {
-                            label: "🗑️ Delete Image",
-                            onClick: () => {
-                              State.removeImageFromMap(mapIndex, imageIndex);
-                            },
-                          },
-                          {
-                            label: "❌ Cancel",
-                            onClick: () => {},
-                          },
-                        ];
-                        ContextMenu.show(e, actions);
-                      },
-                    }, image.src)
-                  ),
-                  m("li", [
-                    m("button.btn.btn-outline-primary.upload-btn", {
-                      onclick: () => {
-                        State.select("map", mapIndex, null); // Select the image
-                        document.getElementById("file-input").click(); // Trigger the file input
-                      },
-                    }, m("i.bi.bi-plus.upload-btn")),
+                          ];
+                          ContextMenu.show(e, actions);
+                        },
+                      }, image.src)
+                    ),
+                    m("li", [
+                      m("button.btn.btn-outline-primary.upload-btn", {
+                        onclick: () => {
+                          State.select("map", mapIndex, null); // Select the image
+                          document.getElementById("file-input").click(); // Trigger the file input
+                        },
+                      }, m("i.bi.bi-plus.upload-btn")),
+                    ]),
                   ]),
-                ]),
+                ] : []),
               ])
             ),
-            m("li", [
-              m("button.btn.btn-outline-primary", {
-                onclick: () => {
-                  const newMapName = prompt("Enter new map name:");
-                  if (newMapName) {
-                    State.addMap(newMapName);
-                  }
-                },
-              }, m("i.bi.bi-plus")),
-            ]),
+            // Only display the button to add a new map if not in view mode
+            ...(State.mode !== "view" ? [
+              m("li", [
+                m("button.btn.btn-outline-primary", {
+                  onclick: () => {
+                    const newMapName = prompt("Enter new map name:");
+                    if (newMapName) {
+                      State.addMap(newMapName);
+                    }
+                  },
+                }, m("i.bi.bi-plus")),
+              ]),
+            ] : []),
           ]),
         ]),
       ]),
