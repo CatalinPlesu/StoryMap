@@ -26,9 +26,9 @@ const StoryNameDisplay = {
                         onClick: (_) => { },
                     },
                 ];
-                ContextMenu.show(e, actions);
+                State.mode === "view" ? null : ContextMenu.show(e, actions);
             },
-            onclick: updateStoryName
+            onclick: State.mode === "view" ? null : updateStoryName
         }, mapName); // Ensure mapName is the text of the button
     }
 };
