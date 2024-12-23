@@ -39,10 +39,10 @@ const ChaptersTree = {
                       },
                       {
                         label: "❌ Cancel",
-                        onClick: () => {},
+                        onClick: () => { },
                       },
                     ];
-                    ContextMenu.show(e, actions);
+                    State.mode === "view" ? null : ContextMenu.show(e, actions);
                   },
                 }, [
                   m("span.toggle", [m("i.bi.bi-chevron-right")]),
@@ -56,7 +56,7 @@ const ChaptersTree = {
                   ...chapter.timeframes.map((timeframe, timeframeIndex) =>
                     m("li", {
                       class: State.selectedChapterIndex === chapterIndex &&
-                          State.selectedTimeframeIndex === timeframeIndex
+                        State.selectedTimeframeIndex === timeframeIndex
                         ? "active"
                         : "",
                       onclick: (e) => {
@@ -94,42 +94,44 @@ const ChaptersTree = {
                           },
                           {
                             label: "❌ Cancel",
-                            onClick: () => {},
+                            onClick: () => { },
                           },
                         ];
-                        ContextMenu.show(e, actions);
+                        State.mode === "view" ? null : ContextMenu.show(e, actions);
                       },
                     }, [
                       m("span", `${timeframe}`),
                     ])
                   ),
-                  m("li", [
-                    m("button.btn.btn-outline-primary.upload-btn", {
-                      onclick: () => {
-                        const newTimeframe = "Timeframe " +
-                          State.chapters[chapterIndex].timeframes.length;
-                        State.addTimeframeToChapter(chapterIndex, newTimeframe);
-                        State.select(
-                          "timeframe",
-                          chapterIndex,
-                          chapter.timeframes.length - 1,
-                        );
-                      },
-                    }, m("i.bi.bi-plus.upload-btn")),
-                  ]),
+                  State.mode === "view" ? null :
+                    m("li", [
+                      m("button.btn.btn-outline-primary.upload-btn", {
+                        onclick: () => {
+                          const newTimeframe = "Timeframe " +
+                            State.chapters[chapterIndex].timeframes.length;
+                          State.addTimeframeToChapter(chapterIndex, newTimeframe);
+                          State.select(
+                            "timeframe",
+                            chapterIndex,
+                            chapter.timeframes.length - 1,
+                          );
+                        },
+                      }, m("i.bi.bi-plus.upload-btn")),
+                    ]),
                 ]),
               ])
             ),
-            m("li", [
-              m("button.btn.btn-outline-primary", {
-                onclick: () => {
-                  const newChapterName = prompt("Enter new chapter name:");
-                  if (newChapterName) {
-                    State.addChapter(newChapterName);
-                  }
-                },
-              }, m("i.bi.bi-plus")),
-            ]),
+            State.mode === "view" ? null :
+              m("li", [
+                m("button.btn.btn-outline-primary", {
+                  onclick: () => {
+                    const newChapterName = prompt("Enter new chapter name:");
+                    if (newChapterName) {
+                      State.addChapter(newChapterName);
+                    }
+                  },
+                }, m("i.bi.bi-plus")),
+              ]),
           ]),
         ]),
       ]),
