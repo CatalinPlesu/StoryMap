@@ -22,7 +22,8 @@ const Canvas = {
       ctx.rotate(rotation * Math.PI / 180);
       ctx.drawImage(img, -adjustedWidth / 2, -adjustedHeight / 2, adjustedWidth, adjustedHeight);
 
-      if (State.selected.nestedIndex === id) {
+      // Only draw the border if not in view mode
+      if (State.selected.nestedIndex === id && State.mode !== 'view') {
         const originalBorderWidth = 10; // The original border width
         const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom; // Reverse scale the border width
         ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
@@ -267,19 +268,11 @@ const Canvas = {
     };
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
+      if (State.mode === 'view') {
+        // View mode: Only allow map zooming
       const rect = canvas.getBoundingClientRect();
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
 
-      if (State.selected.item === "map" && State.selected.nestedIndex !== null) {
-        // Zoom the selected image only
-        const imageId = State.selected.nestedIndex;
-        const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
-        const newImageZoom = currentZoom * zoomFactor;
-        vnode.state.imageZooms.set(imageId, newImageZoom);
-        const currentMap = State.maps[State.selectedMapIndex];
-        const currentImage = currentMap.images[imageId];
-        currentImage.scale = newImageZoom;
-      } else {
         // Get mouse position in screen space
         const screenX = e.clientX - rect.left;
         const screenY = e.clientY - rect.top;
@@ -304,11 +297,56 @@ const Canvas = {
           xoffset: vnode.state.mapOffset.x,
           yoffset: vnode.state.mapOffset.y,
         });
+
+        this.drawCanvas(ctx, vnode.state, canvas);
+      } else {
+        // Original zoom functionality
+        const rect = canvas.getBoundingClientRect();
+        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+
+        if (State.selected.item === "map" && State.selected.nestedIndex !== null) {
+          const imageId = State.selected.nestedIndex;
+          const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
+          const newImageZoom = currentZoom * zoomFactor;
+          vnode.state.imageZooms.set(imageId, newImageZoom);
+          const currentMap = State.maps[State.selectedMapIndex];
+          const currentImage = currentMap.images[imageId];
+          currentImage.scale = newImageZoom;
+        } else {
+          const screenX = e.clientX - rect.left;
+          const screenY = e.clientY - rect.top;
+          const canvasCenterX = canvas.width / 2;
+          const canvasCenterY = canvas.height / 2;
+          const worldX = ((screenX - vnode.state.mapOffset.x - canvasCenterX) / vnode.state.mapZoom) + canvasCenterX;
+          const worldY = ((screenY - vnode.state.mapOffset.y - canvasCenterY) / vnode.state.mapZoom) + canvasCenterY;
+          const oldZoom = vnode.state.mapZoom;
+          const newZoom = oldZoom * zoomFactor;
+          vnode.state.mapZoom = newZoom;
+        vnode.state.mapOffset.x = screenX - ((worldX - canvasCenterX) * newZoom + canvasCenterX);
+        vnode.state.mapOffset.y = screenY - ((worldY - canvasCenterY) * newZoom + canvasCenterY);
+
+        debouncedMapStateUpdate(State.selectedMapIndex, {
+          zoom: newZoom,
+          xoffset: vnode.state.mapOffset.x,
+          yoffset: vnode.state.mapOffset.y,
+        });
       }
 
       this.drawCanvas(ctx, vnode.state, canvas);
+      }
     });
     canvas.addEventListener("mousedown", (e) => {
+      if (State.mode === 'view') {
+        // View mode: Only allow map panning
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        vnode.state.dragging = true;
+        vnode.state.dragStart = { x: mouseX, y: mouseY };
+        vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
+        vnode.state.draggedObjectType = "map";
+      } else {
+        // Original mousedown functionality
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -322,10 +360,31 @@ const Canvas = {
         vnode.state.draggedObjectType = "image";
       } else {
         vnode.state.draggedObjectType = "map";
+        }
       }
     });
     canvas.addEventListener("mousemove", (e) => {
       if (!vnode.state.dragging) return;
+      
+      if (State.mode === 'view') {
+        // View mode: Only allow map panning
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const dx = mouseX - vnode.state.lastDragPosition.x;
+        const dy = mouseY - vnode.state.lastDragPosition.y;
+
+        vnode.state.mapOffset.x += dx;
+        vnode.state.mapOffset.y += dy;
+        debouncedMapStateUpdate(State.selectedMapIndex, {
+          xoffset: vnode.state.mapOffset.x,
+          yoffset: vnode.state.mapOffset.y,
+        });
+
+        vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
+        this.drawCanvas(ctx, vnode.state, canvas);
+      } else {
+        // Original mousemove functionality
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
@@ -342,11 +401,9 @@ const Canvas = {
           
           const stateCharacter = vnode.state.characters.find(c => c.id === characterIndex);
           if (stateCharacter) {
-            // Update position in canvas state
             stateCharacter.x += dx / vnode.state.mapZoom;
             stateCharacter.y += dy / vnode.state.mapZoom;
             
-            // Update position in global state
             State.ensureCharacterState(characterIndex, latestStateIndex, {
               x: stateCharacter.x,
               y: stateCharacter.y
@@ -376,6 +433,7 @@ const Canvas = {
       }
       vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
       this.drawCanvas(ctx, vnode.state, canvas);
+      }
     });
     canvas.addEventListener("mouseup", () => {
       vnode.state.dragging = false;
