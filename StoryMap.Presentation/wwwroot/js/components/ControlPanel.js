@@ -14,13 +14,13 @@ const ControlPanel = {
             }
         }, [
             m("div.speed-control", [
-                m("label", "Speed (seconds): "), // Label for speed input
+                m("label", "Speed (seconds): "), 
                 m("input[type=text]", {
                     value: State.speed || 1,
                     oninput: (e) => {
                         const newSpeed = parseFloat(e.target.value);
                         if (!isNaN(newSpeed) && newSpeed > 0) {
-                            State.speed = newSpeed; // Update speed in State
+                            State.speed = newSpeed; 
                         }
                     },
                     style: {
@@ -31,57 +31,55 @@ const ControlPanel = {
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    State.navigateTimeframe(-1); // Navigate to the previous timeframe
+                    State.navigateTimeframe(-1); 
                 }
             }, [
-                m("i", { class: "bi bi-arrow-left" }) // Use Bootstrap icon for back
+                m("i", { class: "bi bi-arrow-left" }) 
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    // Logic for play/pause
+                    
                     if (State.isPlaying) {
-                        State.isPlaying = false; // Stop playing
+                        State.isPlaying = false; 
                     } else {
-                        this.play(); // Start playing
-                        State.isPlaying = true; // Update play state
+                        this.play(); 
+                        State.isPlaying = true; 
                     }
                 },
                 style: {
-                    backgroundColor: State.isPlaying ? "green" : "grey", // Change color based on play/pause state
+                    backgroundColor: State.isPlaying ? "green" : "grey", 
                 }
             }, [
-                m("i", { class: State.isPlaying ? "bi bi-play" : "bi bi-pause" }) // Use Bootstrap icons for play/pause
+                m("i", { class: State.isPlaying ? "bi bi-play" : "bi bi-pause" }) 
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    State.navigateTimeframe(1); // Navigate to the next timeframe
+                    State.navigateTimeframe(1);
                 }
             }, [
-                m("i", { class: "bi bi-arrow-right" }) // Use Bootstrap icon for next
+                m("i", { class: "bi bi-arrow-right" })
             ]),
         ]) : null;
     },
 
     play() {
-        const timePerFrame = (State.speed || 1) * 1000; // Ensure speed is used correctly, default to 1 second
+        const timePerFrame = (State.speed || 1) * 1000; 
         let currentChapterIndex = State.selectedChapterIndex;
         let currentTimeframeIndex = State.selectedTimeframeIndex;
 
         const intervalId = setInterval(() => {
-            // Check if isPlaying is false and clear the interval if so
             if (!State.isPlaying) {
-                clearInterval(intervalId); // Stop the interval
-                return; // Exit the function
+                clearInterval(intervalId); 
+                return; 
             }
 
-            // Move to the next timeframe using the new function
-            State.navigateTimeframe(1); // Move to the next timeframe
+            State.navigateTimeframe(1); 
 
             if (State.selectedChapterIndex >= State.chapters.length - 1
                 && State.selectedTimeframeIndex >=
                 State.chapters[State.selectedChapterIndex].timeframes.length - 1) {
-                clearInterval(intervalId); // Stop the interval
-                State.isPlaying = false; // Update play state
+                clearInterval(intervalId); 
+                State.isPlaying = false; 
             }
         }, timePerFrame);
     },
