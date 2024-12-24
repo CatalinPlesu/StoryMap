@@ -446,6 +446,24 @@ const State = {
     this.storyName = name;
     m.redraw();
   },
+  navigateTimeframe(direction) {
+    if (direction === 1) { // Next
+        if (this.selectedTimeframeIndex < this.chapters[this.selectedChapterIndex].timeframes.length - 1) {
+            this.selectedTimeframeIndex++; // Move to the next timeframe
+        } else if (this.selectedChapterIndex < this.chapters.length - 1) {
+            this.selectedChapterIndex++; // Move to the next chapter
+            this.selectedTimeframeIndex = 0; // Go to the first timeframe of the next chapter
+        }
+    } else if (direction === -1) { // Previous
+        if (this.selectedTimeframeIndex > 0) {
+            this.selectedTimeframeIndex--; // Move to the previous timeframe
+        } else if (this.selectedChapterIndex > 0) {
+            this.selectedChapterIndex--; // Move to the previous chapter
+            this.selectedTimeframeIndex = this.chapters[this.selectedChapterIndex].timeframes.length - 1; // Go to the last timeframe of the previous chapter
+        }
+    }
+    this.select("timeframe", this.selectedChapterIndex, this.selectedTimeframeIndex); // Update selection
+  },
 };
 
 State.maps = [

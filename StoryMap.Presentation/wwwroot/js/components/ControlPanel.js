@@ -31,14 +31,7 @@ const ControlPanel = {
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    // Logic for previous timeframe
-                    if (State.selectedTimeframeIndex > 0) {
-                        State.selectedTimeframeIndex--; // Move to the previous timeframe
-                    } else if (State.selectedChapterIndex > 0) {
-                        State.selectedChapterIndex--; // Move to the previous chapter
-                        State.selectedTimeframeIndex = State.chapters[State.selectedChapterIndex].timeframes.length - 1; // Go to the last timeframe of the previous chapter
-                    }
-                    State.select("timeframe", State.selectedChapterIndex, State.selectedTimeframeIndex); // Update selection
+                    State.navigateTimeframe(-1); // Navigate to the previous timeframe
                 }
             }, [
                 m("i", { class: "bi bi-arrow-left" }) // Use Bootstrap icon for back
@@ -61,14 +54,7 @@ const ControlPanel = {
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    // Logic for next timeframe
-                    if (State.selectedTimeframeIndex < State.chapters[State.selectedChapterIndex].timeframes.length - 1) {
-                        State.selectedTimeframeIndex++; // Move to the next timeframe
-                    } else if (State.selectedChapterIndex < State.chapters.length - 1) {
-                        State.selectedChapterIndex++; // Move to the next chapter
-                        State.selectedTimeframeIndex = 0; // Go to the first timeframe of the next chapter
-                    }
-                    State.select("timeframe", State.selectedChapterIndex, State.selectedTimeframeIndex); // Update selection
+                    State.navigateTimeframe(1); // Navigate to the next timeframe
                 }
             }, [
                 m("i", { class: "bi bi-arrow-right" }) // Use Bootstrap icon for next
@@ -82,25 +68,23 @@ const ControlPanel = {
         let currentTimeframeIndex = State.selectedTimeframeIndex;
 
         const intervalId = setInterval(() => {
-            // Select the current chapter and timeframe
-            State.select("timeframe", currentChapterIndex, currentTimeframeIndex);
-
-            // Move to the next timeframe
-            currentTimeframeIndex++;
-
-            // Check if we need to move to the next chapter
-            if (currentTimeframeIndex >= State.chapters[currentChapterIndex].timeframes.length) {
-                currentTimeframeIndex = 0; // Reset to the first timeframe
-                currentChapterIndex++; // Move to the next chapter
+            // Check if isPlaying is false and clear the interval if so
+            if (!State.isPlaying) {
+                clearInterval(intervalId); // Stop the interval
+                return; // Exit the function
             }
 
-            // Stop if we have gone through all chapters
-            if (currentChapterIndex >= State.chapters.length) {
+            // Move to the next timeframe using the new function
+            State.navigateTimeframe(1); // Move to the next timeframe
+
+            if (State.selectedChapterIndex >= State.chapters.length - 1
+                && State.selectedTimeframeIndex >=
+                State.chapters[State.selectedChapterIndex].timeframes.length - 1) {
                 clearInterval(intervalId); // Stop the interval
                 State.isPlaying = false; // Update play state
             }
         }, timePerFrame);
-    }
+    },
 };
 
 export default ControlPanel; 
