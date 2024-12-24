@@ -5,6 +5,7 @@ import Canvas from "/js/components/Canvas.js";
 import ContextMenu from "/js/components/ContextMenu.js";
 import StoryNameDisplay from "/js/components/StoryNameDisplay.js";
 import ButtonPanel from "/js/components/ButtonPanel.js";
+import ControlPanel from "/js/components/ControlPanel.js";
 
 const App = {
   view() {
@@ -13,6 +14,7 @@ const App = {
       m(Canvas),
       m(RightBar),
       m(ContextMenu),
+      m(ControlPanel),
     ]);
   },
 };

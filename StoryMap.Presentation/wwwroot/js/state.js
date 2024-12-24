@@ -1,5 +1,6 @@
 const State = {
   _updated: false,
+  isPlaying: false,
   maps: [],
   base_character_details: [],
   characters: [],
