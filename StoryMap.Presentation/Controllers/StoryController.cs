@@ -70,4 +70,69 @@ public class StoryController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(int id)
+    {
+        try
+        {
+            var story = await _storyService.GetById(id);
+            if (story == null)
+                return NotFound();
+
+            var model = _mapper.Map<StoryEntity, StoryDetailsModel>(story);
+            return Json(new { success = true, story = model });
+        }
+        catch (Exception e)
+        {
+            return Json(new { success = false, errors = e.ToString()});
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> List()
+    {
+        var stories = await _storyService.GetAll();
+        var models = _mapper.Map<IEnumerable<StoryEntity>, IEnumerable<StoryModel>>(stories);
+        return Json(new { success = true, stories = models });
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] StoryEditModel editModel)
+    {
+        if (editModel == null)
+            return BadRequest("Model cannot be null.");
+
+        var validationResult = await _editModelValidator.ValidateAsync(editModel);
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+            return Json(new { success = false, errors });
+        }
+
+        var story = await _storyService.GetById(editModel.Id);
+        if (story == null)
+            return NotFound();
+
+        // Map editModel to story
+        _mapper.Map(editModel, story);
+
+        // Now, update the story with the preserved CreatedOnUtc
+        await _storyService.Update(story);
+
+        var updated = _mapper.Map<StoryEntity, StoryEditModel>(story);
+        return Json(new { success = true, story = updated });
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var story = await _storyService.GetById(id);
+        if (story == null)
+            return NotFound();
+
+        await _storyService.Delete(id);
+        return Json(new { success = true });
+    }
+
 }
