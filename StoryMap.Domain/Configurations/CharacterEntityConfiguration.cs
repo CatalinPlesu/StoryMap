@@ -10,7 +10,6 @@ namespace StoryMap.Domain.Configurations
         {
             builder.ToTable("Characters");
             builder.Property(x => x.Name).IsRequired();
-            builder.Property(x => x.Description).IsRequired();
         }
     }
 } 
