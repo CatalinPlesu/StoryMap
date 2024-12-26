@@ -44,6 +44,7 @@ namespace StoryMap.Presentation
                     cfg.AddProfile<ImageProfile>();
                     cfg.AddProfile<MapProfile>();
                     cfg.AddProfile<TimeframeProfile>();
+                    cfg.AddProfile<StoryProfile>();
                 },
                 typeof(Program).Assembly
             );

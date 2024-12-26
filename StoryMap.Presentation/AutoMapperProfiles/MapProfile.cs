@@ -11,6 +11,7 @@ public class MapProfile : Profile
         // Entity to Model mappings
         CreateMap<MapEntity, MapModel>();
         CreateMap<MapEntity, MapCreateModel>();
+        CreateMap<MapEntity, MapDetailsModel>();
         CreateMap<MapEntity, MapEditModel>();
 
         // Model to Entity mappings

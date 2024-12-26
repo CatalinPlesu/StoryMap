@@ -16,7 +16,9 @@ public class CharacterProfile : Profile
 
         // Model to Entity mappings
         CreateMap<CharacterModel, CharacterEntity>();
-        CreateMap<CharacterCreateModel, CharacterEntity>();
+        CreateMap<CharacterCreateModel, CharacterEntity>()
+            .ForMember(dest => dest.Description, opt =>
+                opt.MapFrom(src => src.Description ?? string.Empty));
         CreateMap<CharacterEditModel, CharacterEntity>();
     }
 } 

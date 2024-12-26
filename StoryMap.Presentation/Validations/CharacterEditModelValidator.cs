@@ -9,8 +9,6 @@ namespace StoryMap.Presentation.Validations
         {
             RuleFor(character => character.Name)
                 .NotEmpty().WithMessage("Name is required.");
-            RuleFor(character => character.Description)
-                .NotEmpty().WithMessage("Description is required.");
         }
     }
 } 

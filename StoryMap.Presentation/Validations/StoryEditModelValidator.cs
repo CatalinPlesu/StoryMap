@@ -10,7 +10,8 @@ namespace StoryMap.Presentation.Validations
             RuleFor(story => story.Title)
                 .NotEmpty().WithMessage("Title is required.");
             RuleFor(story => story.Description)
-                .NotEmpty().WithMessage("Description is required.");
+                     .NotNull()
+                     .When(story => !string.IsNullOrEmpty(story.Title));
         }
     }
-} 
+}
