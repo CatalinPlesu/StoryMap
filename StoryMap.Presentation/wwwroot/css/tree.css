@@ -1,111 +1,112 @@
 .leftbar {
-    background-color: #e3f2fd; /* Match the navbar background */
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
-    position: fixed; /* Fixed position ensures it stays in place */
-    top: 130px; /* Start 130px from the top (just below the navbar) */
-    bottom: 20px; /* Extend it to the bottom of the viewport */
-    left: 20px; /* 20px from the left margin */
-    width: 230px; /* Sidebar width */
-    height: calc(100vh - 150px); /* Ensure it takes full height from navbar to bottom */
-    z-index: 1050; /* Ensure it stays on top of other elements */
-    overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
+  background-color: #e3f2fd; /* Match the navbar background */
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+  position: fixed; /* Fixed position ensures it stays in place */
+  top: 130px; /* Start 130px from the top (just below the navbar) */
+  bottom: 20px; /* Extend it to the bottom of the viewport */
+  left: 20px; /* 20px from the left margin */
+  width: 230px; /* Sidebar width */
+  height: calc(
+    100vh - 150px
+  ); /* Ensure it takes full height from navbar to bottom */
+  z-index: 1050; /* Ensure it stays on top of other elements */
+  overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
 }
 
 .rightbar {
-    background-color: #e3f2fd; /* Match the navbar background */
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
-    position: fixed; /* Fixed position ensures it stays in place */
-    top: 130px; /* Start 130px from the top (just below the navbar) */
-    right: 20px; /* 20px from the right margin */
-    bottom: 20px; /* Extend it to the bottom of the viewport */
-    width: 230px; /* Sidebar width */
-    height: calc(100vh - 150px); /* Ensure it takes full height from navbar to bottom */
-    z-index: 1050; /* Ensure it stays on top of other elements */
-    overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
+  background-color: #e3f2fd; /* Match the navbar background */
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+  position: fixed; /* Fixed position ensures it stays in place */
+  top: 130px; /* Start 130px from the top (just below the navbar) */
+  right: 20px; /* 20px from the right margin */
+  bottom: 20px; /* Extend it to the bottom of the viewport */
+  width: 230px; /* Sidebar width */
+  height: calc(
+    100vh - 150px
+  ); /* Ensure it takes full height from navbar to bottom */
+  z-index: 1050; /* Ensure it stays on top of other elements */
+  overflow-y: auto; /* Allow scrolling if content exceeds sidebar height */
 }
 
 .tree,
 .tree ul {
-    list-style-type: none;
-    padding-left: 1rem;
+  list-style-type: none;
+  padding-left: 1rem;
 }
 
 .tree li {
-    position: relative;
-    padding: 0.5rem 0;
-    cursor: text;
+  position: relative;
+  padding: 0.5rem 0;
+  cursor: text;
 }
 
 .tree .inline-edit {
-    border: 1px solid #ced4da;
-    background-color: #98d1fa;
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+  border: 1px solid #ced4da;
+  background-color: #98d1fa;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
 }
 
-
 .tree .active {
-    background-color: #FFD700; 
-    border-top-left-radius: 0.5rem;  
-    border-bottom-left-radius: 0.5rem;
+  background-color: #ffd700;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
 }
 
 .tree .active-image {
-    background-color: #ffe47c; 
-    border-top-left-radius: 0.5rem;  
-    border-bottom-left-radius: 0.5rem;
+  background-color: #ffe47c;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
 }
 
 .tree .modified {
-    background-color: #e3fde7;
-    border-top-left-radius: 0.5rem;
-    border-bottom-left-radius: 0.5rem;
-    animation: fadeBack 5s forwards; /* Fade back to original color */
+  background-color: #e3fde7;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  animation: fadeBack 5s forwards; /* Fade back to original color */
 }
 
 @keyframes fadeBack {
-    0% {
-        background-color: #a1ed97; /* Start with greenish color */
-    }
-    100% {
-        background-color: initial; /* Fade back to the normal color */
-    }
+  0% {
+    background-color: #a1ed97; /* Start with greenish color */
+  }
+  100% {
+    background-color: initial; /* Fade back to the normal color */
+  }
 }
 
 .tree li::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -1rem;
-    border-left: 1px solid #ccc;
-    height: 100%;
-    width: 1px;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -1rem;
+  border-left: 1px solid #ccc;
+  height: 100%;
+  width: 1px;
 }
 
 .tree li::after {
-    content: "";
-    position: absolute;
-    top: 1.25rem;
-    left: -1rem;
-    border-top: 1px solid #ccc;
-    width: 1rem;
+  content: "";
+  position: absolute;
+  top: 1.25rem;
+  left: -1rem;
+  border-top: 1px solid #ccc;
+  width: 1rem;
 }
 
 .tree li:last-child::before {
-    height: 1.25rem;
+  height: 1.25rem;
 }
 
 .tree .toggle {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tree .collapsed ul {
-    display: none;
+  display: none;
 }
-
-

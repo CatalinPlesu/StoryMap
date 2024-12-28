@@ -1,49 +1,49 @@
 #canvas {
-    margin: 0 auto;
-    transition: transform 0.1s ease-in-out; /* Smooth transition for scaling and panning */
+  margin: 0 auto;
+  transition: transform 0.1s ease-in-out; /* Smooth transition for scaling and panning */
 }
 
 /* Center the content with flexbox */
 .container-fluid .row {
-    display: flex;
-    align-items: stretch;
-    min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
 }
 
 .col-md-6 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .image-wrapper {
-    position: relative;
-    display: inline-block;
-    cursor: move;
-    transition: transform 0.1s ease-out; /* Smooth out rotation transitions */
+  position: relative;
+  display: inline-block;
+  cursor: move;
+  transition: transform 0.1s ease-out; /* Smooth out rotation transitions */
 }
 
 .image-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
-    height: auto; /* Ensures aspect ratio is locked */
-    width: auto; /* Ensures aspect ratio is locked */
+  max-width: 100%;
+  max-height: 100%;
+  height: auto; /* Ensures aspect ratio is locked */
+  width: auto; /* Ensures aspect ratio is locked */
 }
 
 .resize-handle {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background-color: green;
-    cursor: nwse-resize;
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background-color: green;
+  cursor: nwse-resize;
 }
 
 .rotate-handle {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: yellow;
-    border-radius: 50%;
-    cursor: grab;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: yellow;
+  border-radius: 50%;
+  cursor: grab;
 }
