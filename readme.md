@@ -56,6 +56,8 @@ data.
 
 
 ## Design Patterns
+This project was developed for a university course that mandated the use of design 
+patterns.
 
 ### Creational
 - [ ] **Singleton** State
