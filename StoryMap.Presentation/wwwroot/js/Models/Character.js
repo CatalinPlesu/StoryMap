@@ -18,10 +18,10 @@ class Character {
    * Creates a clone of the current character instance.
    * @returns {Character} - A new Character instance with the same properties.
    */
-  clone() {
+  clone(stateIndex) {
     return new Character(
       this.name,
-      this.states = [JSON.parse(JSON.stringify(this.states[0]))],
+      this.states = [JSON.parse(JSON.stringify(this.states[stateIndex]))],
     );
   }
 }
