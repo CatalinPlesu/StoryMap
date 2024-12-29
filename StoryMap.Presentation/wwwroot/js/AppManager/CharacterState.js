@@ -11,14 +11,17 @@ class CharacterState {
 
   constructor() {
     this.#appManager = AppManager.getInstance();
-    this.#baseCharacter = new Character("Base Character", new State(
-      this.#appManager.mapGetSelectedIndex(),
-      0,
-      0,
-      0,
-      0,
-      []
-    ));
+    this.#baseCharacter = new Character(
+      "Base Character",
+      new State(
+        this.#appManager.mapGetSelectedIndex(),
+        0,
+        0,
+        0,
+        0,
+        [],
+      ),
+    );
   }
 
   get selected() {
@@ -254,7 +257,9 @@ class CharacterState {
         this.#appManager.chapterGetSelectedIndex(),
         this.#appManager.chapterGetSelectedTimeframeIndex(),
         structuredClone(
-          previousState ? previousState.details : this.#baseCharacter.states[0].details,
+          previousState
+            ? previousState.details
+            : this.#baseCharacter.states[0].details,
         ),
       );
 
@@ -267,6 +272,15 @@ class CharacterState {
   // Method to find the latest state index of a character up to a given chapter and timeframe
   findCharacterLatestStateIndexUpTo(characterIndex, chapterId, timeframeId) {
     const character = this.#characters[characterIndex];
+    if (!character || character.states.length === 0) {
+      return -1;
+    }
+
+    // If we only have the initial state, return 0
+    if (character.states.length === 1) {
+      return 0;
+    }
+
     let latestStateIndex = -1;
     let prevStateIndex = -1;
 
@@ -291,9 +305,18 @@ class CharacterState {
       }
     }
 
-    return latestStateIndex === -1 && prevStateIndex !== -1
-      ? prevStateIndex
-      : latestStateIndex;
+    // If we found an exact match, return it
+    if (latestStateIndex !== -1) {
+      return latestStateIndex;
+    }
+
+    // If we found a previous state, return it
+    if (prevStateIndex !== -1) {
+      return prevStateIndex;
+    }
+
+    // If we didn't find anything, return the initial state (0)
+    return 0;
   }
 
   // Method to get the latest changes for characters
