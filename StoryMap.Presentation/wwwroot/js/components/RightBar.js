@@ -8,8 +8,7 @@ const CharactersTree = {
   view() {
     return m("div.card.mb-3", [
       m("ul.tree.characters#tree-characters", [
-        appManager.storyModeView() ? null :
-         m("li", {
+        appManager.storyModeView() ? null : m("li", {
           oncontextmenu: (e) => {
             const actions = [
               {
@@ -143,7 +142,7 @@ const CharactersTree = {
                     const actions = [
                       {
                         label: `✏️ Edit Name`,
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           const value = appManager
                             .characterGetAll()[characterHelper.characterIndex]
                             .name;
@@ -161,7 +160,7 @@ const CharactersTree = {
                       },
                       {
                         label: "➕ Add Detail",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           const key = prompt(
                             "Enter detail property (e.g., health, race):",
                           );
@@ -178,7 +177,7 @@ const CharactersTree = {
                       },
                       {
                         label: "🛬 Bring to current map",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           appManager.characterBringToMap(
                             characterHelper.characterIndex,
                             characterHelper.latestStateIndex,
@@ -187,7 +186,7 @@ const CharactersTree = {
                       },
                       {
                         label: "⬆️ Move Up",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           appManager.characterMove(
                             characterHelper.characterIndex,
                             -1,
@@ -196,7 +195,7 @@ const CharactersTree = {
                       },
                       {
                         label: "⬇️ Move Down",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           appManager.characterMove(
                             characterHelper.characterIndex,
                             1,
@@ -205,16 +204,16 @@ const CharactersTree = {
                       },
                       {
                         label: "🖨️ Clone",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           appManager.characterClone(
-                              characterHelper.characterIndex,
-                              characterHelper.latestStateIndex,
-                            );
+                            characterHelper.characterIndex,
+                            characterHelper.latestStateIndex,
+                          );
                         },
                       },
                       {
                         label: "🗑️ Delete",
-                        onClick: (characterHelper) => {
+                        onClick: (_) => {
                           appManager.characterRemove(
                             characterHelper.characterIndex,
                           );
