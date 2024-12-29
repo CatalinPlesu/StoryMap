@@ -21,7 +21,14 @@ class Character {
   clone(stateIndex) {
     return new Character(
       this.name,
-      this.states = [JSON.parse(JSON.stringify(this.states[stateIndex]))],
+      new State(
+        this.states[stateIndex].mapId,
+        this.states[stateIndex].x,
+        this.states[stateIndex].y,
+        this.states[stateIndex].chapterId,
+        this.states[stateIndex].timeframeId,
+        [...this.states[stateIndex].details],
+      ),
     );
   }
 }
