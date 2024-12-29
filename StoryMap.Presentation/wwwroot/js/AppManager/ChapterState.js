@@ -2,11 +2,20 @@ class ChapterState {
   #chapters;
   #selectedChapterIndex;
   #selectedTimeframeIndex;
+  #selected = false;
 
   constructor() {
     this.#chapters = [];
     this.#selectedChapterIndex = 0;
     this.#selectedTimeframeIndex = 0;
+  }
+
+  get selected() {
+    return this.#selected;
+  }
+
+  set selected(value) {
+    this.#selected = value;
   }
 
   get chapters() {

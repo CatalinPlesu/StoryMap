@@ -1,10 +1,25 @@
+import AppManager from "./AppManager.js";
+
 class MapState {
   #maps;
   #selectedMapIndex;
+  #selectedImageIndex;
+  #appManager = null;
+  #selected = false;
 
   constructor() {
+    this.#appManager = AppManager.getInstance();
     this.#maps = [];
     this.#selectedMapIndex = 0;
+    this.#selectedImageIndex = 0;
+  }
+
+  get selected() {
+    return this.#selected;
+  }
+
+  set selected(value) {
+    this.#selected = value;
   }
 
   get maps() {
@@ -21,6 +36,14 @@ class MapState {
 
   set selectedMapIndex(value) {
     this.#selectedMapIndex = value;
+  }
+
+  get selectedImageIndex() {
+    return this.#selectedImageIndex;
+  }
+
+  set selectedImageIndex(value) {
+    this.#selectedImageIndex = value;
   }
 
   addMap(name) {
@@ -52,6 +75,7 @@ class MapState {
   updateMapZoom(index, zoom) {
     if (this.#maps[index]) {
       this.#maps[index].zoom = zoom;
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }
@@ -60,6 +84,7 @@ class MapState {
     if (this.#maps[index]) {
       this.#maps[index].xoffset = offset.x;
       this.#maps[index].yoffset = offset.y;
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }
@@ -67,6 +92,8 @@ class MapState {
   addImageToMap(mapIndex, image) {
     if (this.#maps[mapIndex]) {
       this.#maps[mapIndex].images.push(image);
+      this.#selectedImageIndex =  this.#maps[mapIndex].images.length - 1;
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }
@@ -85,6 +112,8 @@ class MapState {
         map.images[imageIndex - 1],
         map.images[imageIndex],
       ];
+      this.#selectedImageIndex -= 1;
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }
@@ -96,6 +125,8 @@ class MapState {
         map.images[imageIndex + 1],
         map.images[imageIndex],
       ];
+      this.#selectedImageIndex += 1;
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }
@@ -103,6 +134,7 @@ class MapState {
   removeImageFromMap(mapIndex, imageIndex) {
     if (this.#maps[mapIndex]?.images[imageIndex]) {
       this.#maps[mapIndex].images.splice(imageIndex, 1);
+      this.#appManager.storyUpdate();
       m.redraw();
     }
   }

@@ -1,14 +1,33 @@
 import State from "../Models/State.js";
 import Character from "../Models/Character.js";
+import AppManager from "./AppManager.js";
 
 class CharacterState {
   #characters = [];
-  #baseCharacterDetails = [];
+  #baseCharacter = null;
   #selectedCharacterIndex = 0;
-  #selectedMapIndex = 0;
-  #selectedChapterIndex = 0;
-  #selectedTimeframeIndex = 0;
-  #updated = false;
+  #selected = false;
+  #appManager = null;
+
+  constructor() {
+    this.#appManager = AppManager.getInstance();
+    this.#baseCharacter = new Character("Base Character", new State(
+      this.#appManager.mapGetSelectedIndex(),
+      0,
+      0,
+      0,
+      0,
+      []
+    ));
+  }
+
+  get selected() {
+    return this.#selected;
+  }
+
+  set selected(value) {
+    this.#selected = value;
+  }
 
   // Getter for characters
   get characters() {
@@ -24,30 +43,22 @@ class CharacterState {
     this.#selectedCharacterIndex = index;
   }
 
-  // Getter for baseCharacterDetails
+  // Getter for baseCharacter details
   get baseCharacterDetails() {
-    return this.#baseCharacterDetails;
+    return this.#baseCharacter.states[0].details;
   }
 
-  // Method to add a character
+  // Method to add a new character based on base character
   addCharacter(name) {
-    const initialState = new State(
-      this.#selectedMapIndex,
-      0,
-      0,
-      0,
-      0,
-      structuredClone(this.#baseCharacterDetails),
-    );
-
-    const newCharacter = new Character(name, initialState);
-    this.#characters.push(newCharacter);
+    let clone = this.#baseCharacter.clone(0);
+    clone.name = name;
+    this.#characters.push(clone);
     m.redraw();
   }
 
-  cloneCharacter(index) {
+  cloneCharacter(index, stateIndex) {
     if (this.#characters[index]) {
-      let clone = this.#characters[index].clone();
+      let clone = this.#characters[index].clone(stateIndex);
       clone.name += " Clone";
       this.#characters.push(clone);
       m.redraw();
@@ -105,8 +116,9 @@ class CharacterState {
       if (
         currentState &&
         currentState.details[detailIndex] &&
-        currentState.chapterId === this.#selectedChapterIndex &&
-        currentState.timeframeId === this.#selectedTimeframeIndex
+        currentState.chapterId === this.#appManager.chapterGetSelectedIndex() &&
+        currentState.timeframeId ===
+          this.#appManager.chapterGetSelectedTimeframeIndex()
       ) {
         if (stateIndex > 0) {
           const previousState = character.states[stateIndex - 1];
@@ -145,19 +157,19 @@ class CharacterState {
 
   // Method to add a detail to base character details
   addDetailToBaseCharacter(detail) {
-    this.#baseCharacterDetails.push(detail);
+    this.#baseCharacter.states[0].details.push(detail);
     m.redraw();
   }
 
   // Method to update a detail in base character details
   updateDetailInBaseCharacter(detailIndex, updates) {
-    this.#baseCharacterDetails[detailIndex] = { ...updates };
+    this.#baseCharacter.states[0].details[detailIndex] = { ...updates };
     m.redraw();
   }
 
   // Method to remove a detail from base character details
   removeDetailFromBaseCharacter(detailIndex) {
-    this.#baseCharacterDetails.splice(detailIndex, 1);
+    this.#baseCharacter.states[0].details.splice(detailIndex, 1);
     m.redraw();
   }
 
@@ -199,7 +211,7 @@ class CharacterState {
       characterIndex,
       latestStateIndex,
       {
-        mapId: this.#selectedMapIndex,
+        mapId: this.#appManager.mapGetSelectedIndex(),
         x: 0,
         y: 0,
       },
@@ -207,7 +219,7 @@ class CharacterState {
 
     if (latestState) {
       console.log(
-        `Character ${characterIndex} moved to map ${this.#selectedMapIndex}`,
+        `Character ${characterIndex} moved to map ${this.#appManager.mapGetSelectedIndex()}`,
       );
       m.redraw();
     }
@@ -224,8 +236,9 @@ class CharacterState {
     let currentState = character.states[stateIndex];
     if (
       currentState &&
-      currentState.chapterId === this.#selectedChapterIndex &&
-      currentState.timeframeId === this.#selectedTimeframeIndex
+      currentState.chapterId === this.#appManager.chapterGetSelectedIndex() &&
+      currentState.timeframeId ===
+        this.#appManager.chapterGetSelectedTimeframeIndex()
     ) {
       Object.assign(currentState, updates);
       return currentState;
@@ -235,18 +248,18 @@ class CharacterState {
         : character.states[0];
 
       currentState = new State(
-        this.#selectedMapIndex,
+        this.#appManager.mapGetSelectedIndex(),
         updates.x || 0,
         updates.y || 0,
-        this.#selectedChapterIndex,
-        this.#selectedTimeframeIndex,
+        this.#appManager.chapterGetSelectedIndex(),
+        this.#appManager.chapterGetSelectedTimeframeIndex(),
         structuredClone(
-          previousState ? previousState.details : this.#baseCharacterDetails,
+          previousState ? previousState.details : this.#baseCharacter.states[0].details,
         ),
       );
 
       character.states.splice(stateIndex + 1, 0, currentState);
-      this.#updated = true;
+      this.#appManager.storyUpdate();
       return currentState;
     }
   }
@@ -285,8 +298,9 @@ class CharacterState {
 
   // Method to get the latest changes for characters
   getLatestCharacterChanges() {
-    const chapterId = this.#selectedChapterIndex ?? 0;
-    const timeframeId = this.#selectedTimeframeIndex ?? 0;
+    const chapterId = this.#appManager.chapterGetSelectedIndex() ?? 0;
+    const timeframeId = this.#appManager.chapterGetSelectedTimeframeIndex() ??
+      0;
     return this.#characters.map((_, characterIndex) => ({
       characterIndex: characterIndex,
       latestStateIndex: this.findCharacterLatestStateIndexUpTo(
