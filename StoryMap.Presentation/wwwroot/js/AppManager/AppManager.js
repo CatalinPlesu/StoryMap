@@ -2,9 +2,10 @@ import MapState from "./MapState.js";
 import CharacterState from "./CharacterState.js";
 import ChapterState from "./ChapterState.js";
 import NavigationState from "./NavigationState.js";
+import StoryState from "./StoryState.js";
 
 /**
- * AppManager Singleton Class
+ * AppManager Singleton Class + Facade
  * This class ensures that only one instance of AppManager exists.
  */
 class AppManager {
@@ -14,6 +15,7 @@ class AppManager {
   #characterState = null;
   #chapterState = null;
   #navigationState = null;
+  #storyState = null;
 
   /**
    * Private constructor to prevent direct instantiation
@@ -45,26 +47,24 @@ class AppManager {
       this.#chapterState = new ChapterState();
     }
     if (!this.#navigationState) {
-      this.#navigationState = new NavigationState(this.#mapState, this.#chapterState, this.#characterState);
+      this.#navigationState = new NavigationState();
+    }
+    if (!this.#storyState) {
+      this.#storyState = new StoryState();
     }
     return this;
   }
 
-  // Example method for AppManager
-  getState() {
-    return {
-      mapState: this.#mapState,
-      characterState: this.#characterState,
-      chapterState: this.#chapterState,
-      navigationState: this.#navigationState,
-    };
-  }
-
   // {MapState} Facade
+  mapSetSelected = (value) => this.#mapState.selected = value;
+  mapGetSelected = () => this.#mapState.selected;
   mapGetAll = () => this.#mapState.maps;
   mapSetAll = (value) => { this.#mapState.maps = value; };
   mapGetSelectedIndex = () => this.#mapState.selectedMapIndex;
-  mapSetSelectedIndex = (value) => { this.#mapState.selectedMapIndex = value; };
+  mapSetSelectedIndex = (value) => {
+    this.#mapState.selectedMapIndex = value; 
+    this.mapSetSelected(true);
+  };
   mapAdd = (name) => this.#mapState.addMap(name);
   mapRemove = (index) => this.#mapState.removeMap(index);
   mapUpdate = (index, updates) => this.#mapState.updateMap(index, updates);
@@ -78,7 +78,10 @@ class AppManager {
   mapRemoveImage = (mapIndex, imageIndex) => this.#mapState.removeImageFromMap(mapIndex, imageIndex);
 
   // {CharacterState} facade
+  characterSetSelected = (value) => this.#characterState.selected = value;
+  characterGetSelected = () => this.#characterState.selected;
   characterAdd = (name) => this.#characterState.addCharacter(name);
+  characterClone = (index, stateIndex) => this.#characterState.cloneCharacter(index, stateIndex);
   characterRemove = (index) => this.#characterState.removeCharacter(index);
   characterRename = (index, name) => this.#characterState.updateCharacterName(index, name);
   characterAddDetail = (characterIndex, stateIndex, detail) => this.#characterState.addDetailToCharacter(characterIndex, stateIndex, detail);
@@ -90,17 +93,25 @@ class AppManager {
   characterGetLatestChanges = () => this.#characterState.getLatestCharacterChanges();
   characterGetAll = () => this.#characterState.characters;
   characterGetSelectedIndex = () => this.#characterState.selectedCharacterIndex;
-  characterSetSelectedIndex = (index) => this.#characterState.selectedCharacterIndex = index;
+  characterSetSelectedIndex = (index) => {
+    this.#characterState.selectedCharacterIndex = index;
+    this.characterSetSelected(true);
+  }
   baseCharacterAddDetail= (detail) => this.#characterState.addDetailToBaseCharacter(detail);
   baseCharacterUpdateDetail= (detailIndex, updates) => this.#characterState.updateDetailInBaseCharacter(detailIndex, updates);
   baseCharacterRemoveDetail= (detailIndex) => this.#characterState.removeDetailFromBaseCharacter(detailIndex);
   baseCharacterGetDetails = () => this.#characterState.baseCharacterDetails;
 
   // {ChapterState} Facade
+  chapterSetSelected = (value) => this.#chapterState.selected = value;
+  chapterGetSelected = () => this.#chapterState.selected;
   chapterGetAll = () => this.#chapterState.chapters;
   chapterSetAll = (value) => { this.#chapterState.chapters = value; };
   chapterGetSelectedIndex = () => this.#chapterState.selectedChapterIndex;
-  chapterSetSelectedIndex = (value) => { this.#chapterState.selectedChapterIndex = value; };
+  chapterSetSelectedIndex = (value) => { 
+    this.#chapterState.selectedChapterIndex = value;
+    this.chapterSetSelected(true);
+  };
   chapterGetSelectedTimeframeIndex = () => this.#chapterState.selectedTimeframeIndex;
   chapterSetSelectedTimeframeIndex = (value) => { this.#chapterState.selectedTimeframeIndex = value; };
   chapterAdd = (name) => this.#chapterState.addChapter(name);
@@ -114,6 +125,18 @@ class AppManager {
   selected = () => this.#navigationState.selected;
   select = (item, index, nestedIndex = null)  => this.#navigationState.select(item, index, nestedIndex);
   navigateTimeframe = (direction) => this.#navigationState.navigateTimeframe(direction);
+
+  // {StoryState} Facade
+  storyGetUpdated = () => this.#storyState.updated;
+  storyUpdate = () => { this.#storyState.updated = true; };
+  storyGetIsPlaying = () => this.#storyState.isPlaying;
+  storySetIsPlaying = (value) => { this.#storyState.isPlaying = value; };
+  storyGetStoryName = () => this.#storyState.storyName;
+  storySetStoryName = (value) => { this.#storyState.storyName = value; };
+  storyMode = () => this.#storyState.mode;
+  storyModeView = () => this.#storyState.mode === "view";
+  storyModeEdit = () => this.#storyState.mode === "edit";
+  storyModeCreate = () => this.#storyState.mode === "create";
 
 }
 
