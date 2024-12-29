@@ -60,14 +60,14 @@ This project was developed for a university course that mandated the use of desi
 patterns.
 
 ### Creational
-- [ ] **Singleton** State
+- [x] **Singleton** State
 - [ ] **Factory Method** Map/Character/Chapter
 - [ ] **Builder** Build Stories
-- [ ] **Prototype** Clone character, template character
+- [x] **Prototype** Clone character, template character
 
 ### Structural
 - [ ] **Bridge** Decouple UI from the data
-- [ ] **Facade** Story Facade - simplified access  
+- [x] **Facade** Story Facade - simplified access  
 - [ ] **Proxy** Before accessing backend use given strategy
 
 ### Behavioural
