@@ -6,6 +6,14 @@ import ContextMenu from "/js/components/ContextMenu.js";
 import StoryNameDisplay from "/js/components/StoryNameDisplay.js";
 import ButtonPanel from "/js/components/ButtonPanel.js";
 import ControlPanel from "/js/components/ControlPanel.js";
+import AppManager from "/js/AppManager/AppManager.js";
+
+let appManager = AppManager.getInstance();
+appManager.init();
+
+appManager.baseCharacterAddDetail({health: "33/100"});
+appManager.baseCharacterAddDetail({money: 3});
+appManager.baseCharacterAddDetail({level: 0});
 
 const App = {
   view() {
