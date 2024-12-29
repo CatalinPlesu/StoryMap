@@ -1,115 +1,122 @@
-import State from "/js/state.js";
 import ContextMenu from "/js/components/ContextMenu.js";
+import AppManager from "/js/AppManager/AppManager.js";
+
+let appManager = AppManager.getInstance();
+globalThis.appManager = appManager;
 
 const CharactersTree = {
   view() {
     return m("div.card.mb-3", [
       m("ul.tree.characters#tree-characters", [
-        State.mode === "view" ? null :
-          m("li", {
-            oncontextmenu: (e) => {
-              const actions = [
-                {
-                  label: "➕ Add details",
-                  onClick: (_) => {
-                    const key = prompt(
-                      "Enter detail property (e.g., health, race):",
-                    );
-                    const value = prompt("Enter detail value:");
-                    if (key && value) {
-                      const newDetail = { [key]: value };
-                      State.addDetailToBaseCharacter(newDetail);
-                    }
-                  },
+        appManager.storyModeView() ? null :
+         m("li", {
+          oncontextmenu: (e) => {
+            const actions = [
+              {
+                label: "➕ Add details",
+                onClick: (_) => {
+                  const key = prompt(
+                    "Enter detail property (e.g., health, race):",
+                  );
+                  const value = prompt("Enter detail value:");
+                  if (key && value) {
+                    const newDetail = { [key]: value };
+                    appManager.baseCharacterAddDetail(newDetail);
+                  }
                 },
-                {
-                  label: "❌ Cancel",
-                  onClick: (_) => { },
+              },
+              {
+                label: "❌ Cancel",
+                onClick: (_) => {},
+              },
+            ];
+            ContextMenu.show(e, actions);
+          },
+        }, [
+          m("span.toggle", [
+            m("i.bi.bi-chevron-right"),
+          ]),
+          "📋 Template Character",
+          m("ul", [
+            ...appManager.baseCharacterGetDetails().map((detail, detailIndex) =>
+              m("li", {
+                oncontextmenu: (e) => {
+                  const actions = [
+                    {
+                      label: `✏️ Edit Key: ${Object.keys(detail)[0]}`,
+                      onClick: (_) => {
+                        const oldDetail = { ...detail };
+                        const key = Object.keys(oldDetail)[0];
+                        const value = oldDetail[key];
+
+                        const newKey = prompt("✏️ Edit detail property:", key);
+
+                        if (newKey) {
+                          const newDetail = { [newKey]: value };
+                          appManager.baseCharacterUpdateDetail(
+                            detailIndex,
+                            newDetail,
+                          );
+                        }
+                      },
+                    },
+                    {
+                      label: `✏️ Edit Value: ${detail[Object.keys(detail)[0]]}`,
+                      onClick: (_) => {
+                        const oldDetail = detail;
+                        const key = Object.keys(oldDetail)[0];
+                        const value = oldDetail[key];
+                        const newValue = prompt(
+                          "✏️ Edit detail property:",
+                          value,
+                        );
+                        if (newValue) {
+                          const newDetail = { [key]: newValue };
+                          appManager.baseCharacterUpdateDetail(
+                            detailIndex,
+                            newDetail,
+                          );
+                        }
+                      },
+                    },
+                    {
+                      label: "🗑️ Delete",
+                      onClick: (_) => {
+                        appManager.baseCharacterRemoveDetail(detailIndex);
+                      },
+                    },
+                    {
+                      label: "❌ Cancel",
+                      onClick: (_) => {},
+                    },
+                  ];
+                  ContextMenu.show(e, actions);
                 },
-              ];
-              ContextMenu.show(e, actions);
-            },
-          }, [
-            m("span.toggle", [
-              m("i.bi.bi-chevron-right"),
-            ]),
-            "📋 Template Character",
-            m("ul", [
-              ...State.base_character_details.map((detail, detailIndex) =>
-                m("li", {
-                  oncontextmenu: (e) => {
-                    const actions = [
-                      {
-                        label: `✏️ Edit Key: ${Object.keys(detail)[0]}`,
-                        onClick: (_) => {
-                          const oldDetail = { ...detail };
-                          const key = Object.keys(oldDetail)[0];
-                          const value = oldDetail[key];
-
-                          const newKey = prompt("✏️ Edit detail property:", key);
-
-                          if (newKey) {
-                            const newDetail = { [newKey]: value };
-                            State.updateDetailInBaseCharacter(
-                              detailIndex,
-                              newDetail,
-                            );
-                          }
-                        },
-                      },
-                      {
-                        label: `✏️ Edit Value: ${detail[Object.keys(detail)[0]]}`,
-                        onClick: (_) => {
-                          const oldDetail = detail;
-                          const key = Object.keys(oldDetail)[0];
-                          const value = oldDetail[key];
-                          const newValue = prompt("✏️ Edit detail property:", value);
-                          if (newValue) {
-                            const newDetail = { [key]: newValue };
-                            State.updateDetailInBaseCharacter(
-                              detailIndex,
-                              newDetail,
-                            );
-                          }
-                        },
-                      },
-                      {
-                        label: "🗑️ Delete",
-                        onClick: (_) => {
-                          State.removeDetailFromBaseCharacter(detailIndex);
-                        },
-                      },
-                      {
-                        label: "❌ Cancel",
-                        onClick: (_) => { },
-                      },
-                    ];
-                    ContextMenu.show(e, actions);
-                  },
-                }, [
-                  m(
-                    "span",
-                    `${Object.keys(detail)[0]}: ${detail[Object.keys(detail)[0]]
-                    }`,
-                  ),
-                ])
-              ),
-              m("li", [
-                m("button.btn.btn-outline-primary.add-detail-btn", {
-                  onclick: () => {
-                    const key = prompt(
-                      "Enter detail property (e.g., health, race):",
-                    );
-                    const value = prompt("Enter detail value:");
-                    if (key && value) {
-                      const newDetail = { [key]: value };
-                      State.addDetailToBaseCharacter(newDetail);
-                    }
-                  },
-                }, m("i.bi.bi-plus.add-detail-btn")),
-              ]),
+              }, [
+                m(
+                  "span",
+                  `${Object.keys(detail)[0]}: ${
+                    detail[Object.keys(detail)[0]]
+                  }`,
+                ),
+              ])
+            ),
+            m("li", [
+              m("button.btn.btn-outline-primary.add-detail-btn", {
+                onclick: () => {
+                  const key = prompt(
+                    "Enter detail property (e.g., health, race):",
+                  );
+                  const value = prompt("Enter detail value:");
+                  if (key && value) {
+                    const newDetail = { [key]: value };
+                    appManager.baseCharacterAddDetail(newDetail);
+                  }
+                },
+              }, m("i.bi.bi-plus.add-detail-btn")),
             ]),
           ]),
+        ]),
 
         m("li", [
           m("span.toggle", [
@@ -117,16 +124,16 @@ const CharactersTree = {
           ]),
           "🧑 Characters",
           m("ul", [
-            ...State.getLatestCharacterChanges().map((characterHelper) => {
+            ...appManager.characterGetLatestChanges().map((characterHelper) => {
               return m("li", [
                 m("div", {
-                  class: State.selectedCharacterIndex ===
-                    characterHelper.characterIndex
+                  class: appManager.characterGetSelectedIndex() ===
+                      characterHelper.characterIndex
                     ? "active"
                     : "",
                   onclick: (e) => {
                     e.stopPropagation();
-                    State.select(
+                    appManager.select(
                       "character",
                       characterHelper.characterIndex,
                       null,
@@ -137,16 +144,16 @@ const CharactersTree = {
                       {
                         label: `✏️ Edit Name`,
                         onClick: (characterHelper) => {
-                          const value =
-                            State.characters[characterHelper.characterIndex]
-                              .name;
+                          const value = appManager
+                            .characterGetAll()[characterHelper.characterIndex]
+                            .name;
 
                           const newValue = prompt(
                             "✏️ Edit character name:",
                             value,
                           );
 
-                          State.updateCharacterName(
+                          appManager.characterRename(
                             characterHelper.characterIndex,
                             newValue,
                           );
@@ -161,7 +168,7 @@ const CharactersTree = {
                           const value = prompt("Enter detail value:");
                           if (key && value) {
                             const newDetail = { [key]: value };
-                            State.addDetailToCharacter(
+                            appManager.characterAddDetail(
                               characterHelper.characterIndex,
                               characterHelper.latestStateIndex,
                               newDetail,
@@ -172,33 +179,55 @@ const CharactersTree = {
                       {
                         label: "🛬 Bring to current map",
                         onClick: (characterHelper) => {
-                          State.bringCharacterToMap(characterHelper.characterIndex, characterHelper.latestStateIndex);
+                          appManager.characterBringToMap(
+                            characterHelper.characterIndex,
+                            characterHelper.latestStateIndex,
+                          );
                         },
                       },
                       {
                         label: "⬆️ Move Up",
                         onClick: (characterHelper) => {
-                          State.moveCharacter(characterHelper.characterIndex, -1);
+                          appManager.characterMove(
+                            characterHelper.characterIndex,
+                            -1,
+                          );
                         },
                       },
                       {
                         label: "⬇️ Move Down",
                         onClick: (characterHelper) => {
-                          State.moveCharacter(characterHelper.characterIndex, 1);
+                          appManager.characterMove(
+                            characterHelper.characterIndex,
+                            1,
+                          );
+                        },
+                      },
+                      {
+                        label: "🖨️ Clone",
+                        onClick: (characterHelper) => {
+                          appManager.characterClone(
+                              characterHelper.characterIndex,
+                              characterHelper.latestStateIndex,
+                            );
                         },
                       },
                       {
                         label: "🗑️ Delete",
                         onClick: (characterHelper) => {
-                          State.removeCharacter(characterHelper.characterIndex);
+                          appManager.characterRemove(
+                            characterHelper.characterIndex,
+                          );
                         },
                       },
                       {
                         label: "❌ Cancel",
-                        onClick: (_) => { },
+                        onClick: (_) => {},
                       },
                     ];
-                    State.mode === "view" ? null : ContextMenu.show(e, actions, characterHelper);
+                    appManager.storyModeView()
+                      ? null
+                      : ContextMenu.show(e, actions, characterHelper);
                   },
                 }, [
                   m("span.toggle", [
@@ -206,22 +235,32 @@ const CharactersTree = {
                   ]),
                   m(
                     "span",
-                    `${State.characters[characterHelper.characterIndex].name} ${State.characters[characterHelper.characterIndex].states[characterHelper.latestStateIndex].mapId === State.selectedMapIndex ? "🌍📍" : "🌍🚫"}`,
+                    `${
+                      appManager
+                        .characterGetAll()[characterHelper.characterIndex].name
+                    } ${
+                      appManager
+                          .characterGetAll()[characterHelper.characterIndex]
+                          .states[characterHelper.latestStateIndex].mapId ===
+                          appManager.mapGetSelectedIndex()
+                        ? "🌍📍"
+                        : "🌍🚫"
+                    }`,
                   ),
                 ]),
                 m("ul", [
-                  ...State.characters[characterHelper.characterIndex]
+                  ...appManager
+                    .characterGetAll()[characterHelper.characterIndex]
                     .states[characterHelper.latestStateIndex].details.map(
                       (detail, detailIndex) => {
                         return m("li", {
-                          class:
-                            State.checkModifiedDetailFromCharacter(
+                          class: appManager.characterCheckModifiedDetail(
                               characterHelper.characterIndex,
                               characterHelper.latestStateIndex,
                               detailIndex,
                             )
-                              ? "modified"
-                              : "",
+                            ? "modified"
+                            : "",
                           oncontextmenu: (e) => {
                             const actions = [
                               {
@@ -238,7 +277,7 @@ const CharactersTree = {
 
                                   if (newKey) {
                                     const newDetail = { [newKey]: value };
-                                    State.updateDetailInCharacter(
+                                    appManager.characterUpdateDetail(
                                       characterHelper.characterIndex,
                                       characterHelper.latestStateIndex,
                                       detailIndex,
@@ -248,8 +287,9 @@ const CharactersTree = {
                                 },
                               },
                               {
-                                label: `✏️ Edit Value: ${detail[Object.keys(detail)[0]]
-                                  }`,
+                                label: `✏️ Edit Value: ${
+                                  detail[Object.keys(detail)[0]]
+                                }`,
                                 onClick: (_) => {
                                   const oldDetail = detail;
                                   const key = Object.keys(oldDetail)[0];
@@ -260,7 +300,7 @@ const CharactersTree = {
                                   );
                                   if (newValue) {
                                     const newDetail = { [key]: newValue };
-                                    State.updateDetailInCharacter(
+                                    appManager.characterUpdateDetail(
                                       characterHelper.characterIndex,
                                       characterHelper.latestStateIndex,
                                       detailIndex,
@@ -272,7 +312,7 @@ const CharactersTree = {
                               {
                                 label: "🗑️ Delete",
                                 onClick: (_) => {
-                                  State.removeDetailFromCharacter(
+                                  appManager.characterRemoveDetail(
                                     characterHelper.characterIndex,
                                     characterHelper.latestStateIndex,
                                     detailIndex,
@@ -281,14 +321,16 @@ const CharactersTree = {
                               },
                               {
                                 label: "❌ Cancel",
-                                onClick: (_) => { },
+                                onClick: (_) => {},
                               },
                             ];
-                            State.mode === "view" ? null : ContextMenu.show(e, actions);
+                            appManager.storyModeView()
+                              ? null
+                              : ContextMenu.show(e, actions);
                           },
                           onclick: (e) => {
                             e.stopPropagation();
-                            State.select(
+                            appManager.select(
                               "character",
                               characterHelper.characterIndex,
                               detailIndex,
@@ -297,45 +339,44 @@ const CharactersTree = {
                         }, [
                           m(
                             "span",
-                            `${Object.keys(detail)[0]}: ${detail[Object.keys(detail)[0]]
+                            `${Object.keys(detail)[0]}: ${
+                              detail[Object.keys(detail)[0]]
                             }`,
                           ),
                         ]);
                       },
                     ),
-                  State.mode === "view" ? null :
-                    m("li", [
-                      m("button.btn.btn-outline-primary.add-detail-btn", {
-                        onclick: () => {
-                          const key = prompt(
-                            "Enter detail property (e.g., health, race):",
+                  appManager.storyModeView() ? null : m("li", [
+                    m("button.btn.btn-outline-primary.add-detail-btn", {
+                      onclick: () => {
+                        const key = prompt(
+                          "Enter detail property (e.g., health, race):",
+                        );
+                        const value = prompt("Enter detail value:");
+                        if (key && value) {
+                          const newDetail = { [key]: value };
+                          appManager.characterAddDetail(
+                            characterHelper.characterIndex,
+                            characterHelper.latestStateIndex,
+                            newDetail,
                           );
-                          const value = prompt("Enter detail value:");
-                          if (key && value) {
-                            const newDetail = { [key]: value };
-                            State.addDetailToCharacter(
-                              characterHelper.characterIndex,
-                              characterHelper.latestStateIndex,
-                              newDetail,
-                            );
-                          }
-                        },
-                      }, m("i.bi.bi-plus.add-detail-btn")),
-                    ]),
+                        }
+                      },
+                    }, m("i.bi.bi-plus.add-detail-btn")),
+                  ]),
                 ]),
               ]);
             }),
-            State.mode === "view" ? null :
-              m("li", [
-                m("button.btn.btn-outline-primary", {
-                  onclick: () => {
-                    const newCharacterName = prompt("Enter new character name:");
-                    if (newCharacterName) {
-                      State.addCharacter(newCharacterName);
-                    }
-                  },
-                }, m("i.bi.bi-plus")),
-              ]),
+            appManager.storyModeView() ? null : m("li", [
+              m("button.btn.btn-outline-primary", {
+                onclick: () => {
+                  const newCharacterName = prompt("Enter new character name:");
+                  if (newCharacterName) {
+                    appManager.characterAdd(newCharacterName);
+                  }
+                },
+              }, m("i.bi.bi-plus")),
+            ]),
           ]),
         ]),
       ]),
