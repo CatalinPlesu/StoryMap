@@ -1,7 +1,9 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
 
 const FileInput = {
   view() {
+    const appManager = AppManager.getInstance();
+    
     return m("input#file-input", {
       type: "file",
       multiple: false,
@@ -18,8 +20,10 @@ const FileInput = {
             scale: 1,
             rotation: 0,
           };
-          if (State.selectedMapIndex !== null) {
-            State.addImageToMap(State.selectedMapIndex, newImage);
+          
+          const selectedMapIndex = appManager.mapGetSelectedIndex();
+          if (selectedMapIndex !== null) {
+            appManager.mapAddImage(selectedMapIndex, newImage);
           }
         }
       }

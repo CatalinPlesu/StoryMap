@@ -1,13 +1,15 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
+
 const ButtonPanel = {
     view({ attrs }) {
+        const appManager = AppManager.getInstance();
         const currentUrl = window.location.href;
 
         return m("div.button-panel", [
-            State.mode === "create" || State.mode === "edit"
+            appManager.storyModeCreate() || appManager.storyModeEdit()
                 ? m("button.btn.btn-danger", {
                     onclick: () => {
-                        window.location.href = State.mode === "create"
+                        window.location.href = appManager.storyModeCreate()
                             ? "/"
                             : "/Story/";
                     },
@@ -28,8 +30,7 @@ const ButtonPanel = {
                         window.location.href = "/Story/Edit";
                     },
                 }, "Edit"),
-
-            State.mode === "create"
+            appManager.storyModeCreate()
                 ? m("button.btn.btn-success", {
                     onclick: () => {
                         console.log("Create clicked");
@@ -43,8 +44,7 @@ const ButtonPanel = {
                     },
                 }, "Create")
                 : null,
-
-            State.mode === "edit"
+            appManager.storyModeEdit()
                 ? m("button.btn.btn-primary", {
                     onclick: () => {
                         console.log("Save clicked");
@@ -62,4 +62,3 @@ const ButtonPanel = {
 };
 
 export default ButtonPanel;
-

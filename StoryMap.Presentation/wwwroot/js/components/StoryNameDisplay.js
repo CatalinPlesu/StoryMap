@@ -1,15 +1,17 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
 import ContextMenu from "/js/components/ContextMenu.js";
 
 const StoryNameDisplay = {
     view() {
-        const mapName = State.storyName ?? "Default Story Name"; // Default string if map name is empty
+        const appManager = AppManager.getInstance();
+        const storyName = appManager.storyGetStoryName() ?? "Default Story Name"; // Default string if story name is empty
 
         // Function to handle updating the story name
         const updateStoryName = () => {
-            const newStoryName = prompt("Enter new story name:", mapName);
+            const newStoryName = prompt("Enter new story name:", storyName);
             if (newStoryName) {
-                State.updateStoryName(newStoryName);
+                appManager.storySetStoryName(newStoryName);
+                appManager.storyUpdate(); // Mark story as updated
             }
         };
 
@@ -26,10 +28,10 @@ const StoryNameDisplay = {
                         onClick: (_) => { },
                     },
                 ];
-                State.mode === "view" ? null : ContextMenu.show(e, actions);
+                appManager.storyModeView() ? null : ContextMenu.show(e, actions);
             },
-            onclick: State.mode === "view" ? null : updateStoryName
-        }, mapName); // Ensure mapName is the text of the button
+            onclick: appManager.storyModeView() ? null : updateStoryName
+        }, storyName); // Ensure storyName is the text of the button
     }
 };
 

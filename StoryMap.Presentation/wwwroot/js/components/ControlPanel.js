@@ -1,8 +1,10 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
 
 const ControlPanel = {
     view() {
-        return State.mode === 'view' ? m("div.control-panel", {
+    const appManager = AppManager.getInstance();
+
+    return appManager.storyModeView() ? m("div.control-panel", {
             style: {
                 position: "absolute",
                 bottom: "20px",
@@ -16,11 +18,11 @@ const ControlPanel = {
             m("div.speed-control", [
                 m("label", "Speed (seconds): "), 
                 m("input[type=text]", {
-                    value: State.speed || 1,
+          value: appManager.storyGetSpeed() || 1,
                     oninput: (e) => {
                         const newSpeed = parseFloat(e.target.value);
                         if (!isNaN(newSpeed) && newSpeed > 0) {
-                            State.speed = newSpeed; 
+              appManager.storySetSpeed(newSpeed);
                         }
                     },
                     style: {
@@ -31,30 +33,29 @@ const ControlPanel = {
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    State.navigateTimeframe(-1); 
+          appManager.navigateTimeframe(-1);
                 }
             }, [
                 m("i", { class: "bi bi-arrow-left" }) 
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    
-                    if (State.isPlaying) {
-                        State.isPlaying = false; 
+          if (appManager.storyGetIsPlaying()) {
+            appManager.storySetIsPlaying(false);
                     } else {
                         this.play(); 
-                        State.isPlaying = true; 
+            appManager.storySetIsPlaying(true);
                     }
                 },
                 style: {
-                    backgroundColor: State.isPlaying ? "green" : "grey", 
+          backgroundColor: appManager.storyGetIsPlaying() ? "green" : "grey",
                 }
             }, [
-                m("i", { class: State.isPlaying ? "bi bi-play" : "bi bi-pause" }) 
+        m("i", { class: appManager.storyGetIsPlaying() ? "bi bi-play" : "bi bi-pause" })
             ]),
             m("button.btn.btn-control", {
                 onclick: () => {
-                    State.navigateTimeframe(1);
+          appManager.navigateTimeframe(1);
                 }
             }, [
                 m("i", { class: "bi bi-arrow-right" })
@@ -63,23 +64,20 @@ const ControlPanel = {
     },
 
     play() {
-        const timePerFrame = (State.speed || 1) * 1000; 
-        let currentChapterIndex = State.selectedChapterIndex;
-        let currentTimeframeIndex = State.selectedTimeframeIndex;
+    const appManager = AppManager.getInstance();
+    const timePerFrame = (appManager.storyGetSpeed() || 1) * 1000;
 
         const intervalId = setInterval(() => {
-            if (!State.isPlaying) {
+      if (!appManager.storyGetIsPlaying()) {
                 clearInterval(intervalId); 
                 return; 
             }
 
-            State.navigateTimeframe(1); 
+      appManager.navigateTimeframe(1);
 
-            if (State.selectedChapterIndex >= State.chapters.length - 1
-                && State.selectedTimeframeIndex >=
-                State.chapters[State.selectedChapterIndex].timeframes.length - 1) {
+      if (appManager.storyIsLastTimeframe()) {
                 clearInterval(intervalId); 
-                State.isPlaying = false; 
+        appManager.storySetIsPlaying(false);
             }
         }, timePerFrame);
     },
