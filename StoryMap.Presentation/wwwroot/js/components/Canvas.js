@@ -1,4 +1,7 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
+
+let appManager = AppManager.getInstance();
+
 const Canvas = {
   drawCanvas: function (ctx, state, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -26,7 +29,7 @@ const Canvas = {
       ctx.drawImage(img, 0, 0, adjustedWidth, adjustedHeight);
 
       // Only draw the border if not in view mode
-      if (State.selected.nestedIndex === id && State.mode !== "view") {
+      if (appManager.selected().nestedIndex === id && !appManager.storyModeView()) {
         const originalBorderWidth = 10; // The original border width
         const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom; // Reverse scale the border width
         ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
@@ -41,8 +44,8 @@ const Canvas = {
 
     // Draw all non-selected characters first
     state.characters.forEach((character) => {
-      const isSelected = State.selected.item === "character" &&
-        State.selected.index === character.id;
+      const isSelected = appManager.selected().item === "character" &&
+        appManager.selected().index === character.id;
 
       if (isSelected) {
         selectedCharacter = character;
@@ -83,10 +86,10 @@ const Canvas = {
       matchesCurrentContext,
     } = character;
     const currentState =
-      State.characters[id].states[state.characters[id].stateIndex];
+      appManager.characterGetAll()[id].states[state.characters[id].stateIndex];
 
     // Check if the character's current state is on the selected map
-    if (currentState.mapId !== State.selectedMapIndex) {
+    if (currentState.mapId !== appManager.mapGetSelectedIndex()) {
       return; // Skip drawing this character if not on the selected map
     }
 
@@ -119,7 +122,7 @@ const Canvas = {
       drawX - baseMarkerSize / 2,
       drawY - baseMarkerSize,
       baseMarkerSize,
-      State.selected.item === "character" && State.selected.index === id,
+      appManager.selected().item === "character" && appManager.selected().index === id,
       state.mapZoom,
     );
 
@@ -179,29 +182,29 @@ const Canvas = {
     vnode.state.resizeObserver = resizeObserver;
 
     const debouncedMapStateUpdate = this._debounce((mapIndex, updates) => {
-      if (mapIndex !== null && State.maps[mapIndex]) {
-        State.maps[mapIndex] = {
-          ...State.maps[mapIndex],
+      if (mapIndex !== null && appManager.mapGetAll()[mapIndex]) {
+        appManager.mapGetAll()[mapIndex] = {
+          ...appManager.mapGetAll()[mapIndex],
           ...updates,
         };
       }
     }, 300);
     vnode.state.updateImageInState = (imageUpdates) => {
       if (
-        State.selectedMapIndex === null ||
-        State.selected.nestedIndex === null
+        appManager.mapGetSelectedIndex() === null ||
+        appManager.selected().nestedIndex === null
       ) return;
-      const currentMap = State.maps[State.selectedMapIndex];
-      const currentImage = currentMap.images[State.selected.nestedIndex];
+      const currentMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
+      const currentImage = currentMap.images[appManager.selected().nestedIndex];
       const updatedImage = {
         ...currentImage,
         ...imageUpdates,
       };
-      currentMap.images[State.selected.nestedIndex] = updatedImage;
+      currentMap.images[appManager.selected().nestedIndex] = updatedImage;
       vnode.state.loadImages();
     };
     vnode.state.loadImages = () => {
-      const selectedMap = State.maps[State.selectedMapIndex];
+      const selectedMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
       if (!selectedMap) {
         vnode.state.images = [];
         vnode.state.characters = []; // Clear characters
@@ -248,9 +251,9 @@ const Canvas = {
       });
 
       // Load characters with animation data
-      vnode.state.characters = State.getLatestCharacterChanges()
+      vnode.state.characters = appManager.characterGetLatestChanges()
         .map((characterHelper) => {
-          const character = State.characters[characterHelper.characterIndex];
+          const character = appManager.characterGetAll()[characterHelper.characterIndex];
           const currentState =
             character.states[characterHelper.latestStateIndex];
           let prevX, prevY;
@@ -259,7 +262,7 @@ const Canvas = {
           if (characterHelper.latestStateIndex > 0) {
             const prevState =
               character.states[characterHelper.latestStateIndex - 1];
-            if (prevState.mapId === State.selectedMapIndex) {
+            if (prevState.mapId === appManager.mapGetSelectedIndex()) {
               prevX = prevState.x;
               prevY = prevState.y;
             }
@@ -275,8 +278,8 @@ const Canvas = {
             prevY,
             animationProgress: 0,
             matchesCurrentContext:
-              currentState.chapterId === State.selectedChapterIndex &&
-              currentState.timeframeId === State.selectedTimeframeIndex, // Check context
+              currentState.chapterId === appManager.chapterGetSelectedIndex() &&
+              currentState.timeframeId === appManager.chapterGetSelectedTimeframeIndex(), // Check context
           };
         });
 
@@ -312,7 +315,7 @@ const Canvas = {
     };
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
-      if (State.mode === "view") {
+      if (appManager.storyModeView()) {
         // View mode: Only allow map zooming
         const rect = canvas.getBoundingClientRect();
         const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
@@ -340,7 +343,7 @@ const Canvas = {
         vnode.state.mapOffset.y = screenY -
           ((worldY - canvasCenterY) * newZoom + canvasCenterY);
 
-        debouncedMapStateUpdate(State.selectedMapIndex, {
+        debouncedMapStateUpdate(appManager.mapGetSelectedIndex(), {
           zoom: newZoom,
           xoffset: vnode.state.mapOffset.x,
           yoffset: vnode.state.mapOffset.y,
@@ -353,13 +356,13 @@ const Canvas = {
         const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
 
         if (
-          State.selected.item === "map" && State.selected.nestedIndex !== null
+          appManager.selected().item === "map" && appManager.selected().nestedIndex !== null
         ) {
-          const imageId = State.selected.nestedIndex;
+          const imageId = appManager.selected().nestedIndex;
           const currentZoom = vnode.state.imageZooms.get(imageId) || 1;
           const newImageZoom = currentZoom * zoomFactor;
           vnode.state.imageZooms.set(imageId, newImageZoom);
-          const currentMap = State.maps[State.selectedMapIndex];
+          const currentMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
           const currentImage = currentMap.images[imageId];
           currentImage.scale = newImageZoom;
         } else {
@@ -379,7 +382,7 @@ const Canvas = {
           vnode.state.mapOffset.y = screenY -
             ((worldY - canvasCenterY) * newZoom + canvasCenterY);
 
-          debouncedMapStateUpdate(State.selectedMapIndex, {
+          debouncedMapStateUpdate(appManager.mapGetSelectedIndex(), {
             zoom: newZoom,
             xoffset: vnode.state.mapOffset.x,
             yoffset: vnode.state.mapOffset.y,
@@ -390,7 +393,7 @@ const Canvas = {
       }
     });
     canvas.addEventListener("mousedown", (e) => {
-      if (State.mode === "view") {
+      if (appManager.storyModeView()) {
         // View mode: Only allow map panning
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
@@ -408,10 +411,10 @@ const Canvas = {
         vnode.state.dragStart = { x: mouseX, y: mouseY };
         vnode.state.lastDragPosition = { x: mouseX, y: mouseY };
 
-        if (State.selected.item === "character") {
+        if (appManager.selected().item === "character") {
           vnode.state.draggedObjectType = "character";
         } else if (
-          State.selected.item === "map" && State.selected.nestedIndex !== null
+          appManager.selected().item === "map" && appManager.selected().nestedIndex !== null
         ) {
           vnode.state.draggedObjectType = "image";
         } else {
@@ -422,7 +425,7 @@ const Canvas = {
     canvas.addEventListener("mousemove", (e) => {
       if (!vnode.state.dragging) return;
 
-      if (State.mode === "view") {
+      if (appManager.storyModeView()) {
         // View mode: Only allow map panning
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
@@ -432,7 +435,7 @@ const Canvas = {
 
         vnode.state.mapOffset.x += dx;
         vnode.state.mapOffset.y += dy;
-        debouncedMapStateUpdate(State.selectedMapIndex, {
+        debouncedMapStateUpdate(appManager.mapGetSelectedIndex(), {
           xoffset: vnode.state.mapOffset.x,
           yoffset: vnode.state.mapOffset.y,
         });
@@ -448,10 +451,10 @@ const Canvas = {
         const dy = mouseY - vnode.state.lastDragPosition.y;
 
         if (vnode.state.draggedObjectType === "character") {
-          const characterIndex = State.selected.index;
-          const character = State.characters[characterIndex];
+          const characterIndex = appManager.selected().index;
+          const character = appManager.characterGetAll()[characterIndex];
           if (character) {
-            const latestStateIndex = State.getLatestCharacterChanges().find(
+            const latestStateIndex = appManager.characterGetLatestChanges().find(
               (change) => change.characterIndex === characterIndex,
             ).latestStateIndex;
 
@@ -462,15 +465,15 @@ const Canvas = {
               stateCharacter.x += dx / vnode.state.mapZoom;
               stateCharacter.y += dy / vnode.state.mapZoom;
 
-              State.ensureCharacterState(characterIndex, latestStateIndex, {
+              appManager.characterEnsureState(characterIndex, latestStateIndex, {
                 x: stateCharacter.x,
                 y: stateCharacter.y,
               });
             }
           }
         } else if (vnode.state.draggedObjectType === "image") {
-          const selectedImageIndex = State.selected.nestedIndex;
-          const currentMap = State.maps[State.selectedMapIndex];
+          const selectedImageIndex = appManager.selected().nestedIndex;
+          const currentMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
           const currentImage = currentMap.images[selectedImageIndex];
           const stateImage = vnode.state.images.find((img) =>
             img.id === selectedImageIndex
@@ -484,7 +487,7 @@ const Canvas = {
         } else {
           vnode.state.mapOffset.x += dx;
           vnode.state.mapOffset.y += dy;
-          debouncedMapStateUpdate(State.selectedMapIndex, {
+          debouncedMapStateUpdate(appManager.mapGetSelectedIndex(), {
             xoffset: vnode.state.mapOffset.x,
             yoffset: vnode.state.mapOffset.y,
           });
@@ -505,15 +508,15 @@ const Canvas = {
   },
   onupdate: function (vnode) {
     const ctx = vnode.dom.getContext("2d");
-    if (State.selectedMapIndex !== vnode.state.lastSelectedMapIndex) {
-      vnode.state.lastSelectedMapIndex = State.selectedMapIndex;
+    if (appManager.mapGetSelectedIndex() !== vnode.state.lastSelectedMapIndex) {
+      vnode.state.lastSelectedMapIndex = appManager.mapGetSelectedIndex();
       vnode.state.loadImages();
       return;
     }
-    if (State.updated) {
+    if (appManager.storyGetUpdated()) {
       vnode.state.loadImages();
     }
-    const selectedMap = State.maps[State.selectedMapIndex];
+    const selectedMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
     if (selectedMap && selectedMap.images) {
       selectedMap.images.forEach((imageData, index) => {
         const currentZoom = vnode.state.imageZooms.get(index) || 1;
