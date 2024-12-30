@@ -1,6 +1,8 @@
-import State from "/js/state.js";
+import AppManager from "/js/AppManager/AppManager.js";
 import ContextMenu from "/js/components/ContextMenu.js";
 import FileInput from "/js/components/FileInput.js";
+
+const appManager = AppManager.getInstance();
 
 const MapsTree = {
   // View function to render the component
@@ -13,14 +15,14 @@ const MapsTree = {
           ]),
           "🗺️ Maps",
           m("ul", [
-            // Loop through each map in the State
-            ...State.maps.map((map, mapIndex) =>
+            // Loop through each map in the AppManager's maps
+            ...appManager.mapGetAll().map((map, mapIndex) =>
               m("li", [
                 m("div", {
-                  class: State.selectedMapIndex === mapIndex ? "active" : "", // Apply classes based on selection/edit state
+                  class: appManager.mapCheckActive(mapIndex) ? "active" : "", // Apply classes based on selection/edit state
                   onclick: (e) => {
                     e.stopPropagation(); // Prevent image selection when map is clicked
-                    State.select("map", mapIndex, null); // Select the map only
+                    appManager.select("map", mapIndex, null); // Select the map only
                   },
                   oncontextmenu: (e) => {
                     e.preventDefault();
@@ -28,20 +30,20 @@ const MapsTree = {
                       {
                         label: "📍 Center Map",
                         onClick: () => {
-                          State.updateMapOffset(mapIndex, { x: 0, y: 0 });
+                          appManager.mapOffset(mapIndex, { x: 0, y: 0 });
                         },
                       },
                       {
                         label: "🔄 Reset Zoom",
                         onClick: () => {
-                          State.updateMapZoom(mapIndex, 1);
+                          appManager.mapZoom(mapIndex, 1);
                         },
                       },
                       {
                         label: "📍🔄 Center & Reset Zoom",
                         onClick: () => {
-                          State.updateMapOffset(mapIndex, { x: 0, y: 0 });
-                          State.updateMapZoom(mapIndex, 1);
+                          appManager.mapOffset(mapIndex, { x: 0, y: 0 });
+                          appManager.mapZoom(mapIndex, 1);
                         },
                       },
                       {
@@ -52,7 +54,7 @@ const MapsTree = {
                     ContextMenu.show(e, actions);
                   },
                 }, [
-                  ...(State.mode !== "view" ? [
+                  ...(!appManager.storyModeView() ? [
                     m("span.toggle", [
                       m("i.bi.bi-chevron-right"),
                     ]),
@@ -60,24 +62,24 @@ const MapsTree = {
                   m("span", map.name),
                 ]),
                 // Only display images if not in view mode
-                ...(State.mode !== "view" ? [
+                ...(!appManager.storyModeView() ? [
                   m("ul", [
                     // Loop through images in each map
                     ...map.images.map((image, imageIndex) =>
                       m("li", {
                         class:
-                          State.selected.item === "map" &&
-                          State.selected.index === mapIndex &&
-                          State.selected.nestedIndex == imageIndex
+                          appManager.selected()?.item === "map" &&
+                          appManager.selected()?.index === mapIndex &&
+                          appManager.selected()?.nestedIndex == imageIndex
                             ? "active-image"
                             : "", // Apply classes based on selection/edit state
                         onclick: (e) => {
                           e.stopPropagation(); // Prevent map/image selection when image is clicked
-                          State.select("map", mapIndex, imageIndex); 
+                          appManager.select({ item: "map", index: mapIndex, nestedIndex: imageIndex });
                         },
                         oncontextmenu: (e) => {
                           e.preventDefault();
-                          State.select("map", mapIndex, imageIndex);
+                          appManager.select({ item: "map", index: mapIndex, nestedIndex: imageIndex });
                           const actions = [
                             {
                               label: `✏️ Edit Image name (${image.src})`,
@@ -87,7 +89,7 @@ const MapsTree = {
                                   image.src,
                                 );
                                 if (newSrc) {
-                                  State.updateImageInMap(mapIndex, imageIndex, {
+                                  appManager.mapUpdateImage(mapIndex, imageIndex, {
                                     src: newSrc,
                                   });
                                 }
@@ -96,7 +98,7 @@ const MapsTree = {
                             {
                               label: "🗑️ Delete Image",
                               onClick: () => {
-                                State.removeImageFromMap(mapIndex, imageIndex);
+                                appManager.mapRemoveImage(mapIndex, imageIndex);
                               },
                             },
                             {
@@ -111,7 +113,7 @@ const MapsTree = {
                     m("li", [
                       m("button.btn.btn-outline-primary.upload-btn", {
                         onclick: () => {
-                          State.select("map", mapIndex, null); // Select the image
+                          appManager.select({ item: "map", index: mapIndex, nestedIndex: null }); // Select the image
                           document.getElementById("file-input").click(); // Trigger the file input
                         },
                       }, m("i.bi.bi-plus.upload-btn")),
@@ -121,13 +123,13 @@ const MapsTree = {
               ])
             ),
             // Only display the button to add a new map if not in view mode
-            ...(State.mode !== "view" ? [
+            ...(!appManager.storyModeView()? [
               m("li", [
                 m("button.btn.btn-outline-primary", {
                   onclick: () => {
                     const newMapName = prompt("Enter new map name:");
                     if (newMapName) {
-                      State.addMap(newMapName);
+                      appManager.mapAdd(newMapName);
                     }
                   },
                 }, m("i.bi.bi-plus")),
