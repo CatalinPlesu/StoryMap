@@ -1,13 +1,17 @@
+import AppManager from "./AppManager.js";
+
 class ChapterState {
   #chapters;
   #selectedChapterIndex;
   #selectedTimeframeIndex;
+  #appManager = null;
   #selected = false;
 
   constructor() {
     this.#chapters = [];
     this.#selectedChapterIndex = 0;
     this.#selectedTimeframeIndex = 0;
+    this.#appManager = AppManager.getInstance();
   }
 
   get selected() {
@@ -44,6 +48,7 @@ class ChapterState {
 
   addChapter(name) {
     this.#chapters.push({ name, timeframes: [] });
+    this.#appManager.select("map", this.#chapters.length - 1, null);
     m.redraw();
   }
 

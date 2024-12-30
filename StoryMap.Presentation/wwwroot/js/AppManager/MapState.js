@@ -48,6 +48,7 @@ class MapState {
 
   addMap(name) {
     this.#maps.push({ name, images: [] });
+    this.#appManager.select("map", this.#maps.length - 1, null);
     m.redraw();
   }
 

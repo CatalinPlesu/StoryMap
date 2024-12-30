@@ -56,6 +56,7 @@ class CharacterState {
     let clone = this.#baseCharacter.clone(0);
     clone.name = name;
     this.#characters.push(clone);
+    this.#appManager.select("character", this.#characters.length - 1, null);
     m.redraw();
   }
 
@@ -64,6 +65,7 @@ class CharacterState {
       let clone = this.#characters[index].clone(stateIndex);
       clone.name += " Clone";
       this.#characters.push(clone);
+      this.#appManager.select("character", this.#characters.length - 1, null);
       m.redraw();
     }
   }
