@@ -57,6 +57,12 @@ class AppManager {
     if (!this.#storage) {
       this.#storage = new StorageProxy();
     }
+
+    if (this.storyModeCreate()) {
+      localStorage.removeItem('storyId');
+    } else {
+      this.load();
+    }
     return this;
   }
 
@@ -68,7 +74,7 @@ class AppManager {
   mapSetAll = (value) => { this.#mapState.maps = value; };
   mapGetSelectedIndex = () => this.#mapState.selectedMapIndex;
   mapSetSelectedIndex = (value) => {
-    this.#mapState.selectedMapIndex = value; 
+    this.#mapState.selectedMapIndex = value;
     this.mapSetSelected(true);
   };
   mapAdd = (name) => this.#mapState.addMap(name);
@@ -100,14 +106,15 @@ class AppManager {
   characterGetLatestChanges = () => this.#characterState.getLatestCharacterChanges();
   characterEnsureState = (characterIndex, stateIndex, updates = {}) => this.#characterState.ensureCharacterState(characterIndex, stateIndex, updates);
   characterGetAll = () => this.#characterState.characters;
+  characterSetAll = (value) => this.#characterState.characters = value;
   characterGetSelectedIndex = () => this.#characterState.selectedCharacterIndex;
   characterSetSelectedIndex = (index) => {
     this.#characterState.selectedCharacterIndex = index;
     this.characterSetSelected(true);
   }
-  baseCharacterAddDetail= (detail) => this.#characterState.addDetailToBaseCharacter(detail);
-  baseCharacterUpdateDetail= (detailIndex, updates) => this.#characterState.updateDetailInBaseCharacter(detailIndex, updates);
-  baseCharacterRemoveDetail= (detailIndex) => this.#characterState.removeDetailFromBaseCharacter(detailIndex);
+  baseCharacterAddDetail = (detail) => this.#characterState.addDetailToBaseCharacter(detail);
+  baseCharacterUpdateDetail = (detailIndex, updates) => this.#characterState.updateDetailInBaseCharacter(detailIndex, updates);
+  baseCharacterRemoveDetail = (detailIndex) => this.#characterState.removeDetailFromBaseCharacter(detailIndex);
   baseCharacterGetDetails = () => this.#characterState.baseCharacterDetails;
 
   // {ChapterState} Facade
@@ -117,7 +124,7 @@ class AppManager {
   chapterGetAll = () => this.#chapterState.chapters;
   chapterSetAll = (value) => { this.#chapterState.chapters = value; };
   chapterGetSelectedIndex = () => this.#chapterState.selectedChapterIndex;
-  chapterSetSelectedIndex = (value) => { 
+  chapterSetSelectedIndex = (value) => {
     this.#chapterState.selectedChapterIndex = value;
     this.chapterSetSelected(true);
   };
@@ -132,7 +139,7 @@ class AppManager {
 
   // {NavigationState} Facade
   selected = () => this.#navigationState.selected;
-  select = (item, index, nestedIndex = null)  => this.#navigationState.select(item, index, nestedIndex);
+  select = (item, index, nestedIndex = null) => this.#navigationState.select(item, index, nestedIndex);
   navigateTimeframe = (direction) => this.#navigationState.navigateTimeframe(direction);
 
   // {StoryState} Facade
@@ -153,9 +160,9 @@ class AppManager {
     const chapters = this.chapterGetAll();
     const currentChapterIndex = this.chapterGetSelectedIndex();
     const currentTimeframeIndex = this.chapterGetSelectedTimeframeIndex();
-    
+
     return currentChapterIndex >= chapters.length - 1 &&
-           currentTimeframeIndex >= chapters[currentChapterIndex].timeframes.length - 1;
+      currentTimeframeIndex >= chapters[currentChapterIndex].timeframes.length - 1;
   };
 
   // Storage facade
