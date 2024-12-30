@@ -126,10 +126,12 @@ const CharactersTree = {
             ...appManager.characterGetLatestChanges().map((characterHelper) => {
               return m("li", [
                 m("div", {
-                  class: appManager.characterGetSelectedIndex() ===
-                      characterHelper.characterIndex
-                    ? "active"
-                    : "",
+                  class:
+                    appManager.characterCheckActive(
+                        characterHelper.characterIndex,
+                      )
+                      ? "active"
+                      : "",
                   onclick: (e) => {
                     e.stopPropagation();
                     appManager.select(
