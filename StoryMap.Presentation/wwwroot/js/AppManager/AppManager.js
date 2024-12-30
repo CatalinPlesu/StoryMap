@@ -58,6 +58,7 @@ class AppManager {
   // {MapState} Facade
   mapSetSelected = (value) => this.#mapState.selected = value;
   mapGetSelected = () => this.#mapState.selected;
+  mapCheckActive = (index) => this.mapGetSelectedIndex() === index;
   mapGetAll = () => this.#mapState.maps;
   mapSetAll = (value) => { this.#mapState.maps = value; };
   mapGetSelectedIndex = () => this.#mapState.selectedMapIndex;
@@ -80,6 +81,7 @@ class AppManager {
   // {CharacterState} facade
   characterSetSelected = (value) => this.#characterState.selected = value;
   characterGetSelected = () => this.#characterState.selected;
+  characterCheckActive = (index) => this.characterGetSelectedIndex() === index && this.#characterState.selected;
   characterAdd = (name) => this.#characterState.addCharacter(name);
   characterClone = (index, stateIndex) => this.#characterState.cloneCharacter(index, stateIndex);
   characterRemove = (index) => this.#characterState.removeCharacter(index);
@@ -105,6 +107,7 @@ class AppManager {
   // {ChapterState} Facade
   chapterSetSelected = (value) => this.#chapterState.selected = value;
   chapterGetSelected = () => this.#chapterState.selected;
+  chapterCheckActive = (index, secondIndex) => this.chapterGetSelectedIndex() === index && this.chapterGetSelectedTimeframeIndex() === secondIndex;
   chapterGetAll = () => this.#chapterState.chapters;
   chapterSetAll = (value) => { this.#chapterState.chapters = value; };
   chapterGetSelectedIndex = () => this.#chapterState.selectedChapterIndex;
