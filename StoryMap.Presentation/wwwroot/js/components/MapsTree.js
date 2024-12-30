@@ -96,6 +96,74 @@ const MapsTree = {
                               },
                             },
                             {
+                              label: `⬆️ Move image up`,
+                              onClick: () => {
+                                appManager.mapMoveImageUp(mapIndex, imageIndex);
+                              },
+                            },
+                            {
+                              label: `⬇️ Move image down`,
+                              onClick: () => {
+                                appManager.mapMoveImageDown(mapIndex, imageIndex);
+                              },
+                            },
+                            {
+                              label: `✏️ Edit X Position (${image.x})`,
+                              onClick: () => {
+                                const newX = prompt(
+                                  "Enter new X position:",
+                                  image.x,
+                                );
+                                if (newX) {
+                                  appManager.mapUpdateImage(mapIndex, imageIndex, {
+                                    x: parseFloat(newX),
+                                  });
+                                }
+                              },
+                            },
+                            {
+                              label: `✏️ Edit Y Position (${image.y})`,
+                              onClick: () => {
+                                const newY = prompt(
+                                  "Enter new Y position:",
+                                  image.y,
+                                );
+                                if (newY) {
+                                  appManager.mapUpdateImage(mapIndex, imageIndex, {
+                                    y: parseFloat(newY),
+                                  });
+                                }
+                              },
+                            },
+                            {
+                              label: `✏️ Edit Scale (${image.scale})`,
+                              onClick: () => {
+                                const newScale = prompt(
+                                  "Enter new scale value:",
+                                  image.scale,
+                                );
+                                if (newScale) {
+                                  appManager.mapUpdateImage(mapIndex, imageIndex, {
+                                    scale: parseFloat(newScale),
+                                  });
+                                }
+                              },
+                            },
+                            {
+                              label: `✏️ Edit Rotation (${image.rotation})`,
+                              onClick: () => {
+                                const newRotation = prompt(
+                                  "Enter new rotation value:",
+                                  image.rotation,
+                                );
+                                if (newRotation) {
+                                  appManager.mapUpdateImage(mapIndex, imageIndex, {
+                                    rotation: parseFloat(newRotation),
+                                  });
+                                }
+                              },
+                            },
+                            {
                               label: "🗑️ Delete Image",
                               onClick: () => {
                                 appManager.mapRemoveImage(mapIndex, imageIndex);
