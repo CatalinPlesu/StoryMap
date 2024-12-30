@@ -93,6 +93,7 @@ class AppManager {
   characterMove = (index, direction) => this.#characterState.moveCharacter(index, direction);
   characterBringToMap = (characterIndex, latestStateIndex) => this.#characterState.bringCharacterToMap(characterIndex, latestStateIndex);
   characterGetLatestChanges = () => this.#characterState.getLatestCharacterChanges();
+  characterEnsureState = (characterIndex, stateIndex, updates = {}) => this.#characterState.ensureCharacterState(characterIndex, stateIndex, updates);
   characterGetAll = () => this.#characterState.characters;
   characterGetSelectedIndex = () => this.#characterState.selectedCharacterIndex;
   characterSetSelectedIndex = (index) => {
@@ -140,7 +141,17 @@ class AppManager {
   storyModeView = () => this.#storyState.mode === "view";
   storyModeEdit = () => this.#storyState.mode === "edit";
   storyModeCreate = () => this.#storyState.mode === "create";
+  storyGetSpeed = () => this.#storyState.speed;
+  storySetSpeed = (value) => { this.#storyState.speed = value; };
 
+  storyIsLastTimeframe = () => {
+    const chapters = this.chapterGetAll();
+    const currentChapterIndex = this.chapterGetSelectedIndex();
+    const currentTimeframeIndex = this.chapterGetSelectedTimeframeIndex();
+    
+    return currentChapterIndex >= chapters.length - 1 &&
+           currentTimeframeIndex >= chapters[currentChapterIndex].timeframes.length - 1;
+  };
 }
 
 export default AppManager;
