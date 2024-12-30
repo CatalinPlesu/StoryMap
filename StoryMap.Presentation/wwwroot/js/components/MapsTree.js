@@ -48,7 +48,7 @@ const MapsTree = {
                       },
                       {
                         label: "❌ Cancel",
-                        onClick: () => {},
+                        onClick: () => { },
                       },
                     ];
                     ContextMenu.show(e, actions);
@@ -68,18 +68,18 @@ const MapsTree = {
                     ...map.images.map((image, imageIndex) =>
                       m("li", {
                         class:
-                          appManager.selected()?.item === "map" &&
-                          appManager.selected()?.index === mapIndex &&
-                          appManager.selected()?.nestedIndex == imageIndex
+                          appManager.selected().item === "map" &&
+                            appManager.selected().index === mapIndex &&
+                            appManager.selected().nestedIndex == imageIndex
                             ? "active-image"
                             : "", // Apply classes based on selection/edit state
                         onclick: (e) => {
                           e.stopPropagation(); // Prevent map/image selection when image is clicked
-                          appManager.select({ item: "map", index: mapIndex, nestedIndex: imageIndex });
+                          appManager.select("map", mapIndex, imageIndex);
                         },
                         oncontextmenu: (e) => {
                           e.preventDefault();
-                          appManager.select({ item: "map", index: mapIndex, nestedIndex: imageIndex });
+                          appManager.select("map", mapIndex, imageIndex);
                           const actions = [
                             {
                               label: `✏️ Edit Image name (${image.src})`,
@@ -103,7 +103,7 @@ const MapsTree = {
                             },
                             {
                               label: "❌ Cancel",
-                              onClick: () => {},
+                              onClick: () => { },
                             },
                           ];
                           ContextMenu.show(e, actions);
@@ -113,7 +113,7 @@ const MapsTree = {
                     m("li", [
                       m("button.btn.btn-outline-primary.upload-btn", {
                         onclick: () => {
-                          appManager.select({ item: "map", index: mapIndex, nestedIndex: null }); // Select the image
+                          appManager.select("map", mapIndex, null);
                           document.getElementById("file-input").click(); // Trigger the file input
                         },
                       }, m("i.bi.bi-plus.upload-btn")),
@@ -123,7 +123,7 @@ const MapsTree = {
               ])
             ),
             // Only display the button to add a new map if not in view mode
-            ...(!appManager.storyModeView()? [
+            ...(!appManager.storyModeView() ? [
               m("li", [
                 m("button.btn.btn-outline-primary", {
                   onclick: () => {
