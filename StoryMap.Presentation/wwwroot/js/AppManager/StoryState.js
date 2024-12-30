@@ -1,9 +1,18 @@
 class StoryState {
   #updated = false;
   #isPlaying = false;
+  #speed = 1;
   #storyName = null;
 
-  // Getter and Setter for #updated
+  get speed() {
+    return this.#speed;
+  }
+
+  set speed(value) {
+    this.#speed = value;
+    m.redraw();
+  }
+  
   get updated() {
     const currentUpdated = this.#updated;
     this.#updated = false;
