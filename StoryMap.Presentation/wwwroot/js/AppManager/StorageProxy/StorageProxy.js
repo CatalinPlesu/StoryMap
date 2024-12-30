@@ -14,8 +14,8 @@ class StorageProxy extends IStorageContext {
         this.context = new StorageContext();
 
         // Default to local storage strategy
-        this.localStorageStrategy = new IndexDbStrategy();
-        this.databaseStorageStrategy = new ApiStrategy();
+        this.indexDbStrategy = new IndexDbStrategy();
+        this.apiStrategy = new ApiStrategy();
         this.useIndexDB = true; // Flag to decide storage type
     }
 
@@ -25,8 +25,8 @@ class StorageProxy extends IStorageContext {
      */
     #useLocalStorage(useLocal) {
         const strategy = useLocal || window.location.protocol === 'file:'
-            ? this.databaseStorageStrategy
-            : this.localStorageStrategy;
+            ? this.indexDbStrategy
+            : this.apiStrategy;
         this.context.setStrategy(strategy);
     }
 
