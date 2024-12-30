@@ -11,7 +11,21 @@ const Canvas = {
     const canvasCenterX = canvas.width / 2;
     const canvasCenterY = canvas.height / 2;
 
-    state.images.forEach(({ id, img, x, y, width, height }) => {
+    // Get the current map's images array to determine the correct z-order
+    const currentMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
+    if (!currentMap || !currentMap.images) {
+      return;
+    }
+
+    // Create an array of image indices in the correct z-order
+    const orderedImageIndices = currentMap.images.map((_, index) => index);
+
+    // Draw images in the correct z-order
+    orderedImageIndices.forEach(imageIndex => {
+      const imageState = state.images.find(img => img.id === imageIndex);
+      if (!imageState) return;
+
+      const { id, img, x, y, width, height } = imageState;
       const zoom = state.imageZooms.get(id) || 1;
       const rotation = state.imageRotations.get(id) || 0;
 
@@ -25,15 +39,14 @@ const Canvas = {
 
       ctx.translate(adjustedX, adjustedY);
       ctx.rotate(rotation * Math.PI / 180);
-      // ctx.drawImage(img, -adjustedWidth / 2, -adjustedHeight / 2, adjustedWidth, adjustedHeight);
       ctx.drawImage(img, 0, 0, adjustedWidth, adjustedHeight);
 
       // Only draw the border if not in view mode
       if (appManager.selected().nestedIndex === id && !appManager.storyModeView()) {
-        const originalBorderWidth = 10; // The original border width
-        const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom; // Reverse scale the border width
-        ctx.lineWidth = scaledBorderWidth; // Set the scaled border width
-        ctx.strokeStyle = "#ffe47c"; // Border color
+        const originalBorderWidth = 10;
+        const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom;
+        ctx.lineWidth = scaledBorderWidth;
+        ctx.strokeStyle = "#ffe47c";
         ctx.strokeRect(0, 0, adjustedWidth, adjustedHeight); 
       }
 
