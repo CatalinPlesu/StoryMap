@@ -37,6 +37,10 @@ class CharacterState {
     return this.#characters;
   }
 
+  set characters(value) {
+    this.#characters = value;
+  }
+
   // Getter and Setter for selectedCharacterIndex
   get selectedCharacterIndex() {
     return this.#selectedCharacterIndex;
