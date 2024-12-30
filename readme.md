@@ -66,12 +66,12 @@ patterns.
 - [x] **Prototype** Clone character, template character
 
 ### Structural
-- [ ] **Bridge** Decouple UI from the data
+- [ ] **Decorator** Have different types of characters: main, villain, episodic
 - [x] **Facade** Story Facade - simplified access  
-- [ ] **Proxy** Before accessing backend use given strategy
+- [x] **Proxy** Before accessing backend use given strategy
 
 ### Behavioural
 - [ ] **Memento** For Character <-> Timeframes Relation
 - [ ] **Observer** Notify canvas when to redraw  
 - [ ] **State** view/edit/create modes  
-- [ ] **Strategy** Backend API - Database / Local Storage  
+- [x] **Strategy** Backend API - Database / Local Storage  

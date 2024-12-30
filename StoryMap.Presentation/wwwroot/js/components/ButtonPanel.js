@@ -34,6 +34,8 @@ const ButtonPanel = {
                 ? m("button.btn.btn-success", {
                     onclick: () => {
                         console.log("Create clicked");
+                        window.location.href = "/Story/";
+                        appManager.save();
                         // Add your create logic here
                     },
                     style: {
@@ -48,6 +50,8 @@ const ButtonPanel = {
                 ? m("button.btn.btn-primary", {
                     onclick: () => {
                         console.log("Save clicked");
+                        window.location.href = "/Story/";
+                        appManager.save();
                         // Add your save logic here
                     },
                     style: {

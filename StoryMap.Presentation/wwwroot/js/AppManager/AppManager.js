@@ -3,6 +3,7 @@ import CharacterState from "./CharacterState.js";
 import ChapterState from "./ChapterState.js";
 import NavigationState from "./NavigationState.js";
 import StoryState from "./StoryState.js";
+import StorageProxy from "./StorageProxy/StorageProxy.js";
 
 /**
  * AppManager Singleton Class + Facade
@@ -16,6 +17,7 @@ class AppManager {
   #chapterState = null;
   #navigationState = null;
   #storyState = null;
+  #storage = null;
 
   /**
    * Private constructor to prevent direct instantiation
@@ -51,6 +53,9 @@ class AppManager {
     }
     if (!this.#storyState) {
       this.#storyState = new StoryState();
+    }
+    if (!this.#storage) {
+      this.#storage = new StorageProxy();
     }
     return this;
   }
@@ -152,6 +157,11 @@ class AppManager {
     return currentChapterIndex >= chapters.length - 1 &&
            currentTimeframeIndex >= chapters[currentChapterIndex].timeframes.length - 1;
   };
+
+  // Storage facade
+  save = () => this.#storage.save();
+  load = () => this.#storage.load();
+  loadStories = () => this.#storage.loadStories();
 }
 
 export default AppManager;
