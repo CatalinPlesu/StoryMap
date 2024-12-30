@@ -45,10 +45,10 @@ class NavigationState {
     if (direction === 1) {
       if (
         selectedTimeframeIndex <
-          this.chapters[selectedChapterIndex].timeframes.length - 1
+          this.#appManager.chapterGetAll()[selectedChapterIndex].timeframes.length - 1
       ) {
         selectedTimeframeIndex++;
-      } else if (selectedChapterIndex < this.chapters.length - 1) {
+      } else if (selectedChapterIndex < this.#appManager.chapterGetAll().length - 1) {
         selectedChapterIndex++;
         selectedTimeframeIndex = 0;
       }
@@ -58,7 +58,7 @@ class NavigationState {
       } else if (selectedChapterIndex > 0) {
         selectedChapterIndex--;
         selectedTimeframeIndex =
-          this.chapters[selectedChapterIndex].timeframes.length - 1;
+          this.#appManager.chapterGetAll()[selectedChapterIndex].timeframes.length - 1;
       }
     }
 
