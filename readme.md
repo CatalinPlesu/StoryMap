@@ -2,18 +2,36 @@
 
 ## Overview
 
-This application enables users to interact with a dynamic map and associated
-entities such as characters, items, and vehicles. Core Requirements include
-image uploads, character location tracking, attribute display, timeline-based
-movement visualization, and support for overlays, zooming, and flexible
-timeframes.
+This application enables users to interact with a dynamic map and associated entities such as characters, items, and vehicles. Core Requirements include image uploads, character location tracking, attribute isplay, timeline-based movement visualization, and support for overlays, zooming, and flexible timeframes.
+
+Creating
+![alt text](<md/Peek 2024-12-31 18-27.gif>)
+
+Seting story name
+![alt text](md/create.gif)
+
+Adding a map
+![alt text](<md/add map.gif>)
+
+Creating Characters
+![alt text](<md/creating characters-1.gif>)
+
+Adding atributes
+![alt text](md/atributes.gif)
+
+Creating chapters
+![alt text](md/chapters.gif)
+
+Playing the story
+![alt text](<md/playing the story.gif>)
+
 
 ## Features
 
 ## Story 
 Story is a Collection of Maps, Characters, and Chapters
 
-### Requirements:
+##### Requirements:
 - [x] Have multiple stories
 - [x] Create / View / Edit stories
 
@@ -21,7 +39,7 @@ Story is a Collection of Maps, Characters, and Chapters
 Maps are a collection of images, with support for multiple maps. Each map can
 contain multiple images that users can scale and move.
 
-### Requirements:
+##### Requirements:
 - [x] Have multiple maps
 - [x] Upload and display images to form a map
 - [x] Support overlays and zoom functionality
@@ -32,7 +50,7 @@ Characters are displayed on the map with animated movement paths. Each
 character has a position on the map and attributes, which are tied to the
 timeframe of a chapter.
 
-### Requirements:
+##### Requirements:
 - [x] Track and display character locations on maps using markers or pointers.
 - [x] Animate character movement between points on the map.
 - [x] attributes (e.g., health, money).
@@ -42,14 +60,14 @@ timeframe of a chapter.
 Chapters organize timeframes in chronological order, connecting characters,
 their positions, and attributes to specific events.
 
-### Requirements:
+##### Requirements:
 - [x] Group timeframes into chapters
 
 ## Export Feature
 The platform provides planned export capabilities to share and integrate story
 data.
 
-### Requirements:
+##### Requirements:
 - [ ] Export stories as a zip file
 - [ ] Import zip files 
 - [ ] Embed maps and related data within EPUB files
@@ -68,7 +86,6 @@ patterns.
 - [x] **Decorator** To modify the init function for Home and Story page
 - [x] **Facade** Story Facade - simplified access  
 - [x] **Proxy** Before accessing backend use given strategy
-
 ### Behavioural
 - [x] **Observer** Notify canvas when to redraw  
 - [x] **State** view/edit/create modes  
