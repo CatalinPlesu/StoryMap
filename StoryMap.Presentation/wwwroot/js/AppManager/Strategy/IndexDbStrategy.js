@@ -1,5 +1,6 @@
 import IStorageStrategy from './IStorageStrategy.js';
 import AppManager from "../AppManager.js";
+import StoryDataBuilder from '../../Models/StoryData.js';
 
 class IndexDbStrategy extends IStorageStrategy {
     constructor() {
@@ -56,14 +57,16 @@ class IndexDbStrategy extends IStorageStrategy {
             storyId = await this.generateUniqueId(store);
         }
 
-        const storyData = {
-            id: storyId,
-            name: appManager.storyGetStoryName() || appManager.mapGetAll()[0].name || "New Story",
-            maps: appManager.mapGetAll(),
-            characters: appManager.characterGetAll(),
-            chapters: appManager.chapterGetAll(),
-            cover: this.extractCover(appManager.mapGetAll())
-        };
+        const builder = new StoryDataBuilder();
+        const storyData = builder
+            .setId(storyId)
+            .setName(appManager.storyGetStoryName() || appManager.mapGetAll()[0].name || "New Story")
+            .setMaps(appManager.mapGetAll())
+            .setCharacters(appManager.characterGetAll())
+            .setChapters(appManager.chapterGetAll())
+            .setCover(this.extractCover(appManager.mapGetAll()))
+            .build();
+
 
         return new Promise((resolve, reject) => {
             const request = store.put(storyData);
@@ -106,37 +109,37 @@ class IndexDbStrategy extends IStorageStrategy {
     }
 
     async loadStories() {
-            const db = await this.#initDb();
-            const transaction = db.transaction([this.storiesStore], 'readonly');
-            const store = transaction.objectStore(this.storiesStore);
+        const db = await this.#initDb();
+        const transaction = db.transaction([this.storiesStore], 'readonly');
+        const store = transaction.objectStore(this.storiesStore);
 
-            return new Promise((resolve, reject) => {
-                const request = store.getAll();
+        return new Promise((resolve, reject) => {
+            const request = store.getAll();
 
-                request.onsuccess = () => {
+            request.onsuccess = () => {
                 // First get all the complete data
-                    const allStoriesData = request.result;
+                const allStoriesData = request.result;
 
                 // Then extract only what we need for the stories list
-                    const storiesList = allStoriesData.map(story => {
+                const storiesList = allStoriesData.map(story => {
                     // Here we make sure to get all fields even if story format changes
-                        const { id, name, maps, characters, chapters, cover } = story;
-                    
+                    const { id, name, maps, characters, chapters, cover } = story;
+
                     return {
-                    id,
-                    name,
-                    cover
+                        id,
+                        name,
+                        cover
                     };
-                    });
+                });
 
-                    const appManager = AppManager.getInstance();
-                    appManager.storiesSetAll(storiesList);
+                const appManager = AppManager.getInstance();
+                appManager.storiesSetAll(storiesList);
 
-                    resolve(storiesList);
-                };
+                resolve(storiesList);
+            };
 
             request.onerror = () => reject(request.error);
-            });
+        });
     }
 
     extractCover(maps) {

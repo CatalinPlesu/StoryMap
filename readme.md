@@ -62,7 +62,7 @@ patterns.
 ### Creational
 - [x] **Singleton** State
 - [ ] **Factory Method** Map/Character/Chapter
-- [ ] **Builder** Build Stories
+- [x] **Builder** Build Story Data to save it
 - [x] **Prototype** Clone character, template character
 
 ### Structural
