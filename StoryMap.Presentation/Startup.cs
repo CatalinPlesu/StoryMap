@@ -17,8 +17,8 @@ namespace StoryMap.Presentation
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDomain(connectionString);
-            services.AddMigrations(connectionString);
+            // services.AddDomain(connectionString);
+            // services.AddMigrations(connectionString);
             services.AddPresentation();
             services.AddAutoMapper();
             services.AddServices();
