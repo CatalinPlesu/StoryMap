@@ -30,10 +30,10 @@ const MapsTree = {
                       {
                         label: "✏️  Edit Map Name",
                         onClick: () => {
-                        const newValue = prompt(
-                          "✏️ Edit Map name:",
-                          map.name,
-                        );
+                          const newValue = prompt(
+                            "✏️ Edit Map name:",
+                            map.name,
+                          );
                           appManager.mapRename(mapIndex, newValue);
                         },
                       },
@@ -54,6 +54,12 @@ const MapsTree = {
                         onClick: () => {
                           appManager.mapOffset(mapIndex, { x: 0, y: 0 });
                           appManager.mapZoom(mapIndex, 1);
+                        },
+                      },
+                      {
+                        label: "🗑️ Delete",
+                        onClick: () => {
+                          appManager.mapRemove(mapIndex);
                         },
                       },
                       {
