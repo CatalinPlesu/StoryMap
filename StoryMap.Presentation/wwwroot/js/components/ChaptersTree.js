@@ -118,14 +118,22 @@ const ChaptersTree = {
                 ]),
               ])
             ),
-            appManager.storyModeView()? null :
+            appManager.storyModeView() ? null :
               m("li", [
                 m("button.btn.btn-outline-primary", {
                   onclick: () => {
-                    const newChapterName = prompt("Enter new chapter name:");
-                    if (newChapterName) {
-                      appManager.chapterAdd(newChapterName);
-                    }
+                    const newChapterName = "Chapter " +
+                      appManager.chapterGetAll().length;
+                    appManager.chapterAdd(newChapterName);
+
+                    const newTimeframe = "Timeframe 0";
+                    appManager.chapterAddTimeframe(appManager.chapterGetAll().length - 1, newTimeframe);
+
+                    appManager.select(
+                      "timeframe",
+                      appManager.chapterGetAll().length - 1,
+                      appManager.chapterGetAll()[appManager.chapterGetAll().length - 1].timeframes.length - 1,
+                    );
                   },
                 }, m("i.bi.bi-plus")),
               ]),
