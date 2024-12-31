@@ -106,24 +106,37 @@ class IndexDbStrategy extends IStorageStrategy {
     }
 
     async loadStories() {
-        const db = await this.#initDb();
-        const transaction = db.transaction([this.storiesStore], 'readonly');
-        const store = transaction.objectStore(this.storiesStore);
+            const db = await this.#initDb();
+            const transaction = db.transaction([this.storiesStore], 'readonly');
+            const store = transaction.objectStore(this.storiesStore);
 
-        return new Promise((resolve, reject) => {
-            const request = store.getAll();
+            return new Promise((resolve, reject) => {
+                const request = store.getAll();
 
-            request.onsuccess = () => {
-                const stories = request.result.map(({ id, name, cover }) => ({
+                request.onsuccess = () => {
+                // First get all the complete data
+                    const allStoriesData = request.result;
+
+                // Then extract only what we need for the stories list
+                    const storiesList = allStoriesData.map(story => {
+                    // Here we make sure to get all fields even if story format changes
+                        const { id, name, maps, characters, chapters, cover } = story;
+                    
+                    return {
                     id,
                     name,
                     cover
-                }));
-                resolve(stories);
-            };
+                    };
+                    });
+
+                    const appManager = AppManager.getInstance();
+                    appManager.storiesSetAll(storiesList);
+
+                    resolve(storiesList);
+                };
 
             request.onerror = () => reject(request.error);
-        });
+            });
     }
 
     extractCover(maps) {
