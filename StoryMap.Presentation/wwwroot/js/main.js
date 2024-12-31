@@ -9,7 +9,7 @@ import ControlPanel from "/js/components/ControlPanel.js";
 import AppManager from "/js/AppManager/AppManager.js";
 
 let appManager = AppManager.getInstance();
-appManager.init();
+appManager.init(true);
 
 appManager.baseCharacterAddDetail({health: "33/100"});
 appManager.baseCharacterAddDetail({money: 3});
