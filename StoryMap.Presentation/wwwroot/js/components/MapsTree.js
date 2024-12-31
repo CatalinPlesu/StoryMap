@@ -28,6 +28,16 @@ const MapsTree = {
                     e.preventDefault();
                     const actions = [
                       {
+                        label: "✏️  Edit Map Name",
+                        onClick: () => {
+                        const newValue = prompt(
+                          "✏️ Edit Map name:",
+                          map.name,
+                        );
+                          appManager.mapRename(mapIndex, newValue);
+                        },
+                      },
+                      {
                         label: "📍 Center Map",
                         onClick: () => {
                           appManager.mapOffset(mapIndex, { x: 0, y: 0 });

@@ -40,7 +40,7 @@ const HomePage = {
                 onclick: () => {
                   // Save story ID to localStorage and navigate
                   localStorage.setItem("storyId", story.id);
-                  window.location.href = `/Story/${story.id}`;
+                  window.location.href = `/Story/`;
                 },
                 style: "cursor: pointer",
               },
