@@ -14,8 +14,8 @@ timeframes.
 Story is a Collection of Maps, Characters, and Chapters
 
 ### Requirements:
-- [ ] Have multiple stories
-- [ ] Create / View / Edit stories
+- [x] Have multiple stories
+- [x] Create / View / Edit stories
 
 ## Maps
 Maps are a collection of images, with support for multiple maps. Each map can
@@ -61,7 +61,6 @@ patterns.
 
 ### Creational
 - [x] **Singleton** State
-- [ ] **Factory Method** Map/Character/Chapter
 - [x] **Builder** Build Story Data to save it
 - [x] **Prototype** Clone character, template character
 
@@ -71,7 +70,6 @@ patterns.
 - [x] **Proxy** Before accessing backend use given strategy
 
 ### Behavioural
-- [ ] **Memento** For Character <-> Timeframes Relation
 - [x] **Observer** Notify canvas when to redraw  
-- [ ] **State** view/edit/create modes  
+- [x] **State** view/edit/create modes  
 - [x] **Strategy** Backend API - Database / Local Storage  
