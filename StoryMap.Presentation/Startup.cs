@@ -1,6 +1,6 @@
-using StoryMap.Domain;
+// using StoryMap.Domain;
 using StoryMap.Presentation.AutoMapperProfiles;
-using StoryMap.Services;
+// using StoryMap.Services;
 
 namespace StoryMap.Presentation
 {
@@ -21,7 +21,7 @@ namespace StoryMap.Presentation
             // services.AddMigrations(connectionString);
             services.AddPresentation();
             services.AddAutoMapper();
-            services.AddServices();
+            // services.AddServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
