@@ -140,8 +140,6 @@ class AppManager extends IAppManager{
   navigateTimeframe = (direction) => this.#navigationState.navigateTimeframe(direction);
 
   // {StoryState} Facade
-  storyGetUpdated = () => this.#storyState.updated;
-  storyUpdate = () => { this.#storyState.updated = true; };
   storyGetIsPlaying = () => this.#storyState.isPlaying;
   storySetIsPlaying = (value) => { this.#storyState.isPlaying = value; };
   storyGetStoryName = () => this.#storyState.storyName;
@@ -154,6 +152,9 @@ class AppManager extends IAppManager{
   storySetSpeed = (value) => { this.#storyState.speed = value; };
   storiesGetAll = () => this.#storyState.stories;
   storiesSetAll = (value) => this.#storyState.stories = value;
+  storyAddObserver = (observer) => this.#storyState.addObserver(observer);
+  storyRemoveObserver = (observer) => this.#storyState.removeObserver(observer);
+  storyNotify = () => this.#storyState.notify();
 
   storyIsLastTimeframe = () => {
     const chapters = this.chapterGetAll();

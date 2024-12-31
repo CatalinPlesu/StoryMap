@@ -4,6 +4,23 @@ class StoryState {
   #speed = 1;
   #storyName = null;
   #stories = [];
+  #observers = [];
+
+  addObserver(observer) {
+    if (observer.update && typeof observer.update === 'function') {
+      this.#observers.push(observer);
+    } else {
+      console.error('Observer must implement an update method');
+    }
+  }
+
+  removeObserver(observer) {
+    this.#observers = this.#observers.filter(obs => obs !== observer);
+  }
+
+  notify() {
+    this.#observers.forEach(observer => observer.update(this));
+  }
 
   get speed() {
     return this.#speed;
@@ -31,6 +48,7 @@ class StoryState {
 
   set updated(value) {
     this.#updated = value;
+    this.notify();
     m.redraw();
   }
 

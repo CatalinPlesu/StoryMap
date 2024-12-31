@@ -72,6 +72,6 @@ patterns.
 
 ### Behavioural
 - [ ] **Memento** For Character <-> Timeframes Relation
-- [ ] **Observer** Notify canvas when to redraw  
+- [x] **Observer** Notify canvas when to redraw  
 - [ ] **State** view/edit/create modes  
 - [x] **Strategy** Backend API - Database / Local Storage  

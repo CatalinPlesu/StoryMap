@@ -1,9 +1,19 @@
+import IObserver from './Observer/IObserver.js';
 import AppManager from "/js/AppManager/AppManager.js";
 
-let appManager = AppManager.getInstance();
+class Canvas extends IObserver {
+  static update = false;
+  constructor() {
+    super();
+    this.appManager = AppManager.getInstance();
+    Canvas.update = false;
+  }
 
-const Canvas = {
-  drawCanvas: function (ctx, state, canvas) {
+  update() {
+    Canvas.update = true;
+  }
+
+  drawCanvas(ctx, state, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
 
@@ -47,7 +57,7 @@ const Canvas = {
         const scaledBorderWidth = originalBorderWidth * zoom * state.mapZoom;
         ctx.lineWidth = scaledBorderWidth;
         ctx.strokeStyle = "#ffe47c";
-        ctx.strokeRect(0, 0, adjustedWidth, adjustedHeight); 
+        ctx.strokeRect(0, 0, adjustedWidth, adjustedHeight);
       }
 
       ctx.restore();
@@ -79,9 +89,9 @@ const Canvas = {
     }
 
     ctx.restore();
-  },
+  }
 
-  drawCharacter: function (
+  drawCharacter(
     ctx,
     character,
     state,
@@ -147,24 +157,25 @@ const Canvas = {
     ctx.fillText(name, drawX, drawY - (baseMarkerSize * 1.5));
 
     ctx.restore();
-  },
+  }
 
-  updateCanvasSize: function (canvas) {
+  updateCanvasSize(canvas) {
     // Get the computed size from CSS
     const rect = canvas.getBoundingClientRect();
     // Set the canvas internal dimensions to match its CSS dimensions
     canvas.width = rect.width;
     canvas.height = rect.height;
-  },
+  }
 
-  _debounce: (func, delay) => {
+  _debounce(func, delay) {
     let timeoutId;
     return (...args) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => func(...args), delay);
     };
-  },
-  oninit: function (vnode) {
+  }
+
+  oninit(vnode) {
     vnode.state.lastSelectedMapIndex = null;
     vnode.state.images = [];
     vnode.state.mapZoom = 1;
@@ -176,8 +187,9 @@ const Canvas = {
     vnode.state.lastDragPosition = { x: 0, y: 0 };
     vnode.state.draggedObjectType = null;
     vnode.state.characters = [];
-  },
-  oncreate: function (vnode) {
+  }
+
+  oncreate(vnode) {
     const canvas = vnode.dom;
     const ctx = canvas.getContext("2d");
 
@@ -518,16 +530,17 @@ const Canvas = {
       vnode.state.draggedObjectType = null;
     });
     vnode.state.loadImages();
-  },
-  onupdate: function (vnode) {
+  }
+  onupdate(vnode) {
     const ctx = vnode.dom.getContext("2d");
     if (appManager.mapGetSelectedIndex() !== vnode.state.lastSelectedMapIndex) {
       vnode.state.lastSelectedMapIndex = appManager.mapGetSelectedIndex();
       vnode.state.loadImages();
       return;
     }
-    if (appManager.storyGetUpdated()) {
+    if (Canvas.update) {
       vnode.state.loadImages();
+      Canvas.update = false;
     }
     const selectedMap = appManager.mapGetAll()[appManager.mapGetSelectedIndex()];
     if (selectedMap && selectedMap.images) {
@@ -550,8 +563,8 @@ const Canvas = {
       });
       this.drawCanvas(ctx, vnode.state, vnode.dom);
     }
-  },
-  view: function () {
+  }
+  view() {
     return m("canvas#canvas", {
       style: {
         border: "2px dashed #ccc",
@@ -563,8 +576,9 @@ const Canvas = {
         height: "calc(100vh - 150px)",
       },
     });
-  },
-};
+  }
+}
+
 export default Canvas;
 
 // Add these animation helper functions at the top of the file

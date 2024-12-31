@@ -270,7 +270,7 @@ class CharacterState {
       );
 
       character.states.splice(stateIndex + 1, 0, currentState);
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify();
       return currentState;
     }
   }

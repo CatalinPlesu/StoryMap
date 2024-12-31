@@ -74,7 +74,7 @@ class MapState {
   updateMapZoom(index, zoom) {
     if (this.#maps[index]) {
       this.#maps[index].zoom = zoom;
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }
@@ -83,7 +83,7 @@ class MapState {
     if (this.#maps[index]) {
       this.#maps[index].xoffset = offset.x;
       this.#maps[index].yoffset = offset.y;
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }
@@ -92,7 +92,7 @@ class MapState {
     if (this.#maps[mapIndex]) {
       this.#maps[mapIndex].images.push(image);
       this.#selectedImageIndex =  this.#maps[mapIndex].images.length - 1;
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }
@@ -112,7 +112,7 @@ class MapState {
         map.images[imageIndex],
       ];
       this.#selectedImageIndex -= 1;
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }
@@ -125,7 +125,7 @@ class MapState {
         map.images[imageIndex],
       ];
       this.#selectedImageIndex += 1;
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }
@@ -133,7 +133,7 @@ class MapState {
   removeImageFromMap(mapIndex, imageIndex) {
     if (this.#maps[mapIndex]?.images[imageIndex]) {
       this.#maps[mapIndex].images.splice(imageIndex, 1);
-      this.#appManager.storyUpdate();
+      this.#appManager.storyNotify()
       m.redraw();
     }
   }

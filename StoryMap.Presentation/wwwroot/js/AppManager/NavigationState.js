@@ -33,7 +33,7 @@ class NavigationState {
         break;
       default:
     }
-    this.#appManager.storyUpdate();
+    this.#appManager.storyNotify()
     m.redraw();
   }
 

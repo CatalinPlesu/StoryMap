@@ -11,7 +11,7 @@ const StoryNameDisplay = {
             const newStoryName = prompt("Enter new story name:", storyName);
             if (newStoryName) {
                 appManager.storySetStoryName(newStoryName);
-                appManager.storyUpdate(); // Mark story as updated
+                appManager.storyNotify() // Mark story as updated
             }
         };
 

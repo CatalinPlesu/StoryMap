@@ -12,11 +12,14 @@ import AppManagerStoryPageDecorator from "./AppManager/Decorator/AppManagerStory
 let appManager = new AppManagerStoryPageDecorator(AppManager.getInstance());
 appManager.init();
 
+const canvas = new Canvas();
+appManager.wrapee.storyAddObserver(canvas);
+
 const App = {
   view() {
     return m("div", [
       m(LeftBar),
-      m(Canvas),
+      m(canvas),
       m(RightBar),
       m(ContextMenu),
       m(ControlPanel),
