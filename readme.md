@@ -4,6 +4,13 @@
 
 This application enables users to interact with a dynamic map and associated entities such as characters, items, and vehicles. Core Requirements include image uploads, character location tracking, attribute isplay, timeline-based movement visualization, and support for overlays, zooming, and flexible timeframes.
 
+
+## Obtaining the software
+Download the latest release from [release page](https://github.com/CatalinPlesu/StoryMap/releases)
+Launch the StoryMap.Presentation.exe (on Linux without exe)
+The page is located on [http://localhost:5044/](http://localhost:5044/)
+Alternatively run the program with dotnet run
+
 Creating
 ![alt text](<md/Peek 2024-12-31 18-27.gif>)
 
