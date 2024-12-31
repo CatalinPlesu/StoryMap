@@ -2,16 +2,14 @@ import AppManager from "./AppManager.js";
 
 class MapState {
   #maps;
-  #selectedMapIndex;
-  #selectedImageIndex;
+  #selectedMapIndex = null;
+  #selectedImageIndex = null;
   #appManager = null;
   #selected = false;
 
   constructor() {
     this.#appManager = AppManager.getInstance();
     this.#maps = [];
-    this.#selectedMapIndex = 0;
-    this.#selectedImageIndex = 0;
   }
 
   get selected() {
