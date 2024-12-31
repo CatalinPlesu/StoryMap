@@ -1,15 +1,16 @@
 import AppManager from "./AppManager/AppManager.js";
+import AppMagerHomePageDecorator from "./AppManager/Decorator/AppMagerHomePageDecorator.js";
 
 // Initialize AppManager
-let appManager = AppManager.getInstance();
-globalThis.appManager = appManager;
-appManager.init(false);
+globalThis.appManager = AppManager.getInstance();
+let appManager = new AppMagerHomePageDecorator(AppManager.getInstance());
+appManager.init();
 
 // HomePage component
 const HomePage = {
   view() {
     // Fetch all stories from appManager
-    const stories = appManager.storiesGetAll();
+    const stories = appManager.wrapee.storiesGetAll();
 
     return m("div.container.mt-3", [
       m("div.row.mt-5.pt-5", [

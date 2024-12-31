@@ -4,12 +4,13 @@ import ChapterState from "./ChapterState.js";
 import NavigationState from "./NavigationState.js";
 import StoryState from "./StoryState.js";
 import StorageProxy from "./StorageProxy/StorageProxy.js";
+import IAppManager from "./IAppManager.js"; 
 
 /**
  * AppManager Singleton Class + Facade
  * This class ensures that only one instance of AppManager exists.
  */
-class AppManager {
+class AppManager extends IAppManager{
   // The private static instance
   static #instance = null;
   #mapState = null;
@@ -23,6 +24,7 @@ class AppManager {
    * Private constructor to prevent direct instantiation
    */
   constructor() {
+    super();
     if (AppManager.#instance) {
       throw new Error(
         "AppManager instance already exists. Use getInstance() instead.",
@@ -38,7 +40,7 @@ class AppManager {
     return AppManager.#instance; // Return the existing or newly created instance
   }
 
-  init(loadStory) {
+  init() {
     if (!this.#mapState) {
       this.#mapState = new MapState();
     }
@@ -56,16 +58,6 @@ class AppManager {
     }
     if (!this.#storage) {
       this.#storage = new StorageProxy();
-    }
-
-    if (loadStory) {
-      if (this.storyModeCreate()) {
-        localStorage.removeItem('storyId');
-      } else {
-        this.load();
-      }
-    } else {
-      this.loadStories();
     }
 
     return this;

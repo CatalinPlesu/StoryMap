@@ -66,7 +66,7 @@ patterns.
 - [x] **Prototype** Clone character, template character
 
 ### Structural
-- [ ] **Decorator** Have different types of characters: main, villain, episodic
+- [x] **Decorator** To modify the init function for Home and Story page
 - [x] **Facade** Story Facade - simplified access  
 - [x] **Proxy** Before accessing backend use given strategy
 

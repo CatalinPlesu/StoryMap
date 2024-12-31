@@ -7,13 +7,10 @@ import StoryNameDisplay from "/js/components/StoryNameDisplay.js";
 import ButtonPanel from "/js/components/ButtonPanel.js";
 import ControlPanel from "/js/components/ControlPanel.js";
 import AppManager from "/js/AppManager/AppManager.js";
+import AppManagerStoryPageDecorator from "./AppManager/Decorator/AppManagerStoryPageDecorator.js";
 
-let appManager = AppManager.getInstance();
-appManager.init(true);
-
-appManager.baseCharacterAddDetail({health: "33/100"});
-appManager.baseCharacterAddDetail({money: 3});
-appManager.baseCharacterAddDetail({level: 0});
+let appManager = new AppManagerStoryPageDecorator(AppManager.getInstance());
+appManager.init();
 
 const App = {
   view() {

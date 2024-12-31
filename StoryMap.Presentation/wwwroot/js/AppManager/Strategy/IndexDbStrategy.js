@@ -58,7 +58,7 @@ class IndexDbStrategy extends IStorageStrategy {
 
         const storyData = {
             id: storyId,
-            name: appManager.storyGetStoryName(),
+            name: appManager.storyGetStoryName() || appManager.mapGetAll()[0].name || "New Story",
             maps: appManager.mapGetAll(),
             characters: appManager.characterGetAll(),
             chapters: appManager.chapterGetAll(),
