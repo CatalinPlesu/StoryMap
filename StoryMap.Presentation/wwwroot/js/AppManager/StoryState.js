@@ -3,6 +3,7 @@ class StoryState {
   #isPlaying = false;
   #speed = 1;
   #storyName = null;
+  #stories = [];
 
   get speed() {
     return this.#speed;
@@ -12,7 +13,16 @@ class StoryState {
     this.#speed = value;
     m.redraw();
   }
-  
+
+  get stories() {
+    return this.#stories;
+  }
+
+  set stories(value) {
+    this.#stories = value;
+    m.redraw();
+  }
+
   get updated() {
     const currentUpdated = this.#updated;
     this.#updated = false;

@@ -38,7 +38,7 @@ class AppManager {
     return AppManager.#instance; // Return the existing or newly created instance
   }
 
-  init() {
+  init(loadStory) {
     if (!this.#mapState) {
       this.#mapState = new MapState();
     }
@@ -58,11 +58,16 @@ class AppManager {
       this.#storage = new StorageProxy();
     }
 
-    if (this.storyModeCreate()) {
-      localStorage.removeItem('storyId');
+    if (loadStory) {
+      if (this.storyModeCreate()) {
+        localStorage.removeItem('storyId');
+      } else {
+        this.load();
+      }
     } else {
-      this.load();
+      this.loadStories();
     }
+
     return this;
   }
 
@@ -155,6 +160,8 @@ class AppManager {
   storyModeCreate = () => this.#storyState.mode === "create";
   storyGetSpeed = () => this.#storyState.speed;
   storySetSpeed = (value) => { this.#storyState.speed = value; };
+  storiesGetAll = () => this.#storyState.stories;
+  storiesSetAll = (value) => this.#storyState.stories = value;
 
   storyIsLastTimeframe = () => {
     const chapters = this.chapterGetAll();
