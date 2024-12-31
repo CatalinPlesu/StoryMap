@@ -106,7 +106,7 @@ class IndexDbStrategy extends IStorageStrategy {
     }
 
     async loadStories() {
-        const db = await this.initDb();
+        const db = await this.#initDb();
         const transaction = db.transaction([this.storiesStore], 'readonly');
         const store = transaction.objectStore(this.storiesStore);
 
