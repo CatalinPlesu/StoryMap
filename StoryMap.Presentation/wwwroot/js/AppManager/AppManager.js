@@ -5,6 +5,7 @@ import NavigationState from "./NavigationState.js";
 import StoryState from "./StoryState.js";
 import StorageProxy from "./StorageProxy/StorageProxy.js";
 import IAppManager from "./IAppManager.js"; 
+import StoryModeContext from "./State/StoryModeContext.js"; 
 
 /**
  * AppManager Singleton Class + Facade
@@ -19,6 +20,7 @@ class AppManager extends IAppManager{
   #navigationState = null;
   #storyState = null;
   #storage = null;
+  #viewMode = null;
 
   /**
    * Private constructor to prevent direct instantiation
@@ -58,6 +60,9 @@ class AppManager extends IAppManager{
     }
     if (!this.#storage) {
       this.#storage = new StorageProxy();
+    }
+    if (!this.#viewMode) {
+      this.#viewMode = new StoryModeContext();
     }
 
     return this;
@@ -144,10 +149,10 @@ class AppManager extends IAppManager{
   storySetIsPlaying = (value) => { this.#storyState.isPlaying = value; };
   storyGetStoryName = () => this.#storyState.storyName;
   storySetStoryName = (value) => { this.#storyState.storyName = value; };
-  storyMode = () => this.#storyState.mode;
-  storyModeView = () => this.#storyState.mode === "view";
-  storyModeEdit = () => this.#storyState.mode === "edit";
-  storyModeCreate = () => this.#storyState.mode === "create";
+  storyMode = () => this.#viewMode.stateName;
+  storyModeView = () => this.#viewMode.isViewMode();
+  storyModeEdit = () => this.#viewMode.isEditMode();
+  storyModeCreate = () => this.#viewMode.isCreateMode();
   storyGetSpeed = () => this.#storyState.speed;
   storySetSpeed = (value) => { this.#storyState.speed = value; };
   storiesGetAll = () => this.#storyState.stories;
